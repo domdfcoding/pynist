@@ -1,21 +1,21 @@
 ****************
-package_name
+pynist
 ****************
 
-.. image:: https://travis-ci.org/domdfcoding/package_name.svg?branch=master
-    :target: https://travis-ci.org/domdfcoding/package_name
+.. image:: https://travis-ci.org/domdfcoding/pynist.svg?branch=master
+    :target: https://travis-ci.org/domdfcoding/pynist
     :alt: Build Status
-.. image:: https://readthedocs.org/projects/package_name/badge/?version=latest
-    :target: https://package_name.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/pynist/badge/?version=latest
+    :target: https://pynist.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-.. image:: https://img.shields.io/pypi/v/package_name.svg
-    :target: https://pypi.org/project/package_name/
+.. image:: https://img.shields.io/pypi/v/pynist.svg
+    :target: https://pypi.org/project/pynist/
     :alt: PyPI
-.. image:: https://img.shields.io/pypi/pyversions/package_name.svg
-    :target: https://pypi.org/project/package_name/
+.. image:: https://img.shields.io/pypi/pyversions/pynist.svg
+    :target: https://pypi.org/project/pynist/
     :alt: PyPI - Python Version
-.. image:: https://coveralls.io/repos/github/domdfcoding/package_name/badge.svg?branch=master
-    :target: https://coveralls.io/github/domdfcoding/package_name?branch=master
+.. image:: https://coveralls.io/repos/github/domdfcoding/pynist/badge.svg?branch=master
+    :target: https://coveralls.io/github/domdfcoding/pynist?branch=master
     :alt: Coverage
 
 

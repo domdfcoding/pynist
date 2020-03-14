@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath('..'))
 
 from sphinx.locale import _
 
-from package_name import __author__, __version__, __copyright__
+from pynist import __author__, __version__, __copyright__
 from __pkginfo__ import github_username, modname
 
 github_url = f"https://github.com/{github_username}/{modname}"

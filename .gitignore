@@ -107,3 +107,6 @@ venv.bak/
 build
 *.egg-info
 */__pycache__
+
+# NIST Library
+*/mainlib
