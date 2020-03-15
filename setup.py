@@ -11,7 +11,7 @@ from __pkginfo__ import \
 
 from setuptools import setup, find_packages, Extension
 
-arch = "x64" if sys.maxsize > 2**32 else "x86"
+arch = "64" if sys.maxsize > 2**32 else "86"
 
 m = Extension(
 		name='pynist._core',
@@ -20,7 +20,7 @@ m = Extension(
 				('WIN32', '1'),
 				('MSTXTDATA', '1'),
 				],
-		libraries=[f'{arch}/nistdl'],
+		libraries=[f'nistdl{arch}'],
 		sources=['pynist/pynist.c'],
 		)
 
@@ -40,5 +40,5 @@ setup(
 		url                = web,
 		version            = VERSION,
 		ext_modules = [m],
-		data_files = [('', [f'{arch}/NISTDL.dll', f'{arch}/ctNt66.dll'])],
+		data_files = [('', [f'x{arch}/NISTDL{arch}.dll', f'x{arch}/ctNt66{"_64" if arch == "64" else ""}.dll'])],
 		)
