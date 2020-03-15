@@ -4,14 +4,22 @@
 import sys
 
 from __pkginfo__ import \
-    author,           author_email,       install_requires,          \
-    license,          long_description,   classifiers,               \
-    entry_points,     modname,            py_modules,                \
-    short_desc,       VERSION,            web
+	(
+	author, author_email, install_requires,
+	license, long_description, classifiers,
+	entry_points, modname, py_modules,
+	short_desc, VERSION, web,
+	)
 
 from setuptools import setup, find_packages, Extension
 
-arch = "64" if sys.maxsize > 2**32 else "86"
+
+if sys.maxsize > 2 ** 32:
+	libraries = ['nistdl64']
+	data_files = [('', [f'x64/NISTDL64.dll', f'x64/ctNt66_64.dll'])]
+else:
+	libraries = ['nistdl32']
+	data_files = [('', [f'x86/NISTDL32.dll', f'x86/ctNt66.dll'])]
 
 m = Extension(
 		name='pynist._core',
@@ -20,25 +28,24 @@ m = Extension(
 				('WIN32', '1'),
 				('MSTXTDATA', '1'),
 				],
-		libraries=[f'nistdl{arch}'],
+		libraries=libraries,
 		sources=['pynist/pynist.c'],
 		)
 
-
 setup(
-		author             = author,
-		author_email       = author_email,
-		classifiers        = classifiers,
-		description        = short_desc,
-		entry_points       = entry_points,
-		install_requires   = install_requires,
-		license            = license,
-		long_description   = long_description,
-		name               = modname,
-		packages           = find_packages(exclude=("tests",)),
-		py_modules         = py_modules,
-		url                = web,
-		version            = VERSION,
-		ext_modules = [m],
-		data_files = [('', [f'x{arch}/NISTDL{arch}.dll', f'x{arch}/ctNt66{"_64" if arch == "64" else ""}.dll'])],
+		author=author,
+		author_email=author_email,
+		classifiers=classifiers,
+		description=short_desc,
+		entry_points=entry_points,
+		install_requires=install_requires,
+		license=license,
+		long_description=long_description,
+		name=modname,
+		packages=find_packages(exclude=("tests",)),
+		py_modules=py_modules,
+		url=web,
+		version=VERSION,
+		ext_modules=[m],
+		data_files=data_files
 		)
