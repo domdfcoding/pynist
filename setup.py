@@ -15,11 +15,11 @@ from setuptools import setup, find_packages, Extension
 
 
 if sys.maxsize > 2 ** 32:
-	libraries = ['nistdl64']
-	data_files = [('', [f'x64/NISTDL64.dll', f'x64/ctNt66_64.dll'])]
+	libraries = ['x64/nistdl64']
+	data_files = [('', ['x64/NISTDL64.dll', 'x64/ctNt66_64.dll'])]
 else:
-	libraries = ['nistdl32']
-	data_files = [('', [f'x86/NISTDL32.dll', f'x86/ctNt66.dll'])]
+	libraries = ['x86/nistdl32']
+	data_files = [('', ['x86/NISTDL32.dll', 'x86/ctNt66.dll'])]
 
 m = Extension(
 		name='pynist._core',
