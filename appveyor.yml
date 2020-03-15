@@ -1,0 +1,30 @@
+version: 1.0.{build}
+clone_depth: 50  # The same depth Travis has
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python36"
+#    - PYTHON: "C:\\Python37"
+#    - PYTHON: "C:\\Python38"
+    - PYTHON: "C:\\Python36-x64"
+#    - PYTHON: "C:\\Python37-x64"
+#    - PYTHON: "C:\\Python38-x64"
+
+install:
+  # We need wheel installed to build wheels
+  - "%PYTHON%\\python.exe -m pip install wheel Cython"
+
+build: off
+
+after_test:
+  - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
+
+artifacts:
+  # bdist_wheel puts your built wheel in the dist directory
+  - path: dist\*
+
+
+#on_success:
+#  You can use this step to upload your artifacts to a public website.
+#  See Appveyor's documentation for more details. Or you can simply
+#  access your wheels from the Appveyor "artifacts" tab for your build.
