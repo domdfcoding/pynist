@@ -604,20 +604,15 @@ static PyObject *get_spectrum_by_loc(PyObject *self, PyObject *args) {
 	PyDict_SetItemString(record, "contributor", py_contributor);
 
 //	printf("MS Num Peaks: %d\n", io.libms->num_peaks);
-	printf("597\n");
 	for (int i=0; i < io.libms->num_peaks; i++) {
 //		printf("\tmz, Intensity: %d %d\n", io.libms->mass[i], io.libms->abund[i]);
-		printf("%d\n", PyLong_FromLong(io.libms->mass[i]));
+//		printf("%d\n", PyLong_FromLong(io.libms->mass[i]));
 		PyList_Append(py_mass_list, PyLong_FromLong(io.libms->mass[i]));
-		printf("601\n");
 		PyList_Append(py_intensity_list, PyLong_FromLong(io.libms->abund[i]));
-		printf("603\n");
 		printf("%d, %d\n", i, io.libms->num_peaks);
 	}
-	printf("607\n");
 	PyDict_SetItemString(record, "mass_list", py_mass_list);
 	PyDict_SetItemString(record, "intensity_list", py_intensity_list);
-	printf("610\n");
 	// Get synonyms in a list
 	int start_byte = 0;
 	unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
@@ -626,23 +621,18 @@ static PyObject *get_spectrum_by_loc(PyObject *self, PyObject *args) {
 		if (io.aux_data->synonyms[i] == 0) {
 			if (i-start_byte > 0) {
 				slice_str(io.aux_data->synonyms, buffer, start_byte, i);
-				printf("%s#\n", buffer);
-				printf("620\n");
+//				printf("%s#\n", buffer);
 //				printf("%s\n", PyUnicode_FromString(buffer));
 				PyList_Append(py_synonym_list, PyUnicode_FromFormat("%s", buffer));
 
 				PyObject *py_synonym_char_list = PyList_New(0);
 
 				for (int i = 0; i <= MAX_NAME_LEN; i++) {
-					printf("%d ", buffer[i]);
+//					printf("%d ", buffer[i]);
 					PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
 				}
 
 				PyList_Append(py_synonyms_char_list, py_synonym_char_list);
-
-
-
-				printf("623\n");
 //				PyList_Append(py_synonym_list, PyUnicode_FromString(buffer));
 			}
 
@@ -868,7 +858,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
 			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-				printf("%d ", buffer[i]);
+//				printf("%d ", buffer[i]);
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
 			}
 

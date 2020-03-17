@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>loading...</title>
+	<style>
+		/*https://alligator.io/css/css-spinning-loader-animation/*/
+		:root {
+		  --s-loader-wrapper-bg-color: rgb(255, 255, 255);
+		  --s-loader-width: 200px;
+		  --s-loader-height: var(--s-loader-width);
+		  --s-loader-border-color-trans: rgba(233, 84, 32);
+		  --s-loader-border-color-full: rgb(119, 41, 83);
+		}
+		
+		body {
+		  margin: 0;
+		  background: var(--s-loader-wrapper-bg-color, rgb(21, 22, 43));
+		  height: 100vh;
+		  width: 100%;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		}
+		
+		.spinning-loader {
+		  width: var(--s-loader-width);
+		  height: var(--s-loader-height);
+		  border: 15px solid var(--s-loader-border-color-trans);
+		  border-left-color: var(--s-loader-border-color-full);
+		  border-radius: 50%;
+		  background: transparent;
+		  animation-name: rotate-s-loader;
+		  animation-iteration-count: infinite;
+		  animation-duration: 1.5s;
+		  animation-timing-function: linear;
+		  -webkit-animation-name: rotate-s-loader;
+		  -webkit-animation-iteration-count: infinite;
+		  -webkit-animation-duration: 1.5s;
+		  -webkit-animation-timing-function: linear;
+		  position: relative;
+		}
+		
+		@keyframes rotate-s-loader {
+		  from {
+			transform: rotate(0);
+		  }
+		  to {
+			transform: rotate(360deg);
+		  }
+		@-webkit-keyframes rotate-s-loader {
+		  from {
+			-webkit-transform: rotate(0);
+		  }
+		  to {
+			-webkit-transform: rotate(360deg);
+		  }
+		}
+		
+	</style>
+</head>
+<body>
+<div class="spinning-loader"></div>
+<!---<script> window.location.replace("{{url|safe}}"); </script>--->
+
+</body>
+</html>

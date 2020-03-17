@@ -1,5 +1,5 @@
 from . import _core
-# from ._core import *
+from ._core import *
 abc = "abc"
 
 from .search_result import SearchResult

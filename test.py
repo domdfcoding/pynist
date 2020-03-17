@@ -1,23 +1,14 @@
+import datetime
+start_time = datetime.datetime.now()
+
 import pynist
 import time
 from pyms.Spectrum import MassSpectrum
 
-#peptide = STAVEPLAR (z=2)
-
-FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\pynist\\mainlib"
-FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\pynist"
+FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\00 Projects\\pynist\\mainlib"
+FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
 
 pynist.init_api(FULL_PATH_TO_MAIN_LIBRARY, pynist.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
-
-def pack(spectrum,top=20):
-	spectrum.sort(key=lambda s: s[1], reverse=True)
-	norm = spectrum[0][1]
-	
-	spectrum = [(a,999.0*b/norm) for (a,b) in spectrum[:top]]
-	spectrum.sort()
-	return "*".join(["%.2f\t%.2f" % (a,b) for (a,b) in spectrum]) + "*"
-
-iterations = 1
 
 mz_int_pairs = [
 		(27,138),
@@ -96,26 +87,7 @@ for mass, intensity in mz_int_pairs:
 
 mass_spec = MassSpectrum(mass_list, intensity_list)
 
-# values = list(zip(mzs,intensities))
 values = mz_int_pairs
-print()
-start_time = time.time()
-
-# for i in range(iterations):
-#     print(pack(values, len(values)))
-#     x = pynist.dot_product(pack(values), 169.23)
-#     print(i, x)
-
-# stop_time = time.time()
-#
-# print("best score = %d" % (x))
-# print("%d dot_products in %.2f seconds" % (iterations, stop_time - start_time))
-# print("average time: %.4f seconds" % ((stop_time - start_time) / iterations))
-
-
-# print(pack(values))
-# x = pynist.spectrum_search(pack(values, len(values)))
-# print(f"#{x}#")
 
 hit_list = pynist.full_spectrum_search(mass_spec)
 
@@ -127,10 +99,5 @@ for idx, hit in enumerate(hit_list):
 	print("\n")
 	print(x)
 	
-	input(">")
-#
-# print("#####")
-#
-# print(dir(pynist))
-#
-# print(pynist.COUNT_REF_PEAKS)
+
+print(f"Completed in {(datetime.datetime.now() - start_time).total_seconds()}")

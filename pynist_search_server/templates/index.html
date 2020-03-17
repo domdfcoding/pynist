@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>GunShotMatch DataViewer Server</title>
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+	<style>
+		body {
+			padding-top: 10px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-bottom: 20px;
+	  	}
+
+		div.leftpad {
+			padding-top: 2px;
+			padding-bottom: 2px;
+			padding-left: 20px;
+		}
+	</style>
+</head>
+<body>
+
+<!--Basic Properties-->
+<h2>Woah! How did you get here?</h2>
+<div class="centered">
+	<p>This is the DataViewer Server of GunShotMatch.</p>
+	<p>It generates the pages displayed in the right panel of the DataViewer tab.</p>
+	<p></p>
+	<p>Picture Goes Here</p>
+	<p></p>
+</div>
+
+<!---How Does This Work?--->
+<div class="row">
+	<div class="col">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4 class="panel-title">
+					<a data-toggle="collapse" href="#statistics_collapse">
+						How Does This Work?
+					</a>
+				</h4>
+			</div>
+			<div id="statistics_collapse" class="panel-collapse collapse">
+				<div class="panel-body">
+					<div class="leftpad">
+						I haven't written this yet!
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+<script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+</body>
+</html>

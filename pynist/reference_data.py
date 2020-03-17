@@ -69,6 +69,8 @@ class ReferenceData:
 		
 		if mass_spec is None:
 			self._mass_spec = None
+		elif isinstance(mass_spec, dict):
+			self._mass_spec = MassSpectrum(**mass_spec)
 		else:
 			self._mass_spec = copy_mass_spec(mass_spec)
 		

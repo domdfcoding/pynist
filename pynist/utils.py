@@ -5,6 +5,10 @@ import urllib.parse
 # 3rd party
 from pyms.Spectrum import MassSpectrum
 
+# this package
+from .search_result import SearchResult
+from .reference_data import ReferenceData
+
 
 def quote_mass_spec(mass_spec):
 	"""
@@ -26,3 +30,11 @@ def unquote_mass_spec(string):
 	data_dict = json.loads(json_data)
 
 	return MassSpectrum.from_dict(data_dict)
+
+
+class PyNISTEncoder(json.JSONEncoder):
+	def default(self, o):
+		if isinstance(o, (SearchResult, ReferenceData, MassSpectrum)):
+			return dict(o)
+		else:
+			json.JSONEncoder.default(self, o)
