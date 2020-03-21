@@ -1,5 +1,5 @@
 ****************
-pynist
+PyNIST
 ****************
 
 .. image:: https://travis-ci.org/domdfcoding/pynist.svg?branch=master
@@ -19,4 +19,4 @@ pynist
     :alt: Coverage
 
 
-description goes here
+Python interface to the NIST MS Search DLL

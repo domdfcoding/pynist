@@ -30,7 +30,7 @@ entry_points = None
 #		'pynist=pynist:main',
 #	]}
 
-license = 'GPL3'
+license = 'LGPL3'
 
 short_desc = "Interface to NIST's Spectrum Search Engine"
 
@@ -71,13 +71,12 @@ classifiers = [
 		"Operating System :: Microsoft :: Windows :: Windows 8.1",
 		
 		# "Operating System :: POSIX :: Linux",
-		
 		# "Operating System :: OS Independent",
 		
 		"Intended Audience :: Developers",
-		# "Intended Audience :: Science/Research",
+		"Intended Audience :: Science/Research",
 		
-		"License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+		"License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
 		
 		"Programming Language :: C",
 		"Programming Language :: Python :: 3.6",

@@ -1,3 +1,12 @@
+/*
+NISTMS.H
+
+C Interface to the NIST MS Search DLL
+
+From ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
+
+*/
+
 #ifndef NISTMS_H
 	#define NISTMS_H
 

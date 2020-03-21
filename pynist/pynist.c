@@ -1,29 +1,41 @@
-#include <Python.h>
-/**********************************************************
+/*
+pynist.c
 
-This is the main source file for NIST.pyd, a Python extension for
-performing NIST library searches of MS/MS spectra.
+This file is part of PyNIST
+Python interface to the NIST MS Search DLL
 
-This file is a modified version of the CALLDLL.C file found at this URL:
-ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
+Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 
-The header files in that folder are also part of this project but have
-not been changed from the versions in the zip archive:
-- NISTMS.H
-- NISTERR.H
+PyNIST is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation; either version 3 of
+the License, or (at your option) any later version.
 
-
-The DLLs in the zip archive are also necessary. The following DLLs should
-be kept in the same folder as NIST.pyd:
-- nistdl64_2gb.dll
-- ctNT66_64.dll
-
-
-***********************************************************
-This file is distributed in the hope that it will be useful,
+PyNIST is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-***********************************************************/
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+MA 02110-1301, USA.
+
+PyNIST includes the redistributable binaries for NIST MS Search in
+the x86 and x64 directories. Available from
+ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip .
+ctnt66.dll and ctnt66_64.dll copyright 1984-1996 FairCom Corporation.
+"FairCom" and "c-tree Plus" are trademarks of FairCom Corporation
+and are registered in the United States and other countries.
+All Rights Reserved.
+
+This file is a modified version of the CALLDLL.C files from
+  ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip and
+  https://sourceforge.net/projects/mzapi-live/
+
+*/
+
+#include <Python.h>
 
 /*
   To recompile, the following constant should be externally defined:

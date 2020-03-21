@@ -1,3 +1,12 @@
+/*
+NISTERR.H
+
+C Interface to the NIST MS Search DLL
+
+From ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
+
+*/
+
 /*  %Z%%M%   %I%   %G%   RELEASE: %R%   TFLAG %Y%   */
 /* from WGET_ID.C */
 #define ERR_OUT_OF_RAM -1
