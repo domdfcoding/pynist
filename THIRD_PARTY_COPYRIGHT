@@ -1,0 +1,8 @@
+PyMassSpec NIST Search includes the redistributable binaries for NIST MS Search in
+the x86 and x64 directories. Available from
+ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip .
+
+ctnt66.dll and ctnt66_64.dll copyright 1984-1996 FairCom Corporation.
+"FairCom" and "c-tree Plus" are trademarks of FairCom Corporation
+and are registered in the United States and other countries.
+All Rights Reserved.
