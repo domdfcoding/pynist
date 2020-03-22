@@ -389,7 +389,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	pio->hit_list                   = &hit_list;  /* hit list */
 	pio->hit_list->spec_locs        = fpos_array; /* spectrum pointers */
 	pio->hit_list->max_spec_locs = search_type == NISTMS_SCREEN_SRCH? MAX_SCREEN_LOCS : MAX_NOPRESRCH_HITS;
-	printf("392")
+	printf("392");
 	/*  Screen ("pre-search") retrieves set of tentative hits */
 	nistms_search(search_type, pio);
 	switch ( pio->error_code ) {
@@ -409,7 +409,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		default:
 			printf("Screen search returned error code %d\n", pio->error_code);
 	};
-	printf("412")
+	printf("412");
 	if ( search_type == NISTMS_SCREEN_SRCH ) {
 		/*
 		Now prepare for comparing spectra referred to in
