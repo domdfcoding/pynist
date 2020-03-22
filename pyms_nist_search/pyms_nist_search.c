@@ -389,7 +389,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	pio->hit_list                   = &hit_list;  /* hit list */
 	pio->hit_list->spec_locs        = fpos_array; /* spectrum pointers */
 	pio->hit_list->max_spec_locs = search_type == NISTMS_SCREEN_SRCH? MAX_SCREEN_LOCS : MAX_NOPRESRCH_HITS;
-	printf("392\n");
+
 	/*  Screen ("pre-search") retrieves set of tentative hits */
 	nistms_search(search_type, pio);
 	switch ( pio->error_code ) {
@@ -409,7 +409,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		default:
 			printf("Screen search returned error code %d\n", pio->error_code);
 	};
-	printf("412\n");
+
 	if ( search_type == NISTMS_SCREEN_SRCH ) {
 		/*
 		Now prepare for comparing spectra referred to in
@@ -448,7 +448,6 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 //		   pio.constraints.other_dbs=65;
 
 		/*  compare complete user and library spectra found by pre-search */
-		printf("451\n");
 		nistms_search(NISTMS_COMPARE_SPECTRA_SRCH, pio);
 	}
 	printf("454\n");
@@ -493,7 +492,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
 			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-				printf("%d ", buffer[i]);
+//				printf("%d ", buffer[i]);
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
 			}
 
