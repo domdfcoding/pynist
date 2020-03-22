@@ -1,17 +1,17 @@
 /*
-pynist.c
+pyms-nist-search.c
 
-This file is part of PyNIST
+This file is part of PyMassSpec NIST Search
 Python interface to the NIST MS Search DLL
 
 Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 
-PyNIST is free software; you can redistribute it and/or modify
+PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as
 published by the Free Software Foundation; either version 3 of
 the License, or (at your option) any later version.
 
-PyNIST is distributed in the hope that it will be useful,
+PyMassSpec NIST Search is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@ License along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA.
 
-PyNIST includes the redistributable binaries for NIST MS Search in
+PyMassSpec NIST Search includes the redistributable binaries for NIST MS Search in
 the x86 and x64 directories. Available from
 ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip .
 ctnt66.dll and ctnt66_64.dll copyright 1984-1996 FairCom Corporation.
@@ -45,8 +45,6 @@ This file is a modified version of the CALLDLL.C files from
   or in the compiler command line:
 
   /D "INTERNALBUILD"
-
-  (this setting is already part of the NIST.sln solution file)
 */
 
 /* Linking */
@@ -108,9 +106,7 @@ void slice_str(const unsigned char * str, unsigned char * buffer, size_t start, 
 /************************************/
 void NISTMS_C_EXPORT nistms_search( NISTMS_SEARCH_TYPE srch_type, NISTMS_IO *io);
 
-
 static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum);
-
 
 /* loads a single spectrum from a string */
 static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *spectrum);
@@ -560,7 +556,7 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 /*
 Finds and returns the information about the spectrum at the given location in the library
 */
-static PyObject *get_spectrum_by_loc(PyObject *self, PyObject *args) {
+static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 	NISTMS_RECLOC input_spec_loc;
 	PyObject *record = PyDict_New();
 	PyObject *py_mass_list = PyList_New(0);
@@ -569,12 +565,12 @@ static PyObject *get_spectrum_by_loc(PyObject *self, PyObject *args) {
 	PyObject *py_synonyms_char_list = PyList_New(0);
 
 	int ok = PyArg_ParseTuple(args, "l", &input_spec_loc);
-	printf("Parsed Args\n");
-	printf("input_spec_locs = %ld", input_spec_loc);
+//	printf("Parsed Args\n");
+//	printf("input_spec_locs = %ld", input_spec_loc);
 
 	get_spectrum( &io, input_spec_loc);
 
-	printf("Search Complete\n");
+//	printf("Search Complete\n");
 
 //	printf("Name: %s\n", io.aux_data->name);
 	PyObject *py_name = PyUnicode_FromFormat("%s", io.aux_data->name);
@@ -583,7 +579,7 @@ static PyObject *get_spectrum_by_loc(PyObject *self, PyObject *args) {
 	PyObject *py_name_char_list = PyList_New(0);
 
 	for (int i = 0; i <= MAX_NAME_LEN; i++) {
-		printf("%d ", io.aux_data->name[i]);
+//		printf("%d ", io.aux_data->name[i]);
 		PyList_Append(py_name_char_list, PyLong_FromLong(io.aux_data->name[i]));
 	}
 
@@ -621,7 +617,7 @@ static PyObject *get_spectrum_by_loc(PyObject *self, PyObject *args) {
 //		printf("%d\n", PyLong_FromLong(io.libms->mass[i]));
 		PyList_Append(py_mass_list, PyLong_FromLong(io.libms->mass[i]));
 		PyList_Append(py_intensity_list, PyLong_FromLong(io.libms->abund[i]));
-		printf("%d, %d\n", i, io.libms->num_peaks);
+//		printf("%d, %d\n", i, io.libms->num_peaks);
 	}
 	PyDict_SetItemString(record, "mass_list", py_mass_list);
 	PyDict_SetItemString(record, "intensity_list", py_intensity_list);
@@ -1106,7 +1102,7 @@ static char           szReferences[REFERENCES_LEN];
 	}
 #endif
 
-	printf("\nGathering Data for spectrum at location %ld\n", fpos);
+	printf("Gathering Data for spectrum at location %ld\n", fpos);
 	pio->input_spec_loc = fpos; /* most significant 4 bits=lib number, the rest=file offset */
 
 	pio->libms          = &ms;
@@ -1262,10 +1258,10 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
 
 
 static PyMethodDef Methods[] = {
-	{"spectrum_search", spec_search, METH_VARARGS, "Searches the library with search type 'NISTMS_NO_PRE_SRCH'"},
-	{"full_spectrum_search", full_spec_search, METH_VARARGS, ""},
-	{"get_spectrum_by_loc", get_spectrum_by_loc, METH_VARARGS, ""},
-	{"init_api", init_api, METH_VARARGS, ""},
+	{"_spectrum_search", spec_search, METH_VARARGS, "Searches the library with search type 'NISTMS_NO_PRE_SRCH'"},
+	{"_full_spectrum_search", full_spec_search, METH_VARARGS, ""},
+	{"_get_reference_data", get_reference_data, METH_VARARGS, ""},
+	{"_init_api", init_api, METH_VARARGS, ""},
 	{NULL, NULL}
 };
 

@@ -26,13 +26,13 @@ from pyms.Spectrum import MassSpectrum
 
 
 # This package
-# from pynist import SearchResult, ReferenceData
+# from pyms_nist_search import SearchResult, ReferenceData
 from pynist.utils import unquote_mass_spec, PyNISTEncoder
 
 
 app = Flask(__name__)
 
-# Setup pynist
+# Setup pyms_nist_search
 FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\00 Projects\\pynist\\mainlib"
 FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
 
@@ -61,7 +61,7 @@ def spectrum_search_with_ref_data():
 	output_buffer = []
 
 	for idx, hit in enumerate(hit_list):
-		ref_data = pynist.get_spectrum_by_loc(hit.spec_loc)
+		ref_data = pynist.get_reference_data(hit.spec_loc)
 		output_buffer.append((hit, ref_data))
 
 	return json.dumps(output_buffer, cls=PyNISTEncoder)
@@ -69,7 +69,7 @@ def spectrum_search_with_ref_data():
 	
 @app.route("/search/loc/<int:loc>", methods=['GET', 'POST'])
 def loc_search(loc):
-	x = pynist.get_spectrum_by_loc(loc)
+	x = pynist.get_reference_data(loc)
 	# print(request.data)
 	return json.dumps(x, cls=PyNISTEncoder)
 	

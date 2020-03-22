@@ -1,14 +1,18 @@
 import datetime
 start_time = datetime.datetime.now()
 
-import pynist
+import pyms_nist_search
 import time
 from pyms.Spectrum import MassSpectrum
 
 FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\00 Projects\\pynist\\mainlib"
 FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
 
-pynist.init_api(FULL_PATH_TO_MAIN_LIBRARY, pynist.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
+
+search = pyms_nist_search.Engine(FULL_PATH_TO_MAIN_LIBRARY, pyms_nist_search.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
+
+
+# pyms_nist_search.init_api(FULL_PATH_TO_MAIN_LIBRARY, pyms_nist_search.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
 
 mz_int_pairs = [
 		(27,138),
@@ -89,15 +93,15 @@ mass_spec = MassSpectrum(mass_list, intensity_list)
 
 values = mz_int_pairs
 
-hit_list = pynist.full_spectrum_search(mass_spec)
+hit_list = search.full_spectrum_search(mass_spec)
 
 print("Hit List")
 for idx, hit in enumerate(hit_list):
 	print(idx, hit)
-	print(hit.spec_loc)
-	x = pynist.get_spectrum_by_loc(hit.spec_loc)
-	print("\n")
-	print(x)
+	# print(hit.spec_loc)
+	ref_data = search.get_reference_data(hit.spec_loc)
+	print(ref_data)
+	print("---")
 	
 
 print(f"Completed in {(datetime.datetime.now() - start_time).total_seconds()}")

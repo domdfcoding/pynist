@@ -21,18 +21,13 @@ copyright = """
 
 VERSION = "0.1.0"
 
-modname = "pynist"
+modname = "pyms_nist_search"
 py_modules = None
 entry_points = None
-# py_modules         = [modname]
-# entry_points       = {
-#	'console_scripts': [
-#		'pynist=pynist:main',
-#	]}
 
 license = 'LGPL3'
 
-short_desc = "Interface to NIST's Spectrum Search Engine"
+short_desc = "PyMassSpec extension for searching mass spectra using NIST's Spectrum Search Engine"
 
 author = "Dominic Davis-Foster"
 author_email = "dominic@davis-foster.co.uk"

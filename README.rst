@@ -1,5 +1,5 @@
 ****************
-PyNIST
+PyMassSpec NIST Search
 ****************
 
 .. image:: https://travis-ci.org/domdfcoding/pynist.svg?branch=master
@@ -19,4 +19,4 @@ PyNIST
     :alt: Coverage
 
 
-Python interface to the NIST MS Search DLL
+PyMassSpec extension for searching mass spectra using NIST's Spectrum Search Engine

@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 #
-#  search_result.py
+#  reference_data.py
 #
-#  This file is part of PyNIST
+#  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
 #  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
-#  PyNIST is free software; you can redistribute it and/or modify
+#  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
 #  published by the Free Software Foundation; either version 3 of
 #  the License, or (at your option) any later version.
 #
-#  PyNIST is distributed in the hope that it will be useful,
+#  PyMassSpec NIST Search is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Lesser General Public License for more details.
@@ -23,7 +23,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #
-#  PyNIST includes the redistributable binaries for NIST MS Search in
+#  PyMassSpec NIST Search includes the redistributable binaries for NIST MS Search in
 #  the x86 and x64 directories. Available from
 #  ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip .
 #  ctnt66.dll and ctnt66_64.dll copyright 1984-1996 FairCom Corporation.
@@ -33,38 +33,61 @@
 
 
 
+# stdlib
 import json
 
+# 3rd party
+from pyms.Spectrum import MassSpectrum
 
-class SearchResult:
-	def __init__(self, name='', cas='', match_factor=0, reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
+
+class ReferenceData:
+	def __init__(self, name='', cas='', nist_no=0, id=0, mw=0.0, formula='', contributor='', mass_spec=None, synonyms=None):
 		"""
 		
 		:param name: The name of the compound
 		:type name: str
 		:param cas: The CAS number of the compound
 		:type cas: str
-		:param match_factor:
-		:type match_factor: int
-		:param reverse_match_factor:
-		:type reverse_match_factor: int
-		:param hit_prob:
-		:type hit_prob: float
-		:param spec_loc: The location of the reference spectrum in the library.
-		:type spec_loc: int
+		:param nist_no:
+		:type nist_no:
+		:param id:
+		:type id:
+		:param mw:
+		:type mw:
+		:param formula:
+		:type formula:
+		:param contributor:
+		:type contributor:
+		:param mass_spec:
+		:type mass_spec:
+		:param synonyms:
+		:type synonyms:
 		"""
 		
 		self._name = name
+		self._formula = formula
+		self._contributor = contributor
 		
 		if cas == "0-00-0":
 			cas = "---"
 		self._cas = cas
 		
-		self._match_factor = int(match_factor)
-		self._reverse_match_factor = int(reverse_match_factor)
+		self._nist_no = int(nist_no)
+		self._id = int(id)
 		
-		self._hit_prob = float(hit_prob)
-		self._spec_loc = int(spec_loc)
+		self._mw = float(mw)
+		
+		if mass_spec is None:
+			self._mass_spec = None
+		elif isinstance(mass_spec, dict):
+			self._mass_spec = MassSpectrum(**mass_spec)
+		else:
+			self._mass_spec = copy_mass_spec(mass_spec)
+		
+		if synonyms is None:
+			self._synonyms = []
+		else:
+			self._synonyms = synonyms[:]
 	
 	@property
 	def name(self):
@@ -75,34 +98,49 @@ class SearchResult:
 		return self._cas
 		
 	@property
-	def match_factor(self):
-		return int(self._match_factor)
+	def formula(self):
+		return self._formula
 	
 	@property
-	def reverse_match_factor(self):
-		return int(self._reverse_match_factor)
+	def contributor(self):
+		return self._contributor
 	
 	@property
-	def hit_prob(self):
-		return float(self._hit_prob)
+	def nist_no(self):
+		return int(self._nist_no)
 	
 	@property
-	def spec_loc(self):
-		return int(self._spec_loc)
+	def id(self):
+		return int(self._id)
+	
+	@property
+	def mw(self):
+		return int(self._mw)
+	
+	@property
+	def mass_spec(self):
+		return copy_mass_spec(self._mass_spec)
+	
+	@property
+	def synonyms(self):
+		return self._synonyms[:]
 	
 	@classmethod
 	def from_pynist(cls, pynist_dict):
 		return cls(
-				match_factor=pynist_dict["sim_num"],
-				reverse_match_factor=pynist_dict["rev_sim_num"],
-				hit_prob=pynist_dict["hit_prob"]/100,
-				cas=cas_int_to_string(pynist_dict["cas_no"]),
-				name=parse_name_chars(pynist_dict["hit_name_chars"]),
-				spec_loc=pynist_dict["spec_loc"],
+				name=parse_name_chars(pynist_dict["name_chars"]),
+				cas=cas_int_to_string(pynist_dict["cas"]),
+				formula=pynist_dict["formula"],
+				contributor=pynist_dict["contributor"],
+				nist_no=pynist_dict["nist_no"],
+				id=pynist_dict["id"],
+				mw=pynist_dict["mw"],
+				mass_spec=MassSpectrum(pynist_dict["mass_list"], pynist_dict["intensity_list"]),
+				synonyms=[parse_name_chars(synonym) for synonym in pynist_dict["synonyms_chars"]],
 				)
 	
 	def __repr__(self):
-		return f"Search Result: {self.name} \t({self.match_factor})"
+		return f"Reference Data: {self.name} \t({self.cas})"
 	
 	def __str__(self):
 		return self.__repr__()
@@ -111,10 +149,13 @@ class SearchResult:
 		return dict(
 				name=self._name,
 				cas=self.cas,
-				match_factor=self.match_factor,
-				reverse_match_factor=self.reverse_match_factor,
-				spec_loc=self.spec_loc,
-				hit_prob=self.hit_prob,
+				formula=self.formula,
+				contributor=self.contributor,
+				nist_no=self.nist_no,
+				id=self.id,
+				mw=self.mw,
+				mass_spec=copy_mass_spec(self.mass_spec),
+				synonyms=self.synonyms[:],
 				)
 	
 	def __iter__(self):
@@ -139,7 +180,6 @@ class SearchResult:
 	
 	def to_json(self):
 		return json.dumps(dict(self))
-	
 
 
 def parse_name_chars(name_char_list):
@@ -232,4 +272,13 @@ def cas_string_to_int(cas_no):
 	# TODO: Check check_digit
 	
 	return block_1 + block_2 + check_digit
+
+
+def copy_mass_spec(mass_spec):
+	""" Returns a copy of the MassSpectrum object given"""
+	
+	if not isinstance(mass_spec, MassSpectrum):
+		raise TypeError("`mass_spec` must be a `pyms.Spectrum.MassSpectrum` object.")
+	
+	return MassSpectrum(mass_spec.mass_list[:], mass_spec.intensity_list[:])
 

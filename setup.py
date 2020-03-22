@@ -22,14 +22,14 @@ else:
 	data_files = [('', ['x86/NISTDL32.dll', 'x86/ctNt66.dll'])]
 
 m = Extension(
-		name='pynist._core',
+		name='pyms_nist_search._core',
 		define_macros=[
 				('INTERNALBUILD', '1'),
 				('WIN32', '1'),
 				('MSTXTDATA', '1'),
 				],
 		libraries=libraries,
-		sources=['pynist/pynist.c'],
+		sources=['pyms_nist_search/pyms_nist_search.c'],
 		)
 
 setup(
