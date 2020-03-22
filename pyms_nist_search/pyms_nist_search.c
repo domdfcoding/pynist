@@ -545,7 +545,7 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 			my_test[counter] = '\000';
 		}
 	}
-	printf("%s", my_test);
+	printf("##%s##\n", my_test);
 	py_hit_list = full_spectrum_search( &io, my_test);
 
 	free(my_test);
