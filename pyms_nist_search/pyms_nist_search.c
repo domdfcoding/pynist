@@ -464,6 +464,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		unsigned char * raw_hit_names = pio->hit_list->lib_names;
 
 		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
+			printf("467 - hit number %d\n", i);
 			PyObject *d = PyDict_New();
 
 //			printf("%d, ", i);
