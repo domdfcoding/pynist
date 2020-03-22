@@ -495,30 +495,33 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 //				printf("%d ", buffer[i]);
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
 			}
-
+			// Issue after here on 99th hit
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
 
-
+			printf("501\n");
 			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
 //			printf("%s, ", buffer);
 			PyDict_SetItemString(d, "hit_name", py_hit_name);
 
 //			printf("%ld, ", pio->hit_list->stru_pos[i]);
 
+			printf("507\n");
 			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 //			printf("%ld, ", pio->hit_list->spec_locs[i]);
 
+			printf("513\n");
 			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
 			PyDict_SetItemString(d, "cas_no", py_cas_no);
 //			printf("%ld, ", pio->hit_list->casnos[i]);
 
 //			printf("\n");
 
+			printf("520\n");
 			PyList_Append(py_hit_list, d);
 
 		}
-
+	printf("524\n");
 	}
 
 	return(py_hit_list);
