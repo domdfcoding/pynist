@@ -1,0 +1,8 @@
+language: python
+dist: xenial
+python:
+- '3.6'
+- '3.7'
+- '3.8'
+script:
+ - echo "skipping tests"
