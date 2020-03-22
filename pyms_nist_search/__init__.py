@@ -112,7 +112,7 @@ if sys.platform == "win32":
 			# TODO: type check
 			
 			values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-			
+			print(115)
 			hit_list = _core._full_spectrum_search(pack(values, len(values)))
 		
 			parsed_hit_list = []

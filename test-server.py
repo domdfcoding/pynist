@@ -3,10 +3,10 @@ start_time = datetime.datetime.now()
 
 from pyms.Spectrum import MassSpectrum
 import requests
-from pynist.utils import quote_mass_spec
-from pynist.utils import PyNISTEncoder
-from pynist.search_result import SearchResult
-from pynist.reference_data import ReferenceData
+from pyms_nist_search.utils import quote_mass_spec
+from pyms_nist_search.utils import PyNISTEncoder
+from pyms_nist_search.search_result import SearchResult
+from pyms_nist_search.reference_data import ReferenceData
 import json
 
 mz_int_pairs = [
