@@ -551,7 +551,7 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 		}
 	}
 
-	py_hit_list = full_spectrum_search( &io, my_test);
+//	py_hit_list = full_spectrum_search( &io, my_test);
 	printf("554\n");
 	free(my_test);
 	printf("556\n");
