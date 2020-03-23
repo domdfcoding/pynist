@@ -555,7 +555,9 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 	printf("554\n");
 	free(my_test);
 	printf("556\n");
-	return py_hit_list;
+//	return py_hit_list;
+	return Py_None;
+
 }
 
 /*
