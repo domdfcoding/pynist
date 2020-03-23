@@ -524,7 +524,8 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	printf("524\n");
 	}
 	// crash occurs after return from this function
-	return(py_hit_list);
+//	return(py_hit_list);
+	return Py_None;
 
 }
 
