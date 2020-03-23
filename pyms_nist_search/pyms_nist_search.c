@@ -326,7 +326,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		} else {
 			printf("Could not read the spectrum. Terminating.\n");
 		}
-		return Py_None; // cannot read the spectrum
+		Py_RETURN_NONE; // cannot read the spectrum
 	}
 
 	/*****************************************************************************
@@ -525,7 +525,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	}
 	// crash occurs after return from this function
 //	return(py_hit_list);
-	return Py_None;
+	Py_RETURN_NONE;
 
 }
 
@@ -556,7 +556,7 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 	free(my_test);
 	printf("556\n");
 //	return py_hit_list;
-	return Py_None;
+	Py_RETURN_NONE;
 
 }
 
@@ -718,7 +718,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
 			return NULL;
 		}
-        return Py_None; // cannot read the spectrum
+        Py_RETURN_NONE; // cannot read the spectrum
 	}
 
 	cntls.search_mode = 'Q';    // Quick Search
@@ -1258,7 +1258,7 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
 
 	io.string_in = StringIn;
 
-	return Py_None;
+	Py_RETURN_NONE;
 }
 
 
