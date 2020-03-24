@@ -1,12 +1,18 @@
 import datetime
 from pyms.Spectrum import MassSpectrum
 import pyms_nist_search
+import sys
 
 start_time = datetime.datetime.now()
 
 
-FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\00 Projects\\pynist\\mainlib"
-FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
+if sys.platform == "win32":
+	FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\mainlib"
+	FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
+else:
+	FULL_PATH_TO_MAIN_LIBRARY = "/home/domdf/Python/mainlib"
+	FULL_PATH_TO_WORK_DIR = "/home/domdf/Python/00 Projects/pynist"
+	
 
 search = pyms_nist_search.Engine(FULL_PATH_TO_MAIN_LIBRARY, pyms_nist_search.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
 

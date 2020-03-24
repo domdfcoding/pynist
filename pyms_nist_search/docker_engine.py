@@ -40,7 +40,6 @@ import time
 # 3rd party
 import docker
 import docker.errors
-# from docker.types import Mount
 import requests
 
 # this package
@@ -50,6 +49,7 @@ from .reference_data import ReferenceData
 
 
 client = docker.from_env()
+
 
 class Engine:
 	def __init__(self, lib_path, lib_type, work_dir=None):
@@ -72,9 +72,6 @@ class Engine:
 		# 		break
 		# else:
 		#
-		# 	# TODO: Allow library to be on local file system, not in docker image
-		# 	# library_mount = Mount("/mainlib", lib_path, read_only=True)
-		#
 		self.docker = client.containers.run(
 				"pywine-pyms-nist",
 				ports={5001: 5001},
@@ -84,16 +81,19 @@ class Engine:
 				# stdout=False,
 				# stderr=False,
 				stdin_open=False,
-				# mounts=[library_mount]
+				volumes={lib_path: {'bind': '/mainlib', 'mode': 'ro'}},
 				)
+		
+		# TODO: Pass library type through to docker.
+		#  For now only User Libraries are supported
 		
 		atexit.register(self.uninit)
 		
 		# Wait for server to come online
 		while True:
 			try:
-				requests.get("http://localhost:5001/")
-				break
+				if requests.get("http://localhost:5001/").text == "ready":
+					break
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 			
@@ -104,9 +104,8 @@ class Engine:
 		
 		print("Shutting down docker server")
 		
-		# print("Server log follows:")
-		# print(self.docker.logs(timestamps=True).decode("utf-8"))
-		
+		print("Server log follows:")
+		print(self.docker.logs(timestamps=True).decode("utf-8"))
 		try:
 			self.docker.stop()
 		except docker.errors.NotFound:
