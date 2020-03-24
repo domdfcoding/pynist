@@ -441,7 +441,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		/*  compare complete user and library spectra found by pre-search */
 		nistms_search(NISTMS_COMPARE_SPECTRA_SRCH, pio);
 	}
-	printf("454\n");
+
 	PyObject *py_hit_list = PyList_New(0);
 
 	if(pio->hit_list->num_hits_found){

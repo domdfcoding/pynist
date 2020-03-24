@@ -84,10 +84,9 @@ class SearchResult(NISTBase):
 	
 	@classmethod
 	def from_pynist(cls, pynist_dict):
-		print(pynist_dict["cas_no"])
 		return cls(
 				name=parse_name_chars(pynist_dict["hit_name_chars"]),
-				cas=cas_int_to_string(pynist_dict["cas_no"]),
+				cas=pynist_dict["cas_no"],
 				match_factor=pynist_dict["sim_num"],
 				reverse_match_factor=pynist_dict["rev_sim_num"],
 				hit_prob=pynist_dict["hit_prob"]/100,

@@ -122,7 +122,7 @@ class ReferenceData(NISTBase):
 	def from_pynist(cls, pynist_dict):
 		return cls(
 				name=parse_name_chars(pynist_dict["name_chars"]),
-				cas=cas_int_to_string(pynist_dict["cas"]),
+				cas=pynist_dict["cas"],
 				formula=pynist_dict["formula"],
 				contributor=pynist_dict["contributor"],
 				nist_no=pynist_dict["nist_no"],

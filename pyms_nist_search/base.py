@@ -36,14 +36,14 @@
 import json
 
 # 3rd party
-from chemistry_tools.cas import cas_int_to_string
+from chemistry_tools.cas import cas_int_to_string, check_cas_number
 
 # this package
 from .utils import parse_name_chars
 
 
 class NISTBase:
-	def __init__(self, name='', cas=''):
+	def __init__(self, name='', cas='---'):
 		"""
 
 		:param name: The name of the compound
@@ -54,6 +54,12 @@ class NISTBase:
 		
 		self._name = name
 		
+		if isinstance(cas, int):
+			if check_cas_number(cas):
+				cas = "---"
+			else:
+				cas = cas_int_to_string(cas)
+			
 		if cas == "0-00-0":
 			cas = "---"
 		self._cas = cas
