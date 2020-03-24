@@ -65,45 +65,52 @@ class Engine:
 		:type work_dir:
 		"""
 		
-		# TODO: Start the Server and setup hook to stop it
-		
-		print(client.containers.list(all=True, filters={"status": "running"}))
-		
-		# Check if the server is already running
-		for container in client.containers.list(all=True, filters={"status": "running"}):
-			print(container)
-			if container.name == "pyms-nist-server":
-				self.docker = container
-				break
-		else:
-			
-			# TODO: Allow library to be on local file system, not in docker image
-			# library_mount = Mount("/mainlib", lib_path, read_only=True)
-			
-			self.docker = client.containers.run(
-					"pywine-pyms-nist",
-					ports={5001: 5001},
-					detach=True,
-					name="pyms-nist-server",
-					remove=True,
-					# stdout=False,
-					# stderr=False,
-					stdin_open=False,
-					# mounts=[library_mount]
-					)
+		# # Check if the server is already running
+		# for container in client.containers.list(all=True, filters={"status": "running"}):
+		# 	if container.name == "pyms-nist-server":
+		# 		self.docker = container
+		# 		break
+		# else:
+		#
+		# 	# TODO: Allow library to be on local file system, not in docker image
+		# 	# library_mount = Mount("/mainlib", lib_path, read_only=True)
+		#
+		self.docker = client.containers.run(
+				"pywine-pyms-nist",
+				ports={5001: 5001},
+				detach=True,
+				name="pyms-nist-server",
+				remove=True,
+				# stdout=False,
+				# stderr=False,
+				stdin_open=False,
+				# mounts=[library_mount]
+				)
 		
 		atexit.register(self.uninit)
 		
-		# Allow time for docker container to fully start
-		time.sleep(5)
-	
+		# Wait for server to come online
+		while True:
+			try:
+				requests.get("http://localhost:5001/")
+				break
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+			
 	def uninit(self):
 		"""
 		Uninitialize the Search Engine
 		"""
 		
 		print("Shutting down docker server")
-		self.docker.stop()
+		
+		# print("Server log follows:")
+		# print(self.docker.logs(timestamps=True).decode("utf-8"))
+		
+		try:
+			self.docker.stop()
+		except docker.errors.NotFound:
+			print("Unable to shut down the docker server")
 	
 	def spectrum_search(self):
 		# TODO
@@ -112,25 +119,43 @@ class Engine:
 	def full_spectrum_search(self, mass_spec):
 		# TODO: type check
 		
-		res = requests.post(
-				f"http://localhost:5001/search/spectrum/",
-				json=json.dumps(mass_spec, cls=PyNISTEncoder)
-				)
-		
+		# Keep trying until it works
+		while True:
+			try:
+				res = requests.post(
+						"http://localhost:5001/search/spectrum/",
+						json=json.dumps(mass_spec, cls=PyNISTEncoder)
+						)
+				break
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+			
 		return hit_list_from_json(res.text)
 	
 	def full_search_with_ref_data(self, mass_spec):
 		# TODO: type check
 		
-		res = requests.post(
-				f"http://localhost:5001/search/spectrum_with_ref_data/",
-				json=json.dumps(mass_spec, cls=PyNISTEncoder)
-				)
+		# Keep trying until it works
+		while True:
+			try:
+				res = requests.post(
+						"http://localhost:5001/search/spectrum_with_ref_data/",
+						json=json.dumps(mass_spec, cls=PyNISTEncoder)
+						)
+				break
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
 		
 		return hit_list_with_ref_data_from_json(res.text)
 	
 	def get_reference_data(self, spec_loc):
-		res = requests.post(f"http://localhost:5001/search/loc/{spec_loc}")
+		# Keep trying until it works
+		while True:
+			try:
+				res = requests.post(f"http://localhost:5001/search/loc/{spec_loc}")
+				break
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
 		
 		return ReferenceData(**json.loads(res.text))
 
