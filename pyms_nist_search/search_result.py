@@ -2,6 +2,9 @@
 #-*- coding: utf-8 -*-
 #
 #  search_result.py
+"""
+Class to store search results from NIST MS Search
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,16 +35,19 @@
 #  All Rights Reserved.
 
 
-# 3rd party
-from chemistry_tools.cas import cas_int_to_string
-
 # this package
 from .utils import parse_name_chars
 from .base import NISTBase
 
 
 class SearchResult(NISTBase):
-	def __init__(self, name='', cas='', match_factor=0, reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
+	"""
+	Class to store search results from NIST MS Search
+	"""
+	
+	def __init__(
+			self, name='', cas='', match_factor=0,
+			reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
 		"""
 		
 		:param name: The name of the compound

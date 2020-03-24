@@ -2,6 +2,9 @@
 #-*- coding: utf-8 -*-
 #
 #  reference_data.py
+"""
+Class to store reference data from NIST MS Search
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -37,7 +40,6 @@ import copy
 
 # 3rd party
 from pyms.Spectrum import MassSpectrum
-from chemistry_tools.cas import cas_int_to_string
 
 # this package
 from .utils import parse_name_chars
@@ -45,7 +47,14 @@ from .base import NISTBase
 
 
 class ReferenceData(NISTBase):
-	def __init__(self, name='', cas='', nist_no=0, id=0, mw=0.0, formula='', contributor='', mass_spec=None, synonyms=None):
+	"""
+	Class to store reference data from NIST MS Search
+	"""
+	
+	def __init__(
+			self, name='', cas='', nist_no=0, id=0, mw=0.0,
+			formula='', contributor='', mass_spec=None, synonyms=None
+			):
 		"""
 		
 		:param name: The name of the compound
@@ -53,19 +62,19 @@ class ReferenceData(NISTBase):
 		:param cas: The CAS number of the compound
 		:type cas: str
 		:param nist_no:
-		:type nist_no:
+		:type nist_no: int
 		:param id:
-		:type id:
+		:type id: int
 		:param mw:
-		:type mw:
-		:param formula:
-		:type formula:
-		:param contributor:
-		:type contributor:
+		:type mw: float
+		:param formula: The formula of the compound
+		:type formula: str
+		:param contributor: The contributor to the database
+		:type contributor: str
 		:param mass_spec:
 		:type mass_spec:
-		:param synonyms:
-		:type synonyms:
+		:param synonyms: List of synonyms for the compound
+		:type synonyms: list of str
 		"""
 		
 		NISTBase.__init__(self, name, cas)

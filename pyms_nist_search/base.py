@@ -2,6 +2,9 @@
 #-*- coding: utf-8 -*-
 #
 #  base.py
+"""
+Base class for other PyMassSpec NIST Search classes
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -43,6 +46,10 @@ from .utils import parse_name_chars
 
 
 class NISTBase:
+	"""
+	Base class for other PyMassSpec NIST Search classes
+	"""
+	
 	def __init__(self, name='', cas='---'):
 		"""
 

@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 #  pynist_search_server.py
+"""
+Search engine for Windows systems
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -33,6 +36,7 @@
 
 
 # stdlib
+import atexit
 import os
 
 # this package
@@ -44,18 +48,22 @@ from .utils import pack
 
 
 class Engine:
+	"""
+	Search engine for Windows systems
+	"""
+	
 	def __init__(self, lib_path, lib_type, work_dir=None):
 		"""
 
 		TODO: Search by Name. See page 13 of the documentation.
 		 Would also like to search by CAS number but DLL doesn't seem to support that
 
-		:param lib_path:
-		:type lib_path:
-		:param lib_type:
-		:type lib_type:
-		:param work_dir:
-		:type work_dir:
+		:param lib_path: The path to the mass spectral library
+		:type lib_path: str or pathlib.Path
+		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
+		:type lib_type: int
+		:param work_dir: The path to the working directory
+		:type work_dir: str or pathlib.Path
 		"""
 		
 		if work_dir is None:
@@ -63,7 +71,9 @@ class Engine:
 		
 		# TODO: check library and work dir exist
 		
-		_core._init_api(lib_path, lib_type, work_dir)
+		_core._init_api(str(lib_path), lib_type, str(work_dir))
+		
+		atexit.register(self.uninit)
 	
 	def uninit(self):
 		"""

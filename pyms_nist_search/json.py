@@ -2,6 +2,9 @@
 #-*- coding: utf-8 -*-
 #
 #  json.py
+"""
+Custom json encoder to support PyMassSpec NIST Search classes
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,7 +35,6 @@
 #  All Rights Reserved.
 
 
-
 # stdlib
 import json
 
@@ -44,9 +46,12 @@ from .base import NISTBase
 
 
 class PyNISTEncoder(json.JSONEncoder):
+	"""
+	Custom json encoder to support PyMassSpec NIST Search classes
+	"""
+	
 	def default(self, o):
 		if isinstance(o, (NISTBase, MassSpectrum)):
 			return dict(o)
 		else:
 			json.JSONEncoder.default(self, o)
-

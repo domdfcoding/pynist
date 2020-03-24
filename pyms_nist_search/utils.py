@@ -2,6 +2,9 @@
 #-*- coding: utf-8 -*-
 #
 #  utils.py
+"""
+General utilities
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -61,7 +64,7 @@ def parse_name_chars(name_char_list):
 	:param name_char_list:
 	:type name_char_list: list of int
 
-	:return:
+	:return: The parsed name
 	:rtype: str
 	"""
 	
@@ -95,7 +98,6 @@ def parse_name_chars(name_char_list):
 			char = "η"
 		else:
 			char = chr(dec)
-		# print(char, dec)
 		
 		if char != "\x00":
 			hit_name += char

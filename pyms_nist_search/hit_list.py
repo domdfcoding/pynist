@@ -2,6 +2,9 @@
 #-*- coding: utf-8 -*-
 #
 #  hit_list.py
+"""
+Functions for working with hit lists
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,13 +35,8 @@
 #  All Rights Reserved.
 
 
-
 # stdlib
 import json
-import urllib.parse
-
-# 3rd party
-from pyms.Spectrum import MassSpectrum
 
 # this package
 from .search_result import SearchResult
@@ -66,4 +64,3 @@ def hit_list_with_ref_data_from_json(json_data):
 		hit_list.append((SearchResult(**hit), ReferenceData(**ref_data)))
 	
 	return hit_list
-

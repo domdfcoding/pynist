@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 #  docker_engine.py
+"""
+Search engine for Linux and other platforms supporting Docker
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -52,17 +55,21 @@ client = docker.from_env()
 
 
 class Engine:
+	"""
+	Search engine for Linux and other platforms supporting Docker
+	"""
+	
 	def __init__(self, lib_path, lib_type, work_dir=None):
 		"""
 
 		Values of arguments don't matter on non-Win32
 
-		:param lib_path:
-		:type lib_path:
-		:param lib_type:
-		:type lib_type:
-		:param work_dir:
-		:type work_dir:
+		:param lib_path: The path to the mass spectral library
+		:type lib_path: str or pathlib.Path
+		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
+		:type lib_type: int
+		:param work_dir: The path to the working directory
+		:type work_dir: str or pathlib.Path
 		"""
 		
 		# # Check if the server is already running
@@ -104,8 +111,9 @@ class Engine:
 		
 		print("Shutting down docker server")
 		
-		print("Server log follows:")
-		print(self.docker.logs(timestamps=True).decode("utf-8"))
+		# print("Server log follows:")
+		# print(self.docker.logs(timestamps=True).decode("utf-8"))
+		
 		try:
 			self.docker.stop()
 		except docker.errors.NotFound:
