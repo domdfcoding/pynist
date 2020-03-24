@@ -90,7 +90,10 @@ if sys.platform == "win32":
 	
 	setup(
 			**common_kwargs,
-			install_requires=["PyMassSpec>=2.2.10"],
+			install_requires=[
+					"PyMassSpec>=2.2.10",
+					"chemistry_tools>=0.2.1",
+					],
 			ext_modules=[extension],
 			data_files=data_files
 			)
@@ -110,7 +113,8 @@ else:
 			install_requires=[
 					"PyMassSpec>=2.2.10",
 					"docker>=4.2.0",
-					"requests>=2.22.0"
+					"requests>=2.22.0",
+					"chemistry_tools>=0.2.1",
 					],
 			ext_modules=[min_extension],
 			)

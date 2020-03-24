@@ -32,10 +32,12 @@
 #  All Rights Reserved.
 
 
+# 3rd party
+from chemistry_tools.cas import cas_int_to_string
+
 # this package
 from .utils import parse_name_chars
 from .base import NISTBase
-from .cas import cas_int_to_string
 
 
 class SearchResult(NISTBase):

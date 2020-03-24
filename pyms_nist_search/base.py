@@ -35,8 +35,10 @@
 # stdlib
 import json
 
+# 3rd party
+from chemistry_tools.cas import cas_int_to_string
+
 # this package
-from .cas import cas_int_to_string
 from .utils import parse_name_chars
 
 

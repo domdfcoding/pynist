@@ -57,6 +57,7 @@ def hit_list_from_json(json_data):
 
 
 def hit_list_with_ref_data_from_json(json_data):
+	print(json_data)
 	raw_output = json.loads(json_data)
 	
 	hit_list = []

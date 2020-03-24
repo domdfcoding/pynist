@@ -51,7 +51,6 @@ from .reference_data import ReferenceData
 
 client = docker.from_env()
 
-
 class Engine:
 	def __init__(self, lib_path, lib_type, work_dir=None):
 		"""
@@ -68,8 +67,10 @@ class Engine:
 		
 		# TODO: Start the Server and setup hook to stop it
 		
+		print(client.containers.list(all=True, filters={"status": "running"}))
+		
 		# Check if the server is already running
-		for container in client.containers.list():
+		for container in client.containers.list(all=True, filters={"status": "running"}):
 			print(container)
 			if container.name == "pyms-nist-server":
 				self.docker = container
@@ -85,8 +86,8 @@ class Engine:
 					detach=True,
 					name="pyms-nist-server",
 					remove=True,
-					stdout=False,
-					stderr=False,
+					# stdout=False,
+					# stderr=False,
 					stdin_open=False,
 					# mounts=[library_mount]
 					)
@@ -94,7 +95,7 @@ class Engine:
 		atexit.register(self.uninit)
 		
 		# Allow time for docker container to fully start
-		time.sleep(2)
+		time.sleep(5)
 	
 	def uninit(self):
 		"""
