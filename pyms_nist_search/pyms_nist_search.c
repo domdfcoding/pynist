@@ -1169,7 +1169,8 @@ static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_
 
 	strcpy(lib_paths,  lib_path);
 
-	printf("%s", lib_paths);
+	printf("Using the following libraries:\n");
+	printf("%s\n", lib_paths);
 
 	lib_types[num_libs++] = lib_type;
 

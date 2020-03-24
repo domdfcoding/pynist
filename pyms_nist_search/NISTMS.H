@@ -100,11 +100,11 @@ From ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
 	#else
 		/************ useful limitations on library records *************************/
 		#define NISTMS_MAXCONTRIBLEN  1024  // max length of aux_data->contributor
-                                    // field in the user library record
+									// field in the user library record
 	#endif
 
 	#define NISTMS_MAXSYNONYMLEN  4500  // max. length of aux_data->synonyms
-	                                    // retrieved from the NIST 11 Main Library.
+										// retrieved from the NIST 11 Main Library.
 	// Note. Since the there is a limit on user library record length (5012 bytes),
 	//       at the time the spectrum is added to the user library the number of
 	//       synonyms in the record can be automatically reduced to fit the record
@@ -210,7 +210,6 @@ From ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
 		#define NISTMS_LIB_NUM(x) ( (int)( ((unsigned long)(x) & 0xF0000000) >> 28 ) )
 
 	#endif
-
 
 	typedef struct tagNISTMS_STDATA {
 		int xl[NISTMS_MAXBONDS], yl[NISTMS_MAXBONDS];
