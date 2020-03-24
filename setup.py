@@ -67,7 +67,7 @@ common_kwargs = dict(
 
 common_requirements = [
 		"PyMassSpec>=2.2.10",
-		"chemistry_tools>=0.2.2",
+		"chemistry_tools>=0.2.4",
 		]
 
 docker_requirements = common_requirements + [
