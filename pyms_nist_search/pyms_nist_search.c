@@ -1208,6 +1208,12 @@ static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_
 		pio->active_libs = active_libs;
 		nistms_search(NISTMS_INDEX_USER_STRU, pio);
 	} else {
+		PyErr_Format(PyExc_ValueError,
+                 "An error occurred. Error code: %d.",
+                 err_code
+                 );
+
+   		return NULL;
 		printf("%d code here...",pio->error_code) ;
 	}
 
