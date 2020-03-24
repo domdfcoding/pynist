@@ -47,6 +47,9 @@ class Engine:
 	def __init__(self, lib_path, lib_type, work_dir=None):
 		"""
 
+		TODO: Search by Name. See page 13 of the documentation.
+		 Would also like to search by CAS number but DLL doesn't seem to support that
+
 		:param lib_path:
 		:type lib_path:
 		:param lib_type:

@@ -65,12 +65,23 @@ common_kwargs = dict(
 		long_description=pathlib.Path("README.rst").read_text() + '\n',
 		)
 
+common_requirements = [
+		"PyMassSpec>=2.2.10",
+		"chemistry_tools>=0.2.2",
+		]
+
+docker_requirements = common_requirements + [
+		"docker>=4.2.0",
+		"requests>=2.22.0",
+		]
 
 build_macros = [
 		('INTERNALBUILD', '1'),
 		('WIN32', '1'),
 		('MSTXTDATA', '1'),
 		]
+
+##############################
 
 if sys.platform == "win32":
 	
@@ -90,10 +101,7 @@ if sys.platform == "win32":
 	
 	setup(
 			**common_kwargs,
-			install_requires=[
-					"PyMassSpec>=2.2.10",
-					"chemistry_tools>=0.2.2",
-					],
+			install_requires=common_requirements,
 			ext_modules=[extension],
 			data_files=data_files
 			)
@@ -101,7 +109,7 @@ if sys.platform == "win32":
 else:
 	# On platforms other than windows, build the minimal C extension that just contains the variables,
 	# as well as the Python files that are required for cross compatibility.
-
+	
 	min_extension = Extension(
 			name='pyms_nist_search._core',
 			define_macros=build_macros,
@@ -110,11 +118,6 @@ else:
 
 	setup(
 			**common_kwargs,
-			install_requires=[
-					"PyMassSpec>=2.2.10",
-					"docker>=4.2.0",
-					"requests>=2.22.0",
-					"chemistry_tools>=0.2.2",
-					],
+			install_requires=docker_requirements,
 			ext_modules=[min_extension],
 			)
