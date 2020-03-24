@@ -84,6 +84,7 @@ class SearchResult(NISTBase):
 	
 	@classmethod
 	def from_pynist(cls, pynist_dict):
+		print(pynist_dict["cas_no"])
 		return cls(
 				name=parse_name_chars(pynist_dict["hit_name_chars"]),
 				cas=cas_int_to_string(pynist_dict["cas_no"]),
