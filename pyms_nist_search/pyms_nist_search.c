@@ -91,15 +91,6 @@ void slice_str(const unsigned char * str, unsigned char * buffer, size_t start, 
 	}
 	buffer[j] = 0;
 }
-//
-///* Take a slice from an array of chars (`str`) between `start` and `end` and put it in `buffer`, as integer values */
-//void slice_str_to_int(const unsigned char * str, unsigned char * buffer, size_t start, size_t end) {
-//	size_t j = 0;
-//	for ( size_t i = start; i <= end; ++i ) {
-//		buffer[j++] = str[i];
-//	}
-//	buffer[j] = 0;
-//}
 
 /************************************/
 /*  Define signatures for functions */
@@ -112,7 +103,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *spectrum);
 
 /* initialization */
-static int  initialize_libs(NISTMS_IO *io);
+//static int  initialize_libs(NISTMS_IO *io);
 
 static void get_spectrum(NISTMS_IO *io, NISTMS_RECLOC *fpos);
 
@@ -147,8 +138,8 @@ int     num_libs=0;
 
 NISTMS_IO io;
 
-#define FULL_PATH_TO_MAIN_LIBRARY       "C:\\Users\\dom13\\Python\\pynist\\mainlib"   // main
-#define FULL_PATH_TO_WORK_DIR           "C:\\Users\\dom13\\Python\\pynist" // safe unless MS Search is running
+//#define FULL_PATH_TO_MAIN_LIBRARY 'Path Goes Here'	// main
+//#define FULL_PATH_TO_WORK_DIR 'Path Goes Here'
 
 
 /******************************************************************
@@ -463,7 +454,6 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		unsigned char * raw_hit_names = pio->hit_list->lib_names;
 
 		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
-			printf("467 - hit number %d\n", i);
 			PyObject *d = PyDict_New();
 
 //			printf("%d, ", i);
@@ -487,45 +477,42 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 			int start_byte = i*name_len;
 			int end_byte = start_byte + name_len;
 			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
-			slice_str(raw_hit_names, buffer, start_byte, end_byte);
+//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
-			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//				printf("%d ", buffer[i]);
-				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+			// Fix for Wine crash
+			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
 			}
-			// Issue after here on 99th hit
+
+//			for (int i = 0; i <= MAX_NAME_LEN; i++) {
+//				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+//			}
+
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
 
-			printf("501\n");
-			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
-//			printf("%s, ", buffer);
-			PyDict_SetItemString(d, "hit_name", py_hit_name);
+//			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
+//			PyDict_SetItemString(d, "hit_name", py_hit_name);
 
 //			printf("%ld, ", pio->hit_list->stru_pos[i]);
 
-			printf("507\n");
 			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 //			printf("%ld, ", pio->hit_list->spec_locs[i]);
 
-			printf("513\n");
 			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
 			PyDict_SetItemString(d, "cas_no", py_cas_no);
 //			printf("%ld, ", pio->hit_list->casnos[i]);
 
 //			printf("\n");
 
-			printf("520\n");
 			PyList_Append(py_hit_list, d);
 
 		}
-	printf("524\n");
 	}
-	// crash occurs after return from this function
-//	return(py_hit_list);
-	Py_RETURN_NONE;
+
+	return(py_hit_list);
 
 }
 
@@ -551,13 +538,9 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 		}
 	}
 
-//	py_hit_list = full_spectrum_search( &io, my_test);
-	printf("554\n");
+	py_hit_list = full_spectrum_search( &io, my_test);
 	free(my_test);
-	printf("556\n");
-//	return py_hit_list;
-	Py_RETURN_NONE;
-
+	return py_hit_list;
 }
 
 /*
@@ -635,6 +618,7 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 	for (int i = 0; i <= io.aux_data->synonyms_len; i++) {
 		if (io.aux_data->synonyms[i] == 0) {
 			if (i-start_byte > 0) {
+
 				slice_str(io.aux_data->synonyms, buffer, start_byte, i);
 //				printf("%s#\n", buffer);
 //				printf("%s\n", PyUnicode_FromString(buffer));
@@ -643,12 +627,10 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 				PyObject *py_synonym_char_list = PyList_New(0);
 
 				for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//					printf("%d ", buffer[i]);
 					PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
 				}
 
 				PyList_Append(py_synonyms_char_list, py_synonym_char_list);
-//				PyList_Append(py_synonym_list, PyUnicode_FromString(buffer));
 			}
 
 			start_byte = i+1;
@@ -868,20 +850,23 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			int start_byte = i*name_len;
 			int end_byte = start_byte + name_len;
 			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
-			slice_str(raw_hit_names, buffer, start_byte, end_byte);
+//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
-			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//				printf("%d ", buffer[i]);
-				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+			// Fix for Wine crash
+			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
 			}
+
+//			for (int i = 0; i <= MAX_NAME_LEN; i++) {
+//				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+//			}
 
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
 
-			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
-//			printf("%s, ", buffer);
-			PyDict_SetItemString(d, "hit_name", py_hit_name);
+//			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
+//			PyDict_SetItemString(d, "hit_name", py_hit_name);
 
 //			printf("%ld, ", pio->hit_list->stru_pos[i]);
 
@@ -898,7 +883,6 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyList_Append(py_hit_list, d);
 
 		}
-
 	}
 
 	return(py_hit_list);
@@ -995,56 +979,56 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 }
 
 
-static int initialize_libs(NISTMS_IO *pio) {
-	num_libs     = 0;
-	lib_paths[0] = 0;
-
-	strcpy(lib_paths,  FULL_PATH_TO_MAIN_LIBRARY);
-
-	printf("%s", lib_paths);
-
-	lib_types[num_libs++] = NISTMS_MAIN_LIB;
-
-	lib_types[num_libs] = '\0';
-
-	/*  order number of NISTMS_MAIN_LIB in active_lib[] will be 1 */
-	/*  order number of NISTMS_USER_LIB in active_lib[] will be 2 */
-	/*  order number of NISTMS_REP_LIB  in active_lib[] will be 3 */
-	/*  order number of another NISTMS_USER_LIB in active_lib[] will be 4 */
-
-	/*  attach initialization information to NISTMS_IO structure */
-	pio->num_libs = (unsigned int)num_libs;
-	pio->lib_paths = lib_paths;
-	pio->lib_types = lib_types;
-
-	strcpy(work_dir_path, FULL_PATH_TO_WORK_DIR);
-	pio->work_dir_path=work_dir_path;
-
-	/* attach callback function pointer */
-	pio->callback = CallBack;
-
-	nistms_search(NISTMS_INIT_SRCH, pio);
-
-	/* no need for paths and callback until next NISTMS_INIT_SRCH */
-	pio->work_dir_path=NULL;
-	pio->lib_paths    =NULL;
-	pio->callback     =NULL;
-
-
-	/* make sure struct. parts of user libraries are properly indexed */
-	if ( !pio->error_code ) {
-		active_libs[0] = 1; //2; /* user library */
-		active_libs[1] = 0; //4; /* another user library */
-		active_libs[2] = 0;
-		pio->active_libs = active_libs;
-		nistms_search(NISTMS_INDEX_USER_STRU, pio);
-	} else {
-		printf("%d code here...",pio->error_code) ;
-	}
-
-	return(pio->error_code);
-}
-
+//static int initialize_libs(NISTMS_IO *pio) {
+//	num_libs     = 0;
+//	lib_paths[0] = 0;
+//
+//	strcpy(lib_paths,  FULL_PATH_TO_MAIN_LIBRARY);
+//
+//	printf("%s", lib_paths);
+//
+//	lib_types[num_libs++] = NISTMS_MAIN_LIB;
+//
+//	lib_types[num_libs] = '\0';
+//
+//	/*  order number of NISTMS_MAIN_LIB in active_lib[] will be 1 */
+//	/*  order number of NISTMS_USER_LIB in active_lib[] will be 2 */
+//	/*  order number of NISTMS_REP_LIB  in active_lib[] will be 3 */
+//	/*  order number of another NISTMS_USER_LIB in active_lib[] will be 4 */
+//
+//	/*  attach initialization information to NISTMS_IO structure */
+//	pio->num_libs = (unsigned int)num_libs;
+//	pio->lib_paths = lib_paths;
+//	pio->lib_types = lib_types;
+//
+//	strcpy(work_dir_path, FULL_PATH_TO_WORK_DIR);
+//	pio->work_dir_path=work_dir_path;
+//
+//	/* attach callback function pointer */
+//	pio->callback = CallBack;
+//
+//	nistms_search(NISTMS_INIT_SRCH, pio);
+//
+//	/* no need for paths and callback until next NISTMS_INIT_SRCH */
+//	pio->work_dir_path=NULL;
+//	pio->lib_paths    =NULL;
+//	pio->callback     =NULL;
+//
+//
+//	/* make sure struct. parts of user libraries are properly indexed */
+//	if ( !pio->error_code ) {
+//		active_libs[0] = 1; //2; /* user library */
+//		active_libs[1] = 0; //4; /* another user library */
+//		active_libs[2] = 0;
+//		pio->active_libs = active_libs;
+//		nistms_search(NISTMS_INDEX_USER_STRU, pio);
+//	} else {
+//		printf("%d code here...",pio->error_code) ;
+//	}
+//
+//	return(pio->error_code);
+//}
+//
 
 
 

@@ -1,1 +1,3 @@
-PyMassSpec==2.2.10
+PyMassSpec>=2.2.10
+docker>=4.2.0
+requests>=2.22.0

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 #
-#  __init__.py
+#  mass_spec.py
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,37 +32,32 @@
 #  All Rights Reserved.
 
 
-import sys
+# stdlib
+import json
+import urllib.parse
 
-from ._core import *
-from .reference_data import ReferenceData
-from .search_result import SearchResult
-
-#
-# def full_spectrum_search(mass_spec):
-# 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-#
-# 	hit_list = _core.full_spectrum_search(pack(values, len(values)))
-#
-# 	parsed_hit_list = []
-#
-# 	for hit in hit_list:
-# 		parsed_hit_list.append(SearchResult.from_pynist(hit))
-#
-# 	return parsed_hit_list
-#
-#
-# def get_reference_data(spec_loc):
-# 	reference_data = _core.get_reference_data(spec_loc)
-#
-# 	return ReferenceData.from_pynist(reference_data)
-
-# TODO: Search by Name. See page 13 of the documentation.
-#  Would also like to search by CAS number but DLL doesn't seem to support that
+# 3rd party
+from pyms.Spectrum import MassSpectrum
 
 
-if sys.platform == "win32":
-	from .win_engine import Engine
+def quote_mass_spec(mass_spec):
+	"""
+
+	:param mass_spec:
+	:type mass_spec: pyms.Spectrum.MassSpectrum
+	:return:
+	:rtype:
+	"""
 	
-else:
-	from .docker_engine import Engine
+	if not isinstance(mass_spec, MassSpectrum):
+		raise ValueError("`mass_spec` must be a `pyms.Spectrum.MassSpectrum` object")
+	
+	return urllib.parse.quote(json.dumps(dict(mass_spec)))
+
+
+def unquote_mass_spec(string):
+	json_data = urllib.parse.unquote(string)
+	data_dict = json.loads(json_data)
+	
+	return MassSpectrum.from_dict(data_dict)
+

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
-#  __init__.py
+#  pynist_search_server.py
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,37 +32,73 @@
 #  All Rights Reserved.
 
 
-import sys
+# stdlib
+import os
 
+# this package
+from . import _core
 from ._core import *
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-
-#
-# def full_spectrum_search(mass_spec):
-# 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-#
-# 	hit_list = _core.full_spectrum_search(pack(values, len(values)))
-#
-# 	parsed_hit_list = []
-#
-# 	for hit in hit_list:
-# 		parsed_hit_list.append(SearchResult.from_pynist(hit))
-#
-# 	return parsed_hit_list
-#
-#
-# def get_reference_data(spec_loc):
-# 	reference_data = _core.get_reference_data(spec_loc)
-#
-# 	return ReferenceData.from_pynist(reference_data)
-
-# TODO: Search by Name. See page 13 of the documentation.
-#  Would also like to search by CAS number but DLL doesn't seem to support that
+from .utils import pack
 
 
-if sys.platform == "win32":
-	from .win_engine import Engine
+class Engine:
+	def __init__(self, lib_path, lib_type, work_dir=None):
+		"""
+
+		:param lib_path:
+		:type lib_path:
+		:param lib_type:
+		:type lib_type:
+		:param work_dir:
+		:type work_dir:
+		"""
+		
+		if work_dir is None:
+			work_dir = os.getcwd()
+		
+		# TODO: check library and work dir exist
+		
+		_core._init_api(lib_path, lib_type, work_dir)
 	
-else:
-	from .docker_engine import Engine
+	def uninit(self):
+		"""
+		Uninitialize the Search Engine
+		"""
+		
+		pass
+	
+	def spectrum_search(self):
+		# TODO
+		pass
+	
+	def full_spectrum_search(self, mass_spec):
+		# TODO: type check
+		
+		values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
+		hit_list = _core._full_spectrum_search(pack(values, len(values)))
+		
+		parsed_hit_list = []
+		
+		for hit in hit_list:
+			parsed_hit_list.append(SearchResult.from_pynist(hit))
+		
+		return parsed_hit_list
+	
+	def full_search_with_ref_data(self, mass_spec):
+		# TODO: type check
+		
+		hit_list = self.full_spectrum_search(mass_spec)
+		output_buffer = []
+		
+		for idx, hit in enumerate(hit_list):
+			ref_data = self.get_reference_data(hit.spec_loc)
+			output_buffer.append((hit, ref_data))
+		
+		return output_buffer
+	
+	def get_reference_data(self, spec_loc):
+		reference_data = _core._get_reference_data(spec_loc)
+		
+		return ReferenceData.from_pynist(reference_data)

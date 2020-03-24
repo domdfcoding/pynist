@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 #
-#  __init__.py
+#  json.py
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,37 +32,21 @@
 #  All Rights Reserved.
 
 
-import sys
 
-from ._core import *
-from .reference_data import ReferenceData
-from .search_result import SearchResult
+# stdlib
+import json
 
-#
-# def full_spectrum_search(mass_spec):
-# 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-#
-# 	hit_list = _core.full_spectrum_search(pack(values, len(values)))
-#
-# 	parsed_hit_list = []
-#
-# 	for hit in hit_list:
-# 		parsed_hit_list.append(SearchResult.from_pynist(hit))
-#
-# 	return parsed_hit_list
-#
-#
-# def get_reference_data(spec_loc):
-# 	reference_data = _core.get_reference_data(spec_loc)
-#
-# 	return ReferenceData.from_pynist(reference_data)
+# 3rd party
+from pyms.Spectrum import MassSpectrum
 
-# TODO: Search by Name. See page 13 of the documentation.
-#  Would also like to search by CAS number but DLL doesn't seem to support that
+# this package
+from .base import NISTBase
 
 
-if sys.platform == "win32":
-	from .win_engine import Engine
-	
-else:
-	from .docker_engine import Engine
+class PyNISTEncoder(json.JSONEncoder):
+	def default(self, o):
+		if isinstance(o, (NISTBase, MassSpectrum)):
+			return dict(o)
+		else:
+			json.JSONEncoder.default(self, o)
+

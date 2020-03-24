@@ -32,11 +32,13 @@
 #  All Rights Reserved.
 
 
+# this package
+from .utils import parse_name_chars
+from .base import NISTBase
+from .cas import cas_int_to_string
 
-import json
 
-
-class SearchResult:
+class SearchResult(NISTBase):
 	def __init__(self, name='', cas='', match_factor=0, reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
 		"""
 		
@@ -54,11 +56,7 @@ class SearchResult:
 		:type spec_loc: int
 		"""
 		
-		self._name = name
-		
-		if cas == "0-00-0":
-			cas = "---"
-		self._cas = cas
+		NISTBase.__init__(self, name, cas)
 		
 		self._match_factor = int(match_factor)
 		self._reverse_match_factor = int(reverse_match_factor)
@@ -66,14 +64,6 @@ class SearchResult:
 		self._hit_prob = float(hit_prob)
 		self._spec_loc = int(spec_loc)
 	
-	@property
-	def name(self):
-		return self._name
-	
-	@property
-	def cas(self):
-		return self._cas
-		
 	@property
 	def match_factor(self):
 		return int(self._match_factor)
@@ -93,20 +83,17 @@ class SearchResult:
 	@classmethod
 	def from_pynist(cls, pynist_dict):
 		return cls(
+				name=parse_name_chars(pynist_dict["hit_name_chars"]),
+				cas=cas_int_to_string(pynist_dict["cas_no"]),
 				match_factor=pynist_dict["sim_num"],
 				reverse_match_factor=pynist_dict["rev_sim_num"],
 				hit_prob=pynist_dict["hit_prob"]/100,
-				cas=cas_int_to_string(pynist_dict["cas_no"]),
-				name=parse_name_chars(pynist_dict["hit_name_chars"]),
 				spec_loc=pynist_dict["spec_loc"],
 				)
 	
 	def __repr__(self):
 		return f"Search Result: {self.name} \t({self.match_factor})"
-	
-	def __str__(self):
-		return self.__repr__()
-	
+		
 	def __dict__(self):
 		return dict(
 				name=self._name,
@@ -116,120 +103,3 @@ class SearchResult:
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
 				)
-	
-	def __iter__(self):
-		for key, value in self.__dict__().items():
-			yield key, value
-	
-	def __getstate__(self):
-		return self.__dict__()
-	
-	def __setstate__(self, state):
-		self.__init__(**state)
-	
-	@classmethod
-	def from_json(cls, json_data):
-		peak_dict = json.load(json_data)
-		
-		return cls.from_dict(peak_dict)
-	
-	@classmethod
-	def from_dict(cls, dictionary):
-		return cls(**dictionary)
-	
-	def to_json(self):
-		return json.dumps(dict(self))
-	
-
-
-def parse_name_chars(name_char_list):
-	"""
-	Takes a list of Unicode character codes and converts them to characters,
-	taking into account the special codes used by the NIST DLL.
-	
-	:param name_char_list:
-	:type name_char_list: list of int
-	
-	:return:
-	:rtype: str
-	"""
-	
-	hit_name = ''
-	for dec in name_char_list[:-1]:
-		if dec == 224:
-			char = "α"
-		elif dec == 225:
-			char = "β"
-		elif dec == 231:
-			char = "γ"
-		elif dec == 235:
-			char = "δ"
-		elif dec == 238:
-			char = "ε"
-		elif dec == 227:
-			char = "π"
-		elif dec == 229:
-			char = "σ"
-		elif dec == 230:
-			char = "μ"
-		elif dec == 234:
-			char = "ω"
-		elif dec == 241:
-			char = "±"
-		elif dec == 252:
-			char = "η"
-		else:
-			char = chr(dec)
-		
-		if char != "\x00":
-			hit_name += char
-	
-	return hit_name
-
-
-def cas_int_to_string(cas_no):
-	"""
-	Converts an integer CAS number to a hyphenated string
-	
-	:param cas_no:
-	:type cas_no: int
-	
-	:return:
-	:rtype:
-	"""
-	
-	cas_no = int(cas_no)
-	
-	check_digit = cas_no % 10
-	main_value = (cas_no - check_digit) // 10
-	block_2 = main_value % 100
-	block_1 = (main_value - block_2) // 100
-	
-	# TODO: Check check_digit
-	
-	return f"{block_1}-{block_2}-{check_digit}"
-
-
-def cas_string_to_int(cas_no):
-	"""
-	Converts a hyphenated string CAS number to a integer
-
-	:param cas_no:
-	:type cas_no: int
-
-	:return:
-	:rtype:
-	"""
-	
-	cas_no = str(cas_no)
-	
-	block_1, block_2, check_digit = cas_no.split("-")
-	
-	block_1 = int(block_1) * 1000
-	block_2 = int(block_2) * 10
-	check_digit = int(check_digit) * 1
-	
-	# TODO: Check check_digit
-	
-	return block_1 + block_2 + check_digit
-

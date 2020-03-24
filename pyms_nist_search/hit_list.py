@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 #
-#  __init__.py
+#  hit_list.py
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,37 +32,37 @@
 #  All Rights Reserved.
 
 
-import sys
 
-from ._core import *
-from .reference_data import ReferenceData
+# stdlib
+import json
+import urllib.parse
+
+# 3rd party
+from pyms.Spectrum import MassSpectrum
+
+# this package
 from .search_result import SearchResult
-
-#
-# def full_spectrum_search(mass_spec):
-# 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-#
-# 	hit_list = _core.full_spectrum_search(pack(values, len(values)))
-#
-# 	parsed_hit_list = []
-#
-# 	for hit in hit_list:
-# 		parsed_hit_list.append(SearchResult.from_pynist(hit))
-#
-# 	return parsed_hit_list
-#
-#
-# def get_reference_data(spec_loc):
-# 	reference_data = _core.get_reference_data(spec_loc)
-#
-# 	return ReferenceData.from_pynist(reference_data)
-
-# TODO: Search by Name. See page 13 of the documentation.
-#  Would also like to search by CAS number but DLL doesn't seem to support that
+from .reference_data import ReferenceData
 
 
-if sys.platform == "win32":
-	from .win_engine import Engine
+def hit_list_from_json(json_data):
+	raw_output = json.loads(json_data)
 	
-else:
-	from .docker_engine import Engine
+	hit_list = []
+	
+	for hit in raw_output:
+		hit_list.append(SearchResult(**hit))
+	
+	return hit_list
+
+
+def hit_list_with_ref_data_from_json(json_data):
+	raw_output = json.loads(json_data)
+	
+	hit_list = []
+	
+	for hit, ref_data in raw_output:
+		hit_list.append((SearchResult(**hit), ReferenceData(**ref_data)))
+	
+	return hit_list
+

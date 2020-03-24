@@ -32,44 +32,73 @@
 #  All Rights Reserved.
 
 
-
-# stdlib
-import json
-import urllib.parse
-
-# 3rd party
-from pyms.Spectrum import MassSpectrum
-
-# this package
-from .search_result import SearchResult
-from .reference_data import ReferenceData
-
-
-def quote_mass_spec(mass_spec):
+def pack(spectrum, top=20):
 	"""
-	
-	:param mass_spec:
-	:type mass_spec: pyms.Spectrum.MassSpectrum
+	Convert the spectrum data into a string.
+
+	Adapted from https://sourceforge.net/projects/mzapi-live/
+
+	:param spectrum:
+	:type spectrum:
+	:param top:
+	:type top:
 	:return:
 	:rtype:
 	"""
+	spectrum.sort(key=lambda s: s[1], reverse=True)
+	norm = spectrum[0][1]
 	
-	if not isinstance(mass_spec, MassSpectrum):
-		raise ValueError("`mass_spec` must be a `pyms.Spectrum.MassSpectrum` object")
+	spectrum = [(a, 999.0 * b / norm) for (a, b) in spectrum[:top]]
+	spectrum.sort()
+	return "*".join(["%.2f\t%.2f" % (a, b) for (a, b) in spectrum]) + "*"
+
+
+def parse_name_chars(name_char_list):
+	"""
+	Takes a list of Unicode character codes and converts them to characters,
+	taking into account the special codes used by the NIST DLL.
+
+	:param name_char_list:
+	:type name_char_list: list of int
+
+	:return:
+	:rtype: str
+	"""
 	
-	return urllib.parse.quote(json.dumps(dict(mass_spec)))
-
-
-def unquote_mass_spec(string):
-	json_data = urllib.parse.unquote(string)
-	data_dict = json.loads(json_data)
-
-	return MassSpectrum.from_dict(data_dict)
-
-
-class PyNISTEncoder(json.JSONEncoder):
-	def default(self, o):
-		if isinstance(o, (SearchResult, ReferenceData, MassSpectrum)):
-			return dict(o)
+	hit_name = ''
+	
+	for dec in name_char_list[:-1]:
+		if dec == 0:
+			break
+		
+		if dec == 224:
+			char = "α"
+		elif dec == 225:
+			char = "β"
+		elif dec == 231:
+			char = "γ"
+		elif dec == 235:
+			char = "δ"
+		elif dec == 238:
+			char = "ε"
+		elif dec == 227:
+			char = "π"
+		elif dec == 229:
+			char = "σ"
+		elif dec == 230:
+			char = "μ"
+		elif dec == 234:
+			char = "ω"
+		elif dec == 241:
+			char = "±"
+		elif dec == 252:
+			char = "η"
 		else:
-			json.JSONEncoder.default(self, o)
+			char = chr(dec)
+		# print(char, dec)
+		
+		if char != "\x00":
+			hit_name += char
+	
+	return hit_name
+

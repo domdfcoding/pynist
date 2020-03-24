@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 #
-#  __init__.py
+#  base.py
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -32,37 +32,79 @@
 #  All Rights Reserved.
 
 
-import sys
+# stdlib
+import json
 
-from ._core import *
-from .reference_data import ReferenceData
-from .search_result import SearchResult
-
-#
-# def full_spectrum_search(mass_spec):
-# 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-#
-# 	hit_list = _core.full_spectrum_search(pack(values, len(values)))
-#
-# 	parsed_hit_list = []
-#
-# 	for hit in hit_list:
-# 		parsed_hit_list.append(SearchResult.from_pynist(hit))
-#
-# 	return parsed_hit_list
-#
-#
-# def get_reference_data(spec_loc):
-# 	reference_data = _core.get_reference_data(spec_loc)
-#
-# 	return ReferenceData.from_pynist(reference_data)
-
-# TODO: Search by Name. See page 13 of the documentation.
-#  Would also like to search by CAS number but DLL doesn't seem to support that
+# this package
+from .cas import cas_int_to_string
+from .utils import parse_name_chars
 
 
-if sys.platform == "win32":
-	from .win_engine import Engine
+class NISTBase:
+	def __init__(self, name='', cas=''):
+		"""
+
+		:param name: The name of the compound
+		:type name: str
+		:param cas: The CAS number of the compound
+		:type cas: str
+		"""
+		
+		self._name = name
+		
+		if cas == "0-00-0":
+			cas = "---"
+		self._cas = cas
 	
-else:
-	from .docker_engine import Engine
+	@property
+	def name(self):
+		return self._name
+	
+	@property
+	def cas(self):
+		return self._cas
+	
+	@classmethod
+	def from_json(cls, json_data):
+		peak_dict = json.load(json_data)
+		
+		return cls.from_dict(peak_dict)
+	
+	@classmethod
+	def from_dict(cls, dictionary):
+		return cls(**dictionary)
+	
+	def to_json(self):
+		return json.dumps(dict(self))
+
+	@classmethod
+	def from_pynist(cls, pynist_dict):
+		return cls(
+				name=parse_name_chars(pynist_dict["hit_name_chars"]),
+				cas=cas_int_to_string(pynist_dict["cas_no"]),
+				)
+	
+	def __dict__(self):
+		return dict(
+				name=self._name,
+				cas=self.cas,
+				)
+
+	def __getstate__(self):
+		return self.__dict__()
+	
+	def __setstate__(self, state):
+		self.__init__(**state)
+	
+	def __iter__(self):
+		for key, value in self.__dict__().items():
+			yield key, value
+	
+	def __str__(self):
+		return self.__repr__()
+	
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.__dict__() == other.__dict__()
+		
+		return NotImplemented
