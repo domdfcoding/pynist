@@ -58,7 +58,16 @@ client = docker.from_env()
 
 class Engine:
 	"""
-	Search engine for Linux and other platforms supporting Docker
+	Search engine for Linux and other platforms supporting Docker.
+	
+	The first time the engine is initialized it will download the latest
+	version of the docker image automatically.
+	
+	This can also be done manually, such as to upgrade to the latest version,
+	with the following bash command:
+	
+		$ docker pull domdfcoding/pywine-pyms-nist
+	
 	"""
 	
 	def __init__(self, lib_path, lib_type, work_dir=None):
