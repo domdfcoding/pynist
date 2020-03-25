@@ -2,14 +2,14 @@
 PyMassSpec NIST Search
 ************************
 
-.. image:: https://travis-ci.org/domdfcoding/pynist.svg?branch=master
-	:target: https://travis-ci.org/domdfcoding/pynist
+.. image:: https://travis-ci.com/domdfcoding/pynist.svg?branch=master
+	:target: https://travis-ci.com/domdfcoding/pynist
 	:alt: Build Status
 .. image:: https://ci.appveyor.com/api/projects/status/82cs9prucypd1igb?svg=true
 	:target: https://ci.appveyor.com/project/domdfcoding/pyms-nist-search/branch/master
 	:alt: AppVeyor
-.. image:: https://readthedocs.org/projects/pyms_nist_search/badge/?version=latest
-	:target: https://pyms_nist_search.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/pymassspec/badge/?version=latest
+	:target: https://pymassspec.readthedocs.io/en/latest/?badge=latest
 	:alt: Documentation Status
 .. image:: https://img.shields.io/pypi/v/pyms_nist_search.svg
 	:target: https://pypi.org/project/pyms_nist_search/
