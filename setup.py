@@ -10,7 +10,7 @@ copyright = """
 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 """
 
-VERSION = "0.1.5"
+VERSION = "0.1.6"
 
 modname = "pyms_nist_search"
 
