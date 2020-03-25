@@ -38,6 +38,6 @@ deploy:
   skip_existing: true
   password:
     secure: FosMnyDTf6nzTx4kk/x8DLwxtgMBlK/ET8aRtcgplEwagCBSUIpCeMrTj26LF4gDHI5/EtNoKTGD6KtlCT9OOlyP+MIhSb670+6iaprGoEF91j72SgqjPHUsmsxMj1wgwBjrnut7COy/+lTlLKsH9jmylUkKirQwLsjcwjQMyhsvtmGBQfxYqqVh+qJbv8YnGCXuqvpqy4Ga66SRiOlHaK38zMo2hwJxV32DagIq0LjktA7sOR2CLmtBxKV7S4Ac2CGhG6BqMIdt/r+XD5IijZLXINAfRMfQ2VWwPozY68tfHiqnJ6zBpW6vccmJo386h4vAZg2SZtsn6UCRh3dAsgrAk7r3BjhqA3XVj9CeHk76TrAUUrFu9EuxPVQNwsZ4iawrn2gSD4KONb4zUIFlDErRmZFYaARrohhnEp32sdtLYgfKXO/GlWjmtUS6TefcJFYKcw5ZJHP4WEn+G09ZLJuMm86+YStFyF1BBvoOeXQ8wWjZS4wf5+0muhPGS+iJ9x4lYhwNxQvxD5Y9T7Z8MfZAN+V9yPuIsI/B+Qo+nJFfKkNJnvBy6swukAVXHYKHIX8qDBVBYzUSBH3eFrHMDhH3UxkmffG6EaiX6PeE3xPbAcZZjnbaMECJS1cgNZeU4W7Q38lYUvtMtMK/XJttoozJz70nO2Ctjw0tol4qSCc=
-  file:
-    - "pyms_nist_search-${VERSION}-${PY36}-${PLAT}.whl"
-    - "pyms_nist_search-${VERSION}-${PY37}-${PLAT}.whl"
+#  file:
+#    - "pyms_nist_search-${VERSION}-${PY36}-${PLAT}.whl"
+#    - "pyms_nist_search-${VERSION}-${PY37}-${PLAT}.whl"
