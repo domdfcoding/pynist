@@ -81,6 +81,9 @@ class Engine:
 		# 		break
 		# else:
 		#
+		
+		print("Launching Docker...")
+		
 		self.docker = client.containers.run(
 				"pywine-pyms-nist",
 				ports={5001: 5001},
@@ -98,13 +101,19 @@ class Engine:
 		
 		atexit.register(self.uninit)
 		
+		retry_count = 0
+		
 		# Wait for server to come online
-		while True:
+		while retry_count < 1000:
 			try:
 				if requests.get("http://localhost:5001/").text == "ready":
-					break
+					return
+				
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
+				retry_count += 1
+		
+		raise TimeoutError("Unable to communicate with the search server.")
 			
 	def uninit(self):
 		"""
@@ -139,18 +148,22 @@ class Engine:
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
+		retry_count = 0
+		
 		# Keep trying until it works
-		while True:
+		while retry_count < 1000:
 			try:
 				res = requests.post(
 						"http://localhost:5001/search/spectrum/",
 						json=json.dumps(mass_spec, cls=PyNISTEncoder)
 						)
-				break
+				return hit_list_from_json(res.text)
+			
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
+				retry_count += 1
 			
-		return hit_list_from_json(res.text)
+		raise TimeoutError("Unable to communicate with the search server.")
 	
 	def full_search_with_ref_data(self, mass_spec):
 		"""
@@ -166,18 +179,21 @@ class Engine:
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
+		retry_count = 0
+		
 		# Keep trying until it works
-		while True:
+		while retry_count < 1000:
 			try:
 				res = requests.post(
 						"http://localhost:5001/search/spectrum_with_ref_data/",
 						json=json.dumps(mass_spec, cls=PyNISTEncoder)
 						)
-				break
+				return hit_list_with_ref_data_from_json(res.text)
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
-		
-		return hit_list_with_ref_data_from_json(res.text)
+				retry_count += 1
+	
+		raise TimeoutError("Unable to communicate with the search server.")
 	
 	def get_reference_data(self, spec_loc):
 		"""
@@ -188,15 +204,18 @@ class Engine:
 		:rtype: ReferenceData
 		"""
 		
+		retry_count = 0
+		
 		# Keep trying until it works
-		while True:
+		while retry_count < 1000:
 			try:
 				res = requests.post(f"http://localhost:5001/search/loc/{spec_loc}")
-				break
+				return ReferenceData(**json.loads(res.text))
+			
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 		
-		return ReferenceData(**json.loads(res.text))
+		raise TimeoutError("Unable to communicate with the search server.")
 
 
 def hit_list_from_json(json_data):
