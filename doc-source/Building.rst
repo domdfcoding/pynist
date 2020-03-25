@@ -50,10 +50,3 @@ Different formats are available for built distributions
 .. literalinclude:: ../setup.py
     :language: python
     :linenos:
-
-**__pkginfo__.py**
-
-
-.. literalinclude:: ../__pkginfo__.py
-    :language: python
-    :linenos:

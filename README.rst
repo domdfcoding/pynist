@@ -3,20 +3,21 @@ PyMassSpec NIST Search
 ************************
 
 .. image:: https://travis-ci.org/domdfcoding/pynist.svg?branch=master
-    :target: https://travis-ci.org/domdfcoding/pynist
-    :alt: Build Status
-.. image:: https://readthedocs.org/projects/pynist/badge/?version=latest
-    :target: https://pynist.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
-.. image:: https://img.shields.io/pypi/v/pynist.svg
-    :target: https://pypi.org/project/pynist/
-    :alt: PyPI
-.. image:: https://img.shields.io/pypi/pyversions/pynist.svg
-    :target: https://pypi.org/project/pynist/
-    :alt: PyPI - Python Version
-.. image:: https://coveralls.io/repos/github/domdfcoding/pynist/badge.svg?branch=master
-    :target: https://coveralls.io/github/domdfcoding/pynist?branch=master
-    :alt: Coverage
+	:target: https://travis-ci.org/domdfcoding/pynist
+	:alt: Build Status
+.. image:: https://ci.appveyor.com/api/projects/status/82cs9prucypd1igb?svg=true
+	:target: https://ci.appveyor.com/project/domdfcoding/pyms-nist-search/branch/master
+	:alt: AppVeyor
+.. image:: https://readthedocs.org/projects/pyms_nist_search/badge/?version=latest
+	:target: https://pyms_nist_search.readthedocs.io/en/latest/?badge=latest
+	:alt: Documentation Status
+.. image:: https://img.shields.io/pypi/v/pyms_nist_search.svg
+	:target: https://pypi.org/project/pyms_nist_search/
+	:alt: PyPI
+.. image:: https://img.shields.io/pypi/pyversions/pyms_nist_search.svg
+	:target: https://pypi.org/project/pyms_nist_search/
+	:alt: PyPI - Python Version
+
 
 
 PyMassSpec extension for searching mass spectra using NIST's Spectrum Search Engine
@@ -31,7 +32,11 @@ The main class in this library is the `Engine` class. This class performs the ac
 
 .. code-block:: python
 
-    search = pyms_nist_search.Engine(FULL_PATH_TO_MAIN_LIBRARY, pyms_nist_search.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
+	search = pyms_nist_search.Engine(
+			FULL_PATH_TO_MAIN_LIBRARY,
+			pyms_nist_search.NISTMS_MAIN_LIB,
+			FULL_PATH_TO_WORK_DIR,
+			)
 
 Where ``FULL_PATH_TO_MAIN_LIBRARY`` is the path to the location of your mass spectral library, and ``FULL_PATH_TO_WORK_DIR`` is the path to the working directory to be used by the search engine.
 
@@ -54,4 +59,4 @@ For each of these hits, the reference data can be obtained as follows:
 .. code-block:: python
 
 	for hit in hit_list:
-    	ref_data = search.get_reference_data(hit.spec_loc)
+		ref_data = search.get_reference_data(hit.spec_loc)
