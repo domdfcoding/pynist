@@ -1,4 +1,4 @@
-if [ -z "$var" ];
+if [ -z "$TRAVIS_TAG" ];
 then
     echo "Skipping deploy because this is not a tagged commit"
 else
