@@ -6,11 +6,12 @@ import sys
 
 from setuptools import Extension, find_packages, setup
 
+from pyms_nist_search import __version__, __license__
+
 copyright = """
 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 """
 
-VERSION = "0.1.0"
 
 modname = "pyms_nist_search"
 
@@ -57,9 +58,9 @@ common_kwargs = dict(
 		author_email=author_email,
 		classifiers=classifiers,
 		description=short_desc,
-		license='LGPL3',
+		license=__license__,
 		name=modname,
-		version=VERSION,
+		version=__version__,
 		packages=find_packages(exclude=("tests",)),
 		url=f"https://github.com/{github_username}/{modname}",
 		long_description=pathlib.Path("README.rst").read_text() + '\n',

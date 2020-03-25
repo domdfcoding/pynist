@@ -46,3 +46,12 @@ if sys.platform == "win32":
 	
 else:
 	from .docker_engine import Engine
+
+name = "PyMassSpec NIST Search"
+__author__ = 'Dominic Davis-Foster'
+__license__ = 'LGPLv3'
+__maintainer_email__ = 'dominic@davis-foster.co.uk'
+__version__ = '0.1.0'
+
+__copyright__ = "2020 Dominic Davis-Foster"
+__email__ = "dominic@davis-foster.co.uk"
