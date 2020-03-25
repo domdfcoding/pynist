@@ -3,4 +3,4 @@ sphinx
 PyMassSpec>=2.2.10
 docker>=4.2.0
 requests>=2.22.0
-chemistry_tools>=0.2.4
+chemistry_tools>=0.2.5

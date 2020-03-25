@@ -73,7 +73,7 @@ else:
 
 common_requirements = [
 		"PyMassSpec>=2.2.10",
-		"chemistry_tools>=0.2.4",
+		"chemistry_tools>=0.2.5",
 		]
 
 docker_requirements = common_requirements + [
