@@ -6,7 +6,7 @@ set -e -x
 PYBINS=(
   "/opt/python/cp36-cp36m/bin"
   "/opt/python/cp37-cp37m/bin"
-  "/opt/python/cp38-cp38m/bin"
+#  "/opt/python/cp38-cp38m/bin"
   )
 
 # and later...
