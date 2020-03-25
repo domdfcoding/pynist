@@ -26,6 +26,7 @@ matrix:
 
 before_install:
   - chmod +x .ci/travis_build_wheels.sh
+  - chmod +x .ci/travis_deploy.sh
 
 install:
   - docker pull $DOCKER_IMAGE
@@ -36,7 +37,7 @@ script:
   - .ci/travis_deploy.sh
 
 #before_deploy:
-  - cd wheelhouse
+#  - cd wheelhouse
 #
 #deploy:
 #  skip_cleanup: true
