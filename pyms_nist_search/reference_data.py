@@ -56,7 +56,6 @@ class ReferenceData(NISTBase):
 			formula='', contributor='', mass_spec=None, synonyms=None
 			):
 		"""
-		
 		:param name: The name of the compound
 		:type name: str
 		:param cas: The CAS number of the compound
@@ -69,10 +68,10 @@ class ReferenceData(NISTBase):
 		:type mw: float
 		:param formula: The formula of the compound
 		:type formula: str
-		:param contributor: The contributor to the database
+		:param contributor: The contributor to the library
 		:type contributor: str
-		:param mass_spec:
-		:type mass_spec:
+		:param mass_spec: The reference mass spectrum
+		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param synonyms: List of synonyms for the compound
 		:type synonyms: list of str
 		"""
@@ -101,10 +100,22 @@ class ReferenceData(NISTBase):
 
 	@property
 	def formula(self):
+		"""
+		Returns the formula of the compound.
+
+		:rtype: str
+		"""
+		
 		return self._formula
 	
 	@property
 	def contributor(self):
+		"""
+		Returns the name of the contributor to the library.
+
+		:rtype: str
+		"""
+
 		return self._contributor
 	
 	@property
@@ -121,14 +132,34 @@ class ReferenceData(NISTBase):
 	
 	@property
 	def mass_spec(self):
+		"""
+		Returns the mass spectrum of the compound.
+
+		:rtype: pyms.Spectrum.MassSpectrum
+		"""
+
 		return copy.copy(self._mass_spec)
 	
 	@property
 	def synonyms(self):
+		"""
+		Returns a list of synonyms for the compound.
+
+		:rtype: list of str
+		"""
+
 		return self._synonyms[:]
 	
 	@classmethod
 	def from_pynist(cls, pynist_dict):
+		"""
+		Create a :class:`ReferenceData` object from the raw data returned by the C extension.
+
+		:type pynist_dict: dict
+
+		:rtype: ReferenceData
+		"""
+		
 		return cls(
 				name=parse_name_chars(pynist_dict["name_chars"]),
 				cas=pynist_dict["cas"],

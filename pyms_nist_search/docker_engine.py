@@ -38,17 +38,19 @@ Search engine for Linux and other platforms supporting Docker
 # stdlib
 import atexit
 import json
+import os
 import time
 
 # 3rd party
 import docker
 import docker.errors
 import requests
+from pyms.Spectrum import MassSpectrum
 
 # this package
-from .hit_list import hit_list_from_json, hit_list_with_ref_data_from_json
 from .json import PyNISTEncoder
 from .reference_data import ReferenceData
+from .search_result import SearchResult
 
 
 client = docker.from_env()
@@ -61,9 +63,6 @@ class Engine:
 	
 	def __init__(self, lib_path, lib_type, work_dir=None):
 		"""
-
-		Values of arguments don't matter on non-Win32
-
 		:param lib_path: The path to the mass spectral library
 		:type lib_path: str or pathlib.Path
 		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
@@ -71,6 +70,9 @@ class Engine:
 		:param work_dir: The path to the working directory
 		:type work_dir: str or pathlib.Path
 		"""
+		
+		if not os.path.exists(lib_path):
+			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
 		
 		# # Check if the server is already running
 		# for container in client.containers.list(all=True, filters={"status": "running"}):
@@ -124,7 +126,18 @@ class Engine:
 		pass
 	
 	def full_spectrum_search(self, mass_spec):
-		# TODO: type check
+		"""
+		Perform a Full Spectrum Search of the mass spectral library
+
+		:param mass_spec: The mass spectrum to search against the library
+		:type mass_spec: pyms.Spectrum.MassSpectrum
+
+		:return: List of possible identities for the mass spectrum
+		:rtype: list of SearchResult
+		"""
+
+		if not isinstance(mass_spec, MassSpectrum):
+			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
 		# Keep trying until it works
 		while True:
@@ -140,7 +153,18 @@ class Engine:
 		return hit_list_from_json(res.text)
 	
 	def full_search_with_ref_data(self, mass_spec):
-		# TODO: type check
+		"""
+		Perform a Full Spectrum Search of the mass spectral library, including reference data.
+
+		:param mass_spec: The mass spectrum to search against the library
+		:type mass_spec: pyms.Spectrum.MassSpectrum
+
+		:return: List of tuples consisting of the possible identities for the mass spectrum and the reference data from the library
+		:rtype: list of (SearchResult, ReferenceData) tuples
+		"""
+		
+		if not isinstance(mass_spec, MassSpectrum):
+			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
 		# Keep trying until it works
 		while True:
@@ -156,6 +180,14 @@ class Engine:
 		return hit_list_with_ref_data_from_json(res.text)
 	
 	def get_reference_data(self, spec_loc):
+		"""
+		Get reference data from the library for the compound at the given location.
+
+		:type spec_loc: int
+
+		:rtype: ReferenceData
+		"""
+		
 		# Keep trying until it works
 		while True:
 			try:
@@ -166,3 +198,40 @@ class Engine:
 		
 		return ReferenceData(**json.loads(res.text))
 
+
+def hit_list_from_json(json_data):
+	"""
+	Parse json data into a list of SearchResult objects
+
+	:type json_data: str
+
+	:rtype: list of SearchResult
+	"""
+	
+	raw_output = json.loads(json_data)
+	
+	hit_list = []
+	
+	for hit in raw_output:
+		hit_list.append(SearchResult(**hit))
+	
+	return hit_list
+
+
+def hit_list_with_ref_data_from_json(json_data):
+	"""
+	Parse json data into a list of (SearchResult, ReferenceData) tuples
+
+	:type json_data: str
+
+	:rtype: list of (SearchResult, ReferenceData) tuples
+	"""
+	
+	raw_output = json.loads(json_data)
+	
+	hit_list = []
+	
+	for hit, ref_data in raw_output:
+		hit_list.append((SearchResult(**hit), ReferenceData(**ref_data)))
+	
+	return hit_list

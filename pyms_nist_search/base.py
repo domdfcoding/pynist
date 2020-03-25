@@ -73,27 +73,63 @@ class NISTBase:
 	
 	@property
 	def name(self):
+		"""
+		Returns the name of the compound.
+
+		:rtype: str
+		"""
+		
 		return self._name
 	
 	@property
 	def cas(self):
+		"""
+		Returns the CAS number of the compound.
+
+		:rtype: str
+		"""
+		
 		return self._cas
 	
 	@classmethod
 	def from_json(cls, json_data):
+		"""
+		Construct an object from json data.
+		
+		:type json_data: str
+		"""
+		
 		peak_dict = json.load(json_data)
 		
 		return cls.from_dict(peak_dict)
 	
 	@classmethod
 	def from_dict(cls, dictionary):
+		"""
+		Construct an object from a dictionary.
+
+		:type dictionary: dict
+		"""
+		
 		return cls(**dictionary)
 	
 	def to_json(self):
+		"""
+		Convert the object to json
+		
+		:rtype: str
+		"""
+		
 		return json.dumps(dict(self))
 
 	@classmethod
 	def from_pynist(cls, pynist_dict):
+		"""
+		Create an object from the raw data returned by the C extension.
+
+		:type pynist_dict: dict
+		"""
+		
 		return cls(
 				name=parse_name_chars(pynist_dict["hit_name_chars"]),
 				cas=cas_int_to_string(pynist_dict["cas_no"]),

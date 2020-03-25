@@ -35,23 +35,25 @@ General utilities
 #  All Rights Reserved.
 
 
-def pack(spectrum, top=20):
+def pack(mass_spec, top=20):
 	"""
-	Convert the spectrum data into a string.
+	Convert a pyms.Spectrum.MassSpectrum object into a string.
 
 	Adapted from https://sourceforge.net/projects/mzapi-live/
 
-	:param spectrum:
-	:type spectrum:
-	:param top:
-	:type top:
-	:return:
-	:rtype:
-	"""
-	spectrum.sort(key=lambda s: s[1], reverse=True)
-	norm = spectrum[0][1]
+	:type mass_spec: pyms.Spectrum.MassSpectrum
+	:param top: The number of largest peaks to identify
+	:type top: int
 	
-	spectrum = [(a, 999.0 * b / norm) for (a, b) in spectrum[:top]]
+	:rtype: str
+	"""
+	
+	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
+	
+	values.sort(key=lambda s: s[1], reverse=True)
+	norm = values[0][1]
+	
+	spectrum = [(a, 999.0 * b / norm) for (a, b) in values[:top]]
 	spectrum.sort()
 	return "*".join(["%.2f\t%.2f" % (a, b) for (a, b) in spectrum]) + "*"
 
@@ -61,7 +63,6 @@ def parse_name_chars(name_char_list):
 	Takes a list of Unicode character codes and converts them to characters,
 	taking into account the special codes used by the NIST DLL.
 
-	:param name_char_list:
 	:type name_char_list: list of int
 
 	:return: The parsed name

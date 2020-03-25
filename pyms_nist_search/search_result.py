@@ -49,7 +49,6 @@ class SearchResult(NISTBase):
 			self, name='', cas='', match_factor=0,
 			reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
 		"""
-		
 		:param name: The name of the compound
 		:type name: str
 		:param cas: The CAS number of the compound
@@ -74,22 +73,58 @@ class SearchResult(NISTBase):
 	
 	@property
 	def match_factor(self):
+		"""
+		Returns a score (out of 1000) representing the similarity of the searched
+		mass spectrum to the search result.
+		
+		:rtype: int
+		"""
+		
 		return int(self._match_factor)
 	
 	@property
 	def reverse_match_factor(self):
+		"""
+		Returns a score (out of 1000) representing the similarity of the searched
+		mass spectrum to the search result, but ignoring any peaks that are in
+		the searched mass spectrum but not in the library spectrum.
+
+		:rtype: int
+		"""
+
 		return int(self._reverse_match_factor)
 	
 	@property
 	def hit_prob(self):
+		"""
+		
+		:rtype: float
+		"""
+		
 		return float(self._hit_prob)
 	
 	@property
 	def spec_loc(self):
+		"""
+		Returns a the location of the reference spectrum in the library.
+		This can then be searched using the `get_reference_data` method of the
+		search engine to obtain the reference data.
+		
+		:rtype: int
+		"""
+
 		return int(self._spec_loc)
 	
 	@classmethod
 	def from_pynist(cls, pynist_dict):
+		"""
+		Create a :class:`SearchResult` object from the raw data returned by the C extension.
+		
+		:type pynist_dict: dict
+		
+		:rtype: SearchResult
+		"""
+
 		return cls(
 				name=parse_name_chars(pynist_dict["hit_name_chars"]),
 				cas=pynist_dict["cas_no"],
