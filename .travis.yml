@@ -33,6 +33,7 @@ before_deploy:
   - cd wheelhouse
 
 deploy:
+  skip_cleanup: true
   provider: pypi
   user: DomDF
   on:
