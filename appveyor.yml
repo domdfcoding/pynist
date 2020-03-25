@@ -10,6 +10,9 @@ environment:
     - PYTHON: "C:\\Python37-x64"
     - PYTHON: "C:\\Python38-x64"
 
+  pypi_password:
+    secure: gjVIRU4iiSL61pXP6FoKsQ==
+
 install:
   # We need wheel installed to build wheels
   - "%PYTHON%\\python.exe -m pip install wheel Cython"
@@ -21,10 +24,21 @@ after_test:
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
-  - path: dist\*
+  - path: dist\*.whl
+    name: wheels
 
 
 #on_success:
 #  You can use this step to upload your artifacts to a public website.
 #  See Appveyor's documentation for more details. Or you can simply
 #  access your wheels from the Appveyor "artifacts" tab for your build.
+
+deploy_script:
+  - ps: |
+      if($env:APPVEYOR_REPO_TAG -eq 'true') {
+        Write-Output ("Deploying " + $env:APPVEYOR_REPO_TAG_NAME + " to PyPI...")
+        &amp;"${Env:PYTHON}/python.exe" -m pip install twine
+        &amp;"${Env:PYTHON}/python.exe" -m twine upload -u DomDF -p ${Env:pypi_password} --skip-existing dist/*.whl
+      } else {
+        Write-Output "No tag for deployment"
+      }
