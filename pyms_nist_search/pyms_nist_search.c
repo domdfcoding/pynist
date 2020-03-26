@@ -395,19 +395,19 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 //			printf("%d, ", i);
 
-			PyObject *py_sim_num = PyLong_FromLong(hit_list.sim_num[i]);
+			PyObject *py_sim_num = PyLong_FromLong(pio->hit_list->sim_num[i]);
 			PyDict_SetItemString(d, "sim_num", py_sim_num);
 //			printf("%d, ", pio->hit_list->sim_num[i]);
 
-			PyObject *py_rev_sim_num = PyLong_FromLong(hit_list.rev_sim_num[i]);
+			PyObject *py_rev_sim_num = PyLong_FromLong(pio->hit_list->rev_sim_num[i]);
 			PyDict_SetItemString(d, "rev_sim_num", py_rev_sim_num);
 //			printf("%d, ", pio->hit_list->rev_sim_num[i]);
 
-			PyObject *py_hit_prob = PyLong_FromLong(hit_list.hit_prob[i]);
+			PyObject *py_hit_prob = PyLong_FromLong(pio->hit_list->hit_prob[i]);
 			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
 //			printf("%d, ", pio->hit_list->hit_prob[i]);
 
-//			PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
+//			PyObject *py_in_library_prob = PyLong_FromLong(pio->hit_list->in_library_prob[i]);
 //		    PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
 //			printf("%d, ", pio->hit_list->in_library_prob[i]);
 
@@ -436,11 +436,11 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 			printf("%ld, ", pio->hit_list->spec_locs[i]);
 			printf("438\n");
-			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
+			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 			printf("441\n");
 
-			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
+			PyObject *py_cas_no = PyLong_FromLong(pio->hit_list->casnos[i]);
 			PyDict_SetItemString(d, "cas_no", py_cas_no);
 //			printf("%ld, ", pio->hit_list->casnos[i]);
 			printf("446\n");
