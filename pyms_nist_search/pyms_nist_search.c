@@ -417,7 +417,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 //			slice_str(raw_hit_names, buffer, start_byte, end_byte);
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
-			printf("420\n");
+
 			// Fix for Wine crash
 			for ( size_t i = start_byte; i <= end_byte; ++i ) {
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
@@ -428,21 +428,21 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 //			}
 
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
-			printf("431\n");
+
 //			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
 //			PyDict_SetItemString(d, "hit_name", py_hit_name);
 
 //			printf("%ld, ", pio->hit_list->stru_pos[i]);
 
-			printf("%ld, ", pio->hit_list->spec_locs[i]);
+//			printf("%ld, ", pio->hit_list->spec_locs[i]);
 			printf("438\n");
 			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 			printf("441\n");
 
-			PyObject *py_cas_no = PyLong_FromLong(pio->hit_list->casnos[i]);
-			PyDict_SetItemString(d, "cas_no", py_cas_no);
-//			printf("%ld, ", pio->hit_list->casnos[i]);
+			printf("%ld, ", pio->hit_list->casnos[i]);
+//			PyObject *py_cas_no = PyLong_FromLong(pio->hit_list->casnos[i]);
+//			PyDict_SetItemString(d, "cas_no", py_cas_no);
 			printf("446\n");
 //			printf("\n");
 
