@@ -64,18 +64,18 @@ for hit_no, (hit, ref_data) in enumerate(hit_list):
 	# print(reference_data == ref_data)
 
 print(f"Completed Full Search in {(datetime.datetime.now() - start_time).total_seconds()}")
-#
-# ############
-#
-# start_time = datetime.datetime.now()
-# print("Performing Quick Search")
-#
-# hit_list = search.spectrum_search(mass_spec)
-#
-# for hit_no, hit in enumerate(hit_list):
-# 	print(f"Hit {hit_no}")
-# 	print(hit)
-# 	print()
-#
-# print(f"Completed Quick Search in {(datetime.datetime.now() - start_time).total_seconds()}")
-#
+
+############
+
+start_time = datetime.datetime.now()
+print("Performing Quick Search")
+
+hit_list = search.spectrum_search(mass_spec)
+
+for hit_no, hit in enumerate(hit_list):
+	print(f"Hit {hit_no}")
+	print(hit)
+	print()
+
+print(f"Completed Quick Search in {(datetime.datetime.now() - start_time).total_seconds()}")
+
