@@ -223,7 +223,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 	2) to send possible hit locations for spectral comparison
 	3) to receive an ordered hit list
 	*/
-
+	printf("226\n");
 	static NISTMS_RECLOC fpos_array[MAX_NOPRESRCH_HITS];
 
 	/*     REQUIRED for library search */
@@ -248,13 +248,13 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 	int i;
 //	int best_score = 0 ;
-
+	printf("251\n");
 	/* OPTIONAL; for finding hits satisfying constraints */
 	memset((void*)&cntls, '\0', sizeof(cntls) );
 
 	memset((void*)&hit_list, '\0', sizeof(hit_list) );
 	memset(pep_scores, 0, sizeof(pep_scores));
-
+	printf("257\n");
 	if ( 0 >= parse_spectrum(&userms, &aux, spectrum)) {
 		if ( userms.num_exact_mz < -1 ) {
 			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
@@ -266,7 +266,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 		}
         Py_RETURN_NONE; // cannot read the spectrum
 	}
-
+	printf("269\n");
 	/* new feature: ignore precursor ion(s)
 	   within +/- cntls.precursor_ion_tolerance interval around precursor m/z from:
 
@@ -352,7 +352,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 		// !!cntls.pep_bTF_qry+!!cntls.pep_bE_Omssa+!!cntls.pep_bTF_lib+!!cntls.bRevImpure
 		// elements are needed (number of non-zeroes)
 	}
-
+	printf("355\n");
 	hit_list.lib_names = lib_names;
 	hit_list.lib_names_len = sizeof(LibNamesBuffer);
 	hit_list.max_one_lib_name_len = MAX_NAME_LEN;
@@ -380,7 +380,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 	};
 
 	PyObject *py_hit_list = PyList_New(0);
-
+	printf("383\n");
 	if(pio->hit_list->num_hits_found){
 		int best_score = pio->hit_list->sim_num[0];
 
@@ -394,7 +394,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyObject *d = PyDict_New();
 
 //			printf("%d, ", i);
-
+			printf("397\n");
 			PyObject *py_sim_num = PyLong_FromLong(hit_list.sim_num[i]);
 			PyDict_SetItemString(d, "sim_num", py_sim_num);
 //			printf("%d, ", pio->hit_list->sim_num[i]);
@@ -406,7 +406,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyObject *py_hit_prob = PyLong_FromLong(hit_list.hit_prob[i]);
 			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
 //			printf("%d, ", pio->hit_list->hit_prob[i]);
-
+			printf("409\n");
 //			PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
 //		    PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
 //			printf("%d, ", pio->hit_list->in_library_prob[i]);
@@ -417,7 +417,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 //			slice_str(raw_hit_names, buffer, start_byte, end_byte);
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
-
+			printf("420\n");
 			// Fix for Wine crash
 			for ( size_t i = start_byte; i <= end_byte; ++i ) {
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
@@ -428,7 +428,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 //			}
 
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
-
+			printf("431\n");
 //			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
 //			PyDict_SetItemString(d, "hit_name", py_hit_name);
 
@@ -441,14 +441,14 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
 			PyDict_SetItemString(d, "cas_no", py_cas_no);
 //			printf("%ld, ", pio->hit_list->casnos[i]);
-
+			printf("444\n");
 //			printf("\n");
 
 			PyList_Append(py_hit_list, d);
 
 		}
 	}
-
+	printf("451\n");
 	return(py_hit_list);
 }
 

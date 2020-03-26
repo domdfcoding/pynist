@@ -100,7 +100,7 @@ class Engine:
 				ports={5001: 5001},
 				detach=True,
 				name="pyms-nist-server",
-				remove=True,
+				# remove=True,
 				# stdout=False,
 				# stderr=False,
 				stdin_open=False,
@@ -115,7 +115,7 @@ class Engine:
 		retry_count = 0
 		
 		# Wait for server to come online
-		while retry_count < 1000:
+		while retry_count < 240:
 			try:
 				if requests.get("http://localhost:5001/").text == "ready":
 					return
@@ -139,6 +139,7 @@ class Engine:
 		
 		try:
 			self.docker.stop()
+			self.docker.remove()
 		except docker.errors.NotFound:
 			print("Unable to shut down the docker server")
 	
@@ -161,7 +162,7 @@ class Engine:
 		retry_count = 0
 		
 		# Keep trying until it works
-		while retry_count < 1000:
+		while retry_count < 240:
 			try:
 				res = requests.post(
 						f"http://localhost:5001/search/quick/?n_hits={n_hits}",
@@ -195,7 +196,7 @@ class Engine:
 		retry_count = 0
 		
 		# Keep trying until it works
-		while retry_count < 1000:
+		while retry_count < 240:
 			try:
 				res = requests.post(
 						f"http://localhost:5001/search/spectrum/?n_hits={n_hits}",
@@ -228,7 +229,7 @@ class Engine:
 		retry_count = 0
 		
 		# Keep trying until it works
-		while retry_count < 1000:
+		while retry_count < 240:
 			try:
 				res = requests.post(
 						f"http://localhost:5001/search/spectrum_with_ref_data/?n_hits={n_hits}",
@@ -253,7 +254,7 @@ class Engine:
 		retry_count = 0
 		
 		# Keep trying until it works
-		while retry_count < 1000:
+		while retry_count < 240:
 			try:
 				res = requests.post(f"http://localhost:5001/search/loc/{spec_loc}")
 				return ReferenceData(**json.loads(res.text))
