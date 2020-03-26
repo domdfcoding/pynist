@@ -56,7 +56,7 @@ class Engine:
 	Search engine for Windows systems
 	"""
 	
-	def __init__(self, lib_path, lib_type, work_dir=None):
+	def __init__(self, lib_path, lib_type, work_dir=None, debug=False):
 		"""
 		TODO: Search by Name. See page 13 of the documentation.
 		 Would also like to search by CAS number but DLL doesn't seem to support that
@@ -79,6 +79,8 @@ class Engine:
 		if not os.path.exists(work_dir):
 			os.mkdir(work_dir)
 		
+		self.debug = debug
+		
 		_core._init_api(str(lib_path), lib_type, str(work_dir))
 		
 		atexit.register(self.uninit)
@@ -90,17 +92,15 @@ class Engine:
 		
 		pass
 	
-	def spectrum_search(self):
-		# TODO
-		pass
-	
-	def full_spectrum_search(self, mass_spec):
+	def spectrum_search(self, mass_spec, n_hits=5):
 		"""
-		Perform a Full Spectrum Search of the mass spectral library
-		
+		Perform a Quick Spectrum Search of the mass spectral library
+
 		:param mass_spec: The mass spectrum to search against the library
 		:type mass_spec: pyms.Spectrum.MassSpectrum
-		
+		:param n_hits: The number of hits to return
+		:type n_hits: int
+
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
 		"""
@@ -108,7 +108,7 @@ class Engine:
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
-		hit_list = _core._full_spectrum_search(pack(mass_spec, len(mass_spec)))
+		hit_list = _core._spectrum_search(pack(mass_spec, len(mass_spec)))[:n_hits]
 		
 		parsed_hit_list = []
 		
@@ -117,12 +117,39 @@ class Engine:
 		
 		return parsed_hit_list
 	
-	def full_search_with_ref_data(self, mass_spec):
+	def full_spectrum_search(self, mass_spec, n_hits=5):
+		"""
+		Perform a Full Spectrum Search of the mass spectral library
+		
+		:param mass_spec: The mass spectrum to search against the library
+		:type mass_spec: pyms.Spectrum.MassSpectrum
+		:param n_hits: The number of hits to return
+		:type n_hits: int
+		
+		:return: List of possible identities for the mass spectrum
+		:rtype: list of SearchResult
+		"""
+		
+		if not isinstance(mass_spec, MassSpectrum):
+			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
+		
+		hit_list = _core._full_spectrum_search(pack(mass_spec, len(mass_spec)))[:n_hits]
+		
+		parsed_hit_list = []
+		
+		for hit in hit_list:
+			parsed_hit_list.append(SearchResult.from_pynist(hit))
+		
+		return parsed_hit_list
+	
+	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library, including reference data.
 
 		:param mass_spec: The mass spectrum to search against the library
 		:type mass_spec: pyms.Spectrum.MassSpectrum
+		:param n_hits: The number of hits to return
+		:type n_hits: int
 
 		:return: List of tuples consisting of the possible identities for the mass spectrum and the reference data from the library
 		:rtype: list of (SearchResult, ReferenceData) tuples
@@ -131,7 +158,7 @@ class Engine:
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
-		hit_list = self.full_spectrum_search(mass_spec)
+		hit_list = self.full_spectrum_search(mass_spec)[:n_hits]
 		output_buffer = []
 		
 		for idx, hit in enumerate(hit_list):

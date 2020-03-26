@@ -3,9 +3,6 @@ from pyms.Spectrum import MassSpectrum
 import pyms_nist_search
 import sys
 
-start_time = datetime.datetime.now()
-
-
 if sys.platform == "win32":
 	FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\mainlib"
 	FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
@@ -14,7 +11,12 @@ else:
 	FULL_PATH_TO_WORK_DIR = "/home/domdf/Python/00 Projects/pynist"
 	
 
-search = pyms_nist_search.Engine(FULL_PATH_TO_MAIN_LIBRARY, pyms_nist_search.NISTMS_MAIN_LIB, FULL_PATH_TO_WORK_DIR)
+search = pyms_nist_search.Engine(
+		FULL_PATH_TO_MAIN_LIBRARY,
+		pyms_nist_search.NISTMS_MAIN_LIB,
+		FULL_PATH_TO_WORK_DIR,
+		debug=True,
+		)
 
 mz_int_pairs = [
 		(27, 138),	(28, 210),	(32, 59),	(37, 70),	(38, 273),
@@ -45,6 +47,8 @@ for mass, intensity in mz_int_pairs:
 
 mass_spec = MassSpectrum(mass_list, intensity_list)
 
+start_time = datetime.datetime.now()
+print("Performing Full Search")
 
 hit_list = search.full_search_with_ref_data(mass_spec)
 
@@ -59,4 +63,19 @@ for hit_no, (hit, ref_data) in enumerate(hit_list):
 	# print(reference_data.mass_spec == ref_data.mass_spec)
 	# print(reference_data == ref_data)
 
-print(f"Completed in {(datetime.datetime.now() - start_time).total_seconds()}")
+print(f"Completed Full Search in {(datetime.datetime.now() - start_time).total_seconds()}")
+
+#############
+
+start_time = datetime.datetime.now()
+print("Performing Quick Search")
+
+hit_list = search.spectrum_search(mass_spec)
+
+for hit_no, hit in enumerate(hit_list):
+	print(f"Hit {hit_no}")
+	print(hit)
+	print()
+
+print(f"Completed Quick Search in {(datetime.datetime.now() - start_time).total_seconds()}")
+

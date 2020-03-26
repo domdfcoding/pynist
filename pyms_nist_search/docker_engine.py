@@ -70,7 +70,7 @@ class Engine:
 	
 	"""
 	
-	def __init__(self, lib_path, lib_type, work_dir=None):
+	def __init__(self, lib_path, lib_type, work_dir=None, debug=False):
 		"""
 		:param lib_path: The path to the mass spectral library
 		:type lib_path: str or pathlib.Path
@@ -90,6 +90,8 @@ class Engine:
 		# 		break
 		# else:
 		#
+		
+		self.debug = debug
 		
 		print("Launching Docker...")
 		
@@ -131,24 +133,57 @@ class Engine:
 		
 		print("Shutting down docker server")
 		
-		# print("Server log follows:")
-		# print(self.docker.logs(timestamps=True).decode("utf-8"))
+		if self.debug:
+			print("Server log follows:")
+			print(self.docker.logs(timestamps=True).decode("utf-8"))
 		
 		try:
 			self.docker.stop()
 		except docker.errors.NotFound:
 			print("Unable to shut down the docker server")
 	
-	def spectrum_search(self):
-		# TODO
-		pass
+	def spectrum_search(self, mass_spec, n_hits=5):
+		"""
+		Perform a Quick Spectrum Search of the mass spectral library
+
+		:param mass_spec: The mass spectrum to search against the library
+		:type mass_spec: pyms.Spectrum.MassSpectrum
+		:param n_hits: The number of hits to return
+		:type n_hits: int
+
+		:return: List of possible identities for the mass spectrum
+		:rtype: list of SearchResult
+		"""
+		
+		if not isinstance(mass_spec, MassSpectrum):
+			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
+		
+		retry_count = 0
+		
+		# Keep trying until it works
+		while retry_count < 1000:
+			try:
+				res = requests.post(
+						f"http://localhost:5001/search/quick/?n_hits={n_hits}",
+						json=json.dumps(mass_spec, cls=PyNISTEncoder)
+						)
+				print(res.text)
+				return hit_list_from_json(res.text)
+			
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+				retry_count += 1
+		
+		raise TimeoutError("Unable to communicate with the search server.")
 	
-	def full_spectrum_search(self, mass_spec):
+	def full_spectrum_search(self, mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
 
 		:param mass_spec: The mass spectrum to search against the library
 		:type mass_spec: pyms.Spectrum.MassSpectrum
+		:param n_hits: The number of hits to return
+		:type n_hits: int
 
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
@@ -163,7 +198,7 @@ class Engine:
 		while retry_count < 1000:
 			try:
 				res = requests.post(
-						"http://localhost:5001/search/spectrum/",
+						f"http://localhost:5001/search/spectrum/?n_hits={n_hits}",
 						json=json.dumps(mass_spec, cls=PyNISTEncoder)
 						)
 				return hit_list_from_json(res.text)
@@ -174,12 +209,14 @@ class Engine:
 			
 		raise TimeoutError("Unable to communicate with the search server.")
 	
-	def full_search_with_ref_data(self, mass_spec):
+	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library, including reference data.
 
 		:param mass_spec: The mass spectrum to search against the library
 		:type mass_spec: pyms.Spectrum.MassSpectrum
+		:param n_hits: The number of hits to return
+		:type n_hits: int
 
 		:return: List of tuples consisting of the possible identities for the mass spectrum and the reference data from the library
 		:rtype: list of (SearchResult, ReferenceData) tuples
@@ -194,7 +231,7 @@ class Engine:
 		while retry_count < 1000:
 			try:
 				res = requests.post(
-						"http://localhost:5001/search/spectrum_with_ref_data/",
+						f"http://localhost:5001/search/spectrum_with_ref_data/?n_hits={n_hits}",
 						json=json.dumps(mass_spec, cls=PyNISTEncoder)
 						)
 				return hit_list_with_ref_data_from_json(res.text)
