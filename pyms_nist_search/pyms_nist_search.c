@@ -97,7 +97,13 @@ void slice_str(const unsigned char * str, unsigned char * buffer, size_t start, 
 /************************************/
 void NISTMS_C_EXPORT nistms_search( NISTMS_SEARCH_TYPE srch_type, NISTMS_IO *io);
 
+static PyObject *spec_search(PyObject *self, PyObject *args);
 static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum);
+
+static PyObject *full_spec_search(PyObject *self, PyObject *args);
+static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum);
+
+static PyObject *get_reference_data(PyObject *self, PyObject *args);
 
 /* loads a single spectrum from a string */
 static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *spectrum);
@@ -106,10 +112,10 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 //static int  initialize_libs(NISTMS_IO *io);
 
 static void get_spectrum(NISTMS_IO *io, NISTMS_RECLOC *fpos);
-
 static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz);
 
-
+static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir)
+static PyObject *init_api(PyObject *self, PyObject *args)
 
 /******************************/
 /* allocated for results      */
@@ -166,16 +172,15 @@ void NISTMS_CALLBACK CallBack( IQ *p ) {
 }
 
 
-
+/*
+Takes Python objects as input and prepares them for passing to spectrum_search
+*/
 static PyObject *spec_search(PyObject *self, PyObject *args) {
 	int counter ;
 	char *test ;
 	char *my_test ;
 	int test_len ;
 	PyObject *py_hit_list ;
-
-	NISTMS_HIT_LIST hit_list ;
-	PyObject *sim_num ;
 
 	int ok = PyArg_ParseTuple(args, "s", &test);
 	my_test = (char *) malloc(strlen(test)*sizeof('a'));
@@ -189,12 +194,290 @@ static PyObject *spec_search(PyObject *self, PyObject *args) {
 	}
 
 	py_hit_list = spectrum_search( &io, NISTMS_NO_PRE_SRCH, my_test);
-
-	free(my_test) ;
-
+	free(my_test);
 	return py_hit_list;
 }
 
+static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum) {
+
+	static NISTMS_CONSTRAINTS constraints;
+	static NISTMS_MASS_SPECTRUM userms;  /*  contains unknown spectrum */
+	static NISTMS_AUX_DATA      aux;
+	static NISTMS_HIT_LIST hit_list;     /*  returns hits */
+	static NISTMS_SRCH_CONTROLS cntls;   /*  specifies search type */
+
+//	int search_type = NISTMS_SCREEN_SRCH;
+//
+//	#define MAX_SCREEN_LOCS NISTMS_MAX_FPOS /* 6000 = largest number of tentative hits from the
+//											   screen search (pre-search) */
+//
+//	#define MAX_HITS_RETURNED MAX_LIB_SRCH_HITS
+
+	/*
+	The following seven buffers are attached to the NISTMS_HIT_LIST structure
+	to hold retrieved hit locations, similarity values and optional hit
+	descriptions
+
+	fpos_array is the central buffer.  It is used as follows:
+	1) to receive locations of spectra passing the screen (pre-search)
+	2) to send possible hit locations for spectral comparison
+	3) to receive an ordered hit list
+	*/
+
+	static NISTMS_RECLOC fpos_array[MAX_NOPRESRCH_HITS];
+
+	/*     REQUIRED for library search */
+	static int sim_num[MAX_NOPRESRCH_HITS];
+
+	/*     REQUIRED for reverse (impure) search, OPTIONAL for forward search */
+	static int rev_sim_num[MAX_NOPRESRCH_HITS];
+
+	/*     OPTIONAL for forward (pure compound) 'Q', 'I', or 'P' search,  */
+	/*     Not meaningful for reverse (impure), 'S', 'H' or 'L' searches  */
+	static int hit_prob[MAX_NOPRESRCH_HITS];
+
+//	/*     Meaningful only for Peptide search */
+//	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
+
+	/*     OPTIONAL; for (possibly truncated) name retrieval for hit list presentation */
+	static unsigned char *lib_names = LibNamesBuffer;
+//	static NISTMS_RECLOC *stru_pos[MAX_HITS_RETURNED];
+
+//	/*     OPTIONAL; for CAS reg. nos. retrieval for hit list presentation */
+//	static long *casnos[MAX_HITS_RETURNED];
+
+	int i;
+//	int best_score = 0 ;
+
+	/* OPTIONAL; for finding hits satisfying constraints */
+	memset((void*)&cntls, '\0', sizeof(cntls) );
+
+	memset((void*)&hit_list, '\0', sizeof(hit_list) );
+	memset(pep_scores, 0, sizeof(pep_scores));
+
+	if ( 0 >= parse_spectrum(&userms, &aux, spectrum)) {
+		if ( userms.num_exact_mz < -1 ) {
+			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
+			return NULL;
+		}
+		else {
+			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
+			return NULL;
+		}
+        Py_RETURN_NONE; // cannot read the spectrum
+	}
+
+	/* new feature: ignore precursor ion(s)
+	   within +/- cntls.precursor_ion_tolerance interval around precursor m/z from:
+
+	  for the searched spectrum:
+	  ----------------------------
+	  1. ms/ms search && cntls.user_mw                    => cntls.user_mw*100
+	  2. peptide search && cntls.precursor_ion_100mz      => cntls.precursor_ion_100mz
+	  3. peptide format search spectrum has precursor m/z => pio->userms->precursor_ion_100mz
+	  4. NOT peptide search && user spec. mw > 0          => pio->aux_data->mw*100
+	  5. zero if none of the above
+	  Note: precursor m/z is extracted from the NIST_MSMS
+			library spectrum synonyms since 2007-04-04
+
+	  for the library spectrum:
+	  ----------------------------
+	  1. spectrum has precursor m/z                       => precursor m/z
+		 (including nist_msms library)
+	  2. not peptide search and spectrum has mw           => mw*100
+
+	  Also are ignored peaks in each library spectrum coinsiding with the search spectrum precursor
+	  and peaks in the search spectrum counsiding with the library spectrum precursor.
+
+	 */
+
+	cntls.search_mode = 'Q';    // Quick Search
+	cntls.user_mw   =  0; // Used by 'L', 'H', 'M' only
+	cntls.impure    =  0;
+
+	cntls.min_mass  =  1;
+	cntls.max_mass  =  2000;
+
+	cntls.min_abund = 1;  // ignored by ms/ms search
+
+
+	cntls.search_mode |= SEARCH_MODE_FLAG_IGNORE_PRECURSOR; // comment out to de-activate
+
+	// for selecting spectra to be compared according to their Precursor m/z
+	// and half-width of the ignoring precursor m/z interval (SEARCH_MODE_FLAG_IGNORE_PRECURSOR)
+	// (for integer m/z the rounding of the half-width is to the nearest 100)
+	cntls.precursor_ion_tolerance = 160;  // 1.6 m/z units
+	// cntls.precursor_ion_tolerance = 10;  // 1.6 m/z units
+	// for spectra comparison
+	cntls.product_ions_tolerance =  80;   // 0.8 m/z units
+
+	// Peptide Presearch Option
+	// The value assigned in the next statement has the followin meaning:
+	// zero => search in the active libs all spectra that have Precursor m/z
+	//   (corresponds to Presearch=Off in the NIST MS Search Prorgam)
+	// 100*(Precursor m/z) => compare only spectra
+	//   within +/- cntls.nPrecursorTolerance interval
+	//   (corresponds to Presearch=Default in the NIST MS Search Prorgam)
+	cntls.precursor_ion_100mz = userms.precursor_ion_100mz; /* Presearch=Default */
+															/* 0 => Presearch = OFF */
+
+	//--- Display indicators ----
+	cntls.pep_bTF_qry        = 0;
+	cntls.pep_bE_Omssa       = 1;
+	cntls.pep_bTF_lib        = 0;
+	cntls.pep_nCysteineModification = 0;  /* unused */
+	cntls.pep_cThreshold     = 0; /* 0=>the highest threshold, 1=>Mediium, 2=>the lowest */
+	//--- Weight indicators ----
+	cntls.pep_bOmssa         = 1; /* Use OMSSA score for weighting = No */
+	cntls.pep_bNumReplicates = 0; /* Use number of Replicates = No */
+	cntls.pep_bQ_TOF         = 0;
+
+	/*  attach allocated buffers to input/output structure */
+	pio->userms = &userms;     /*  input mass spectrum */
+	pio->cntls  = &cntls;      /*  type of search */
+
+	/* prepare hit list to receive spectrum pointers */
+	pio->hit_list                   = &hit_list;  /* hit list */
+	pio->hit_list->spec_locs        = fpos_array; /* spectrum pointers */
+	pio->hit_list->max_spec_locs    = MAX_NOPRESRCH_HITS;
+	pio->hit_list->max_hits_desired = MAX_NOPRESRCH_HITS;
+
+	/* prepare hit list to receive spectrum compare results */
+	pio->hit_list->sim_num = sim_num;
+	pio->hit_list->rev_sim_num = rev_sim_num;
+	pio->hit_list->hit_prob = hit_prob;
+	for ( i = 0; i < NUM_ADD_SPEC_MATCHFACT; i ++ ) {
+		hit_list.pep_Mf[i] = pep_scores[i];
+		// actually, only
+		// !!cntls.pep_bTF_qry+!!cntls.pep_bE_Omssa+!!cntls.pep_bTF_lib+!!cntls.bRevImpure
+		// elements are needed (number of non-zeroes)
+	}
+
+	hit_list.lib_names = lib_names;
+	hit_list.lib_names_len = sizeof(LibNamesBuffer);
+	hit_list.max_one_lib_name_len = MAX_NAME_LEN;
+	hit_list.stru_pos = NULL;  /* no structures available in Peptide libraries */
+	hit_list.casnos   = NULL;  /* no CAS r.n. available in Peptide libraries */
+
+	pio->constraints = NULL;        /*  no constraints */
+
+	/* if these were uncommented, hits would be subject to various peptide-specific constraints*/
+/*
+	io.constraints = &constraints;
+	clear_constraints(io.constraints);              // disable all constraints
+	set_pep_constraints(io.constraints); // add peptide-specific constraints
+*/
+//	printf("%d is the search_type\n",search_type) ;
+	print("371\n");
+	nistms_search(search_type, pio);
+
+	switch ( pio->error_code ) {
+		case 0:
+			break;
+		default:
+			PyErr_Format(PyExc_RuntimeError, "Spectrum search returned error code %d\n", pio->error_code);
+			return NULL;
+	};
+
+	PyObject *py_hit_list = PyList_New(0);
+
+	if(pio->hit_list->num_hits_found){
+		int best_score = pio->hit_list->sim_num[0];
+
+//		printf("%d\n", best_score);
+//		printf("%d\n", pio->hit_list->num_hits_found);
+
+		int name_len = pio->hit_list->max_one_lib_name_len;
+		unsigned char * raw_hit_names = pio->hit_list->lib_names;
+
+		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
+			PyObject *d = PyDict_New();
+
+//			printf("%d, ", i);
+
+			PyObject *py_sim_num = PyLong_FromLong(hit_list.sim_num[i]);
+			PyDict_SetItemString(d, "sim_num", py_sim_num);
+//			printf("%d, ", pio->hit_list->sim_num[i]);
+
+			PyObject *py_rev_sim_num = PyLong_FromLong(hit_list.rev_sim_num[i]);
+			PyDict_SetItemString(d, "rev_sim_num", py_rev_sim_num);
+//			printf("%d, ", pio->hit_list->rev_sim_num[i]);
+
+			PyObject *py_hit_prob = PyLong_FromLong(hit_list.hit_prob[i]);
+			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
+//			printf("%d, ", pio->hit_list->hit_prob[i]);
+
+//			PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
+//		    PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
+//			printf("%d, ", pio->hit_list->in_library_prob[i]);
+
+			int start_byte = i*name_len;
+			int end_byte = start_byte + name_len;
+			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
+//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
+
+			PyObject *py_hit_name_char_list = PyList_New(0);
+
+			// Fix for Wine crash
+			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
+			}
+
+//			for (int i = 0; i <= MAX_NAME_LEN; i++) {
+//				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+//			}
+
+			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
+
+//			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
+//			PyDict_SetItemString(d, "hit_name", py_hit_name);
+
+//			printf("%ld, ", pio->hit_list->stru_pos[i]);
+
+			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
+			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
+//			printf("%ld, ", pio->hit_list->spec_locs[i]);
+
+			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
+			PyDict_SetItemString(d, "cas_no", py_cas_no);
+//			printf("%ld, ", pio->hit_list->casnos[i]);
+
+//			printf("\n");
+
+			PyList_Append(py_hit_list, d);
+
+		}
+	}
+
+	return(py_hit_list);
+}
+
+
+/*
+Takes Python objects as input and prepares them for passing to full_spectrum_search
+*/
+static PyObject *full_spec_search(PyObject *self, PyObject *args) {
+	int counter;
+	char *test;
+	char *my_test;
+	int test_len ;
+	PyObject *py_hit_list ;
+
+	int ok = PyArg_ParseTuple(args, "s", &test);
+	my_test = (char *) malloc(strlen(test)*sizeof('a'));
+	strcpy(my_test,test);
+	test_len = strlen(my_test);
+
+	for(counter = 0; counter < test_len; counter += 1){
+		if(my_test[counter] == '*'){
+			my_test[counter] = '\000';
+		}
+	}
+
+	py_hit_list = full_spectrum_search( &io, my_test);
+	free(my_test);
+	return py_hit_list;
+}
 
 
 /****************************************************************************
@@ -265,7 +548,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	#define MAX_SCREEN_LOCS NISTMS_MAX_FPOS /* 6000 = largest number of tentative hits from the
 											   screen search (pre-search) */
 
-	#define MAX_HITS_RETURNED MAX_LIB_SRCH_HITS //MAX_NOPRESRCH_HITS if search_type=NISTMS_NO_PRE_SRCH
+	#define MAX_HITS_RETURNED MAX_LIB_SRCH_HITS
 
 	/*
 		The following seven buffers are attached to the NISTMS_HIT_LIST structure
@@ -295,6 +578,8 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	/*     Not meaningful for reverse (impure), 'S', 'H' or 'L' search modes  */
 	static int hit_prob[MAX_HITS_RETURNED];
 
+//	/*     Meaningful only for Peptide search */
+//	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
 
 	/*     OPTIONAL; for (possibly truncated) name retrieval for hit list presentation */
 	static unsigned char *lib_names = LibNamesBuffer;
@@ -310,12 +595,16 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	memset((void*)&cntls, '\0', sizeof(cntls) );
 
 	memset((void*)&hit_list, '\0', sizeof(hit_list) );
+//	memset(pep_scores, 0, sizeof(pep_scores));
 
 	if ( 0 >= parse_spectrum(&userms, &aux, spectrum)) {
 		if ( userms.num_exact_mz < -1 ) {
-			printf("Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
-		} else {
-			printf("Could not read the spectrum. Terminating.\n");
+			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
+			return NULL;
+		}
+		else {
+			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
+			return NULL;
 		}
 		Py_RETURN_NONE; // cannot read the spectrum
 	}
@@ -347,13 +636,16 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	******************************************************************************/
 
 	cntls.search_mode = 'I';
-	cntls.user_mw   = 1; // Used by 'L', 'H' or 'M' only
+	cntls.user_mw   = 1; // Used by 'L', 'H' or 'M' only  // This got replaced by 0 later on
 	cntls.impure    = 0;
 
 	// cntls.min_mass =-1 =>lower mass limit=max(min_mass(libms),min_mass(userms)), default in MS Search
 	// in MS Search built before 03/04/2013, in 'E' mode, cntls.min_mass is treated as
 	// cntls.min_mass = fabs(cntls.min_mass) >= 0
 	// cntls.max_mass  = -1 is treated as 1; 0 is treated as max. allowed m/z~4000
+
+	// Min Mass:  -1 => auto: max out of min m/z in library and search spectrum, implemented in MS Search build Mar 04, 2013 or later
+	// Max Mass:  -1=> auto: max out of max m/z in library and search spectrum; up to 4000, implemented in MS Search build Mar 04, 2013 or later
 
 	if ((cntls.search_mode & SEARCH_MODE_CHAR_MASK) == 'E') {
 		cntls.min_mass  = 0; //same as 1;
@@ -364,13 +656,10 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		cntls.max_mass  = -1; //-1=>no upper mass limit
 	}
 
-	cntls.min_abund = 1;  // ignored by ms/ms search
+//	cntls.min_mass  =  1;
+//	cntls.max_mass  =  -1;
 
-	cntls.user_mw   =  0; // Used by 'L', 'H', 'M' only
-	cntls.impure    =  0;
-	cntls.min_mass  =  1;    /* -1 => auto: max out of min m/z in library and search spectrum, implemented in MS Search build Mar 04, 2013 or later */
-	cntls.max_mass  =  -1; /* -1=> auto: max out of max m/z in library and search spectrum; up to 4000, implemented in MS Search build Mar 04, 2013 or later */
-	cntls.min_abund =  0;  /* auto: min possible */
+	cntls.min_abund = 1;  // ignored by ms/ms search  // This got replaced by 0 (auto: min possible) later on
 
 	/*  attach allocated buffers to input/output structure */
 	pio->userms = &userms;     /*  input mass spectrum */
@@ -518,32 +807,6 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 
 
 /*
-Takes Python objects as input and prepares them for passing to full_spectrum_search
-*/
-static PyObject *full_spec_search(PyObject *self, PyObject *args) {
-	int counter;
-	char *test;
-	char *my_test;
-	int test_len ;
-	PyObject *py_hit_list ;
-
-	int ok = PyArg_ParseTuple(args, "s", &test);
-	my_test = (char *) malloc(strlen(test)*sizeof('a'));
-	strcpy(my_test,test);
-	test_len = strlen(my_test);
-
-	for(counter = 0; counter < test_len; counter += 1){
-		if(my_test[counter] == '*'){
-			my_test[counter] = '\000';
-		}
-	}
-
-	py_hit_list = full_spectrum_search( &io, my_test);
-	free(my_test);
-	return py_hit_list;
-}
-
-/*
 Finds and returns the information about the spectrum at the given location in the library
 */
 static PyObject *get_reference_data(PyObject *self, PyObject *args) {
@@ -646,249 +909,7 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 }
 
 
-
-static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum) {
-
-	static NISTMS_CONSTRAINTS constraints;
-	static NISTMS_MASS_SPECTRUM userms;  /*  contains unknown spectrum */
-	static NISTMS_AUX_DATA      aux;
-	static NISTMS_HIT_LIST hit_list;     /*  returns hits */
-	static NISTMS_SRCH_CONTROLS cntls;   /*  specifies search type */
-
-	/*
-	The following seven buffers are attached to the NISTMS_HIT_LIST structure
-	to hold retrieved hit locations, similarity values and optional hit
-	descriptions
-
-	fpos_array is the central buffer.  It is used as follows:
-	1) to receive locations of spectra passing the screen (pre-search)
-	2) to send possible hit locations for spectral comparison
-	3) to receive an ordered hit list
-	*/
-
-	static NISTMS_RECLOC fpos_array[MAX_NOPRESRCH_HITS];
-
-	/*     REQUIRED for library search */
-	static int sim_num[MAX_NOPRESRCH_HITS];
-
-	/*     REQUIRED for reverse (impure) search, OPTIONAL for forward search */
-	static int rev_sim_num[MAX_NOPRESRCH_HITS];
-
-	/*     OPTIONAL for forward (pure compound) 'Q', 'I', or 'P' search,  */
-	/*     Not meaningful for reverse (impure), 'S', 'H' or 'L' searches  */
-	static int hit_prob[MAX_NOPRESRCH_HITS];
-
-	/*     Meaningful only for Peptide search */
-	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
-
-	/*     OPTIONAL; for (possibly truncated) name retrieval for hit list presentation */
-	static unsigned char *lib_names = LibNamesBuffer;
-
-	int i;
-
-	/* OPTIONAL; for finding hits satisfying constraints */
-	memset((void*)&cntls, '\0', sizeof(cntls) );
-
-	memset((void*)&hit_list, '\0', sizeof(hit_list) );
-	memset(pep_scores, 0, sizeof(pep_scores));
-
-	if ( 0 >= parse_spectrum(&userms, &aux, spectrum)) {
-		if ( userms.num_exact_mz < -1 ) {
-			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
-			return NULL;
-		} else {
-			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
-			return NULL;
-		}
-        Py_RETURN_NONE; // cannot read the spectrum
-	}
-
-	cntls.search_mode = 'Q';    // Quick Search
-
-	/* new feature: ignore precursor ion(s)
-	   within +/- cntls.precursor_ion_tolerance interval around precursor m/z from:
-
-	  for the searched spectrum:
-	  ----------------------------
-	  1. ms/ms search && cntls.user_mw                    => cntls.user_mw*100
-	  2. peptide search && cntls.precursor_ion_100mz      => cntls.precursor_ion_100mz
-	  3. peptide format search spectrum has precursor m/z => pio->userms->precursor_ion_100mz
-	  4. NOT peptide search && user spec. mw > 0          => pio->aux_data->mw*100
-	  5. zero if none of the above
-	  Note: precursor m/z is extracted from the NIST_MSMS
-			library spectrum synonyms since 2007-04-04
-
-	  for the library spectrum:
-	  ----------------------------
-	  1. spectrum has precursor m/z                       => precursor m/z
-		 (including nist_msms library)
-	  2. not peptide search and spectrum has mw           => mw*100
-
-	  Also are ignored peaks in each library spectrum coinsiding with the search spectrum precursor
-	  and peaks in the search spectrum counsiding with the library spectrum precursor.
-
-	 */
-
-	cntls.search_mode |= SEARCH_MODE_FLAG_IGNORE_PRECURSOR; // comment out to de-activate
-
-	// for selecting spectra to be compared according to their Precursor m/z
-	// and half-width of the ignoring precursor m/z interval (SEARCH_MODE_FLAG_IGNORE_PRECURSOR)
-	// (for integer m/z the rounding of the half-width is to the nearest 100)
-	cntls.precursor_ion_tolerance = 160;  // 1.6 m/z units
-	// cntls.precursor_ion_tolerance = 10;  // 1.6 m/z units
-	// for spectra comparison
-	cntls.product_ions_tolerance =  80;   // 0.8 m/z units
-
-	// Peptide Presearch Option
-	// The value assigned in the next statement has the followin meaning:
-	// zero => search in the active libs all spectra that have Precursor m/z
-	//   (corresponds to Presearch=Off in the NIST MS Search Prorgam)
-	// 100*(Precursor m/z) => compare only spectra
-	//   within +/- cntls.nPrecursorTolerance interval
-	//   (corresponds to Presearch=Default in the NIST MS Search Prorgam)
-	cntls.precursor_ion_100mz = userms.precursor_ion_100mz; /* Presearch=Default */
-															/* 0 => Presearch = OFF */
-
-	//--- Display indicators ----
-	cntls.pep_bTF_qry        = 0;
-	cntls.pep_bE_Omssa       = 1;
-	cntls.pep_bTF_lib        = 0;
-	cntls.pep_nCysteineModification = 0;  /* unused */
-	cntls.pep_cThreshold     = 0; /* 0=>the highest threshold, 1=>Mediium, 2=>the lowest */
-	//--- Weight indicators ----
-	cntls.pep_bOmssa         = 1; /* Use OMSSA score for weighting = No */
-	cntls.pep_bNumReplicates = 0; /* Use number of Replicates = No */
-	cntls.pep_bQ_TOF         = 0;
-
-	// general
-	cntls.user_mw   =  0; // Used by 'L', 'H', 'M' only
-	cntls.impure    =  0;
-	cntls.min_mass  =  1;
-	cntls.max_mass  =  2000;
-	cntls.min_abund =  1;
-
-
-	/*  attach allocated buffers to input/output structure */
-	pio->userms = &userms;     /*  input mass spectrum */
-	pio->cntls  = &cntls;      /*  type of search */
-
-	/* prepare hit list to receive spectrum pointers */
-	pio->hit_list                   = &hit_list;  /* hit list */
-	pio->hit_list->spec_locs        = fpos_array; /* spectrum pointers */
-	pio->hit_list->max_spec_locs    = MAX_NOPRESRCH_HITS;
-	pio->hit_list->max_hits_desired = MAX_NOPRESRCH_HITS;
-
-	/* prepare hit list to receive spectrum compare results */
-	pio->hit_list->sim_num = sim_num;
-	pio->hit_list->rev_sim_num = rev_sim_num;
-	pio->hit_list->hit_prob = hit_prob;
-	for ( i = 0; i < NUM_ADD_SPEC_MATCHFACT; i ++ ) {
-		hit_list.pep_Mf[i] = pep_scores[i];
-		// actually, only
-		// !!cntls.pep_bTF_qry+!!cntls.pep_bE_Omssa+!!cntls.pep_bTF_lib+!!cntls.bRevImpure
-		// elements are needed (number of non-zeroes)
-	}
-
-	hit_list.lib_names = lib_names;
-	hit_list.lib_names_len = sizeof(LibNamesBuffer);
-	hit_list.max_one_lib_name_len = MAX_NAME_LEN;
-	hit_list.stru_pos = NULL;  /* no structures available in Peptide libraries */
-	hit_list.casnos   = NULL;  /* no CAS r.n. available in Peptide libraries */
-
-	pio->constraints = NULL;        /*  no constraints */
-
-	/* if these were uncommented, hits would be subject to various peptide-specific constraints*/
-/*
-	io.constraints = &constraints;
-	clear_constraints(io.constraints);              // disable all constraints
-	set_pep_constraints(io.constraints); // add peptide-specific constraints
-*/
-//	printf("%d is the search_type\n",search_type) ;
-
-	nistms_search(search_type, pio);
-
-	switch ( pio->error_code ) {
-		case 0:
-			break;
-		default:
-			PyErr_Format(PyExc_RuntimeError, "Spectrum search returned error code %d\n", pio->error_code);
-			return NULL;
-	};
-
-	PyObject *py_hit_list = PyList_New(0);
-
-	if(pio->hit_list->num_hits_found){
-		int best_score = pio->hit_list->sim_num[0];
-
-//		printf("%d\n", best_score);
-//		printf("%d\n", pio->hit_list->num_hits_found);
-
-		int name_len = pio->hit_list->max_one_lib_name_len;
-		unsigned char * raw_hit_names = pio->hit_list->lib_names;
-
-		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
-			PyObject *d = PyDict_New();
-
-//			printf("%d, ", i);
-
-			PyObject *py_sim_num = PyLong_FromLong(hit_list.sim_num[i]);
-			PyDict_SetItemString(d, "sim_num", py_sim_num);
-//			printf("%d, ", pio->hit_list->sim_num[i]);
-
-			PyObject *py_rev_sim_num = PyLong_FromLong(hit_list.rev_sim_num[i]);
-			PyDict_SetItemString(d, "rev_sim_num", py_rev_sim_num);
-//			printf("%d, ", pio->hit_list->rev_sim_num[i]);
-
-			PyObject *py_hit_prob = PyLong_FromLong(hit_list.hit_prob[i]);
-			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
-//			printf("%d, ", pio->hit_list->hit_prob[i]);
-
-//			PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
-//		    PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
-//			printf("%d, ", pio->hit_list->in_library_prob[i]);
-
-			int start_byte = i*name_len;
-			int end_byte = start_byte + name_len;
-			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
-//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
-
-			PyObject *py_hit_name_char_list = PyList_New(0);
-
-			// Fix for Wine crash
-			for ( size_t i = start_byte; i <= end_byte; ++i ) {
-				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
-			}
-
-//			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
-//			}
-
-			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
-
-//			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
-//			PyDict_SetItemString(d, "hit_name", py_hit_name);
-
-//			printf("%ld, ", pio->hit_list->stru_pos[i]);
-
-			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
-			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
-//			printf("%ld, ", pio->hit_list->spec_locs[i]);
-
-			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
-			PyDict_SetItemString(d, "cas_no", py_cas_no);
-//			printf("%ld, ", pio->hit_list->casnos[i]);
-
-//			printf("\n");
-
-			PyList_Append(py_hit_list, d);
-
-		}
-	}
-
-	return(py_hit_list);
-}
-
-
+/* loads a single spectrum from a string */
 static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *szPeaks) {
 
 	unsigned char szName[]    = "unknown";
@@ -1056,108 +1077,106 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
   If optional data is not needed, retrieval will be faster if the
   corresponding fields are NULL.
 ***************************************************************************/
-static void get_spectrum(NISTMS_IO *pio, NISTMS_RECLOC *fpos)
-{
+static void get_spectrum(NISTMS_IO *pio, NISTMS_RECLOC *fpos) {
 	get_spectrum_int_or_accurate_mz(pio, fpos, 1) ;
 }
 /*****************************************************************/
-static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz)
-{
-static NISTMS_MASS_SPECTRUM ms;             /*  required */
-static NISTMS_AUX_DATA      aux;            /*  optionsl */
-static NISTMS_STDATA        stdata;         /*  optional */
-//#define MAX_NUM_REPLICATES  10              /*  larger than ever needed */
-static NISTMS_RECLOC rep_locs[NISTMS_MAXREPLICATES]; /*  optional */
+static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz) {
+	static NISTMS_MASS_SPECTRUM ms;             /*  required */
+	static NISTMS_AUX_DATA      aux;            /*  optionsl */
+	static NISTMS_STDATA        stdata;         /*  optional */
+	//#define MAX_NUM_REPLICATES  10              /*  larger than ever needed */
+	static NISTMS_RECLOC rep_locs[NISTMS_MAXREPLICATES]; /*  optional */
 
-#if( defined(ALLOW_MSMS_VERSION) )
-/* larger peptide-specific 'peaks text info' sizes may be needed */
-#define MZ_PEAK_NUM   NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM
-#define MZ_TEXT_SIZE  NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN
-static char           szMzText[MZ_TEXT_SIZE];  /* buffer to hold 'peaks text info' */
-static char          *pMzPtr[MZ_PEAK_NUM];     /* pointers to peaks */
-#define REFERENCES_LEN NISTMS_MAXREFERENCESLEN /* may be greater */
-static char           szReferences[REFERENCES_LEN];
-#endif
+	#if( defined(ALLOW_MSMS_VERSION) )
+	/* larger peptide-specific 'peaks text info' sizes may be needed */
+	#define MZ_PEAK_NUM   NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM
+	#define MZ_TEXT_SIZE  NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN
+	static char           szMzText[MZ_TEXT_SIZE];  /* buffer to hold 'peaks text info' */
+	static char          *pMzPtr[MZ_PEAK_NUM];     /* pointers to peaks */
+	#define REFERENCES_LEN NISTMS_MAXREFERENCESLEN /* may be greater */
+	static char           szReferences[REFERENCES_LEN];
+	#endif
 
-	memset(&ms,  '\0', sizeof(ms) );
-	memset(&aux, '\0', sizeof(aux) );
+		memset(&ms,  '\0', sizeof(ms) );
+		memset(&aux, '\0', sizeof(aux) );
 
-#if( defined(ALLOW_MSMS_VERSION) )
-	if ( bAccurate_mz ) {
-		// additional members for accurate m/z in mass spectral peaks
-		ms.exact_mz              = pMzPtr;       /* pointers to peaks */
-		ms.exact_mz_len          = MZ_PEAK_NUM;  /* max. number of peaks */
-		ms.num_exact_mz          = 0;            /* current number of peaks */
-		ms.buf_exact_mz          = szMzText;     /* buffer to hold 'peaks text info' */
-		ms.buf_exact_mz_len      = MZ_TEXT_SIZE; /* buffer size */
-	}
-#endif
-
-	printf("Gathering Data for spectrum at location %ld\n", fpos);
-	pio->input_spec_loc = fpos; /* most significant 4 bits=lib number, the rest=file offset */
-
-	pio->libms          = &ms;
-	pio->aux_data       = &aux;
-
-	/*  get chemical structures when io->stdata != NULL */
-	memset(&stdata, '\0', sizeof(stdata) );
-	pio->stdata = &stdata;
-
-	if ( pio->aux_data ) {
-		/*  get synonyms when io->aux_data->synonyms != NULL */
-		memset(g_synonyms, '\0', sizeof(g_synonyms));
-		pio->aux_data->synonyms = g_synonyms;
-		pio->aux_data->synonyms_len = sizeof(g_synonyms);
-
-		/*  get any replicates in replicate library if io->aux_data->rep_locs != NULL */
-		pio->aux_data->num_rep_locs = NISTMS_MAXREPLICATES;
-		pio->aux_data->rep_locs = rep_locs;
-
-		// get contributor for NIST library or comment for user library
-		memset(g_contributor, '\0', sizeof(g_contributor));
-		pio->aux_data->contributor = g_contributor;
-		pio->aux_data->contributor_len = sizeof(g_contributor);
-#if( defined(ALLOW_MSMS_VERSION) )
+	#if( defined(ALLOW_MSMS_VERSION) )
 		if ( bAccurate_mz ) {
-			/* peptide library spectrum origin references */
-			/* tab-delimited refernce fields:
-			   Dataset, Contributor, Number of Files, Source, Reference, Title, Authors.
-			   Each reference is zero-terminated; the last reference has an additional zero termination
-			   The reference's zero termination byte may be located after any field.
-			 */
-			pio->aux_data->references     = szReferences;
-			pio->aux_data->references_len = REFERENCES_LEN;
-			pio->aux_data->num_references = 0; /* will be filled with the number of references */
+			// additional members for accurate m/z in mass spectral peaks
+			ms.exact_mz              = pMzPtr;       /* pointers to peaks */
+			ms.exact_mz_len          = MZ_PEAK_NUM;  /* max. number of peaks */
+			ms.num_exact_mz          = 0;            /* current number of peaks */
+			ms.buf_exact_mz          = szMzText;     /* buffer to hold 'peaks text info' */
+			ms.buf_exact_mz_len      = MZ_TEXT_SIZE; /* buffer size */
 		}
-#endif
-	}
-	/*  this will fill io with data */
-	nistms_search( NISTMS_GET_SPECTRUM_SRCH, pio);
+	#endif
 
-	/* show_spectrum(io);*/
+		printf("Gathering Data for spectrum at location %ld\n", fpos);
+		pio->input_spec_loc = fpos; /* most significant 4 bits=lib number, the rest=file offset */
 
-//    printf("Name: %s\n", pio->aux_data->name);
-//    printf("CAS: %ld\n", pio->aux_data->casno);
-//    printf("NIST Num: %ld\n", pio->aux_data->specno);
-//    printf("ID: %ld##\n", pio->aux_data->ident);
-//    printf("MW: %d##\n", pio->aux_data->mw);
-//    printf("Exact Mass: %d##\n", pio->aux_data->exact_mw);
-//    printf("Formula: %s##\n", pio->aux_data->formula);
-//    printf("Contributor: %s##\n", pio->aux_data->contributor);
-//
-//	printf("MS Num Peaks: %d##\n", pio->libms->num_peaks);
-//
-//	for (int i=0; i < pio->libms->num_peaks; i++) {
-//		printf("\tmz, Intensity: %d %d\n", pio->libms->mass[i], pio->libms->abund[i]);
-//	}
+		pio->libms          = &ms;
+		pio->aux_data       = &aux;
+
+		/*  get chemical structures when io->stdata != NULL */
+		memset(&stdata, '\0', sizeof(stdata) );
+		pio->stdata = &stdata;
+
+		if ( pio->aux_data ) {
+			/*  get synonyms when io->aux_data->synonyms != NULL */
+			memset(g_synonyms, '\0', sizeof(g_synonyms));
+			pio->aux_data->synonyms = g_synonyms;
+			pio->aux_data->synonyms_len = sizeof(g_synonyms);
+
+			/*  get any replicates in replicate library if io->aux_data->rep_locs != NULL */
+			pio->aux_data->num_rep_locs = NISTMS_MAXREPLICATES;
+			pio->aux_data->rep_locs = rep_locs;
+
+			// get contributor for NIST library or comment for user library
+			memset(g_contributor, '\0', sizeof(g_contributor));
+			pio->aux_data->contributor = g_contributor;
+			pio->aux_data->contributor_len = sizeof(g_contributor);
+	#if( defined(ALLOW_MSMS_VERSION) )
+			if ( bAccurate_mz ) {
+				/* peptide library spectrum origin references */
+				/* tab-delimited refernce fields:
+				   Dataset, Contributor, Number of Files, Source, Reference, Title, Authors.
+				   Each reference is zero-terminated; the last reference has an additional zero termination
+				   The reference's zero termination byte may be located after any field.
+				 */
+				pio->aux_data->references     = szReferences;
+				pio->aux_data->references_len = REFERENCES_LEN;
+				pio->aux_data->num_references = 0; /* will be filled with the number of references */
+			}
+	#endif
+		}
+		/*  this will fill io with data */
+		nistms_search( NISTMS_GET_SPECTRUM_SRCH, pio);
+
+		/* show_spectrum(io);*/
+
+	//    printf("Name: %s\n", pio->aux_data->name);
+	//    printf("CAS: %ld\n", pio->aux_data->casno);
+	//    printf("NIST Num: %ld\n", pio->aux_data->specno);
+	//    printf("ID: %ld##\n", pio->aux_data->ident);
+	//    printf("MW: %d##\n", pio->aux_data->mw);
+	//    printf("Exact Mass: %d##\n", pio->aux_data->exact_mw);
+	//    printf("Formula: %s##\n", pio->aux_data->formula);
+	//    printf("Contributor: %s##\n", pio->aux_data->contributor);
+	//
+	//	printf("MS Num Peaks: %d##\n", pio->libms->num_peaks);
+	//
+	//	for (int i=0; i < pio->libms->num_peaks; i++) {
+	//		printf("\tmz, Intensity: %d %d\n", pio->libms->mass[i], pio->libms->abund[i]);
+	//	}
 
 
-	return;
-#if( defined(ALLOW_MSMS_VERSION) )
-	#undef MZ_PEAK_NUM
-	#undef MZ_TEXT_SIZE
-	#undef REFERENCES_LEN
-#endif
+		return;
+	#if( defined(ALLOW_MSMS_VERSION) )
+		#undef MZ_PEAK_NUM
+		#undef MZ_TEXT_SIZE
+		#undef REFERENCES_LEN
+	#endif
 }
 /**************************************************************************/
 

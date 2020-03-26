@@ -9,6 +9,7 @@ PYBINS=(
   )
 
 for PYBIN in ${PYBINS[@]}; do
+    "${PYBIN}/pip" install wheel
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
