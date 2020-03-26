@@ -114,8 +114,8 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 static void get_spectrum(NISTMS_IO *io, NISTMS_RECLOC *fpos);
 static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz);
 
-static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir)
-static PyObject *init_api(PyObject *self, PyObject *args)
+static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir);
+static PyObject *init_api(PyObject *self, PyObject *args);
 
 /******************************/
 /* allocated for results      */
