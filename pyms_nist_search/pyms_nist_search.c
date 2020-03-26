@@ -237,7 +237,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 	static int hit_prob[MAX_NOPRESRCH_HITS];
 
 //	/*     Meaningful only for Peptide search */
-//	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
+	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
 
 	/*     OPTIONAL; for (possibly truncated) name retrieval for hit list presentation */
 	static unsigned char *lib_names = LibNamesBuffer;
@@ -368,7 +368,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 	set_pep_constraints(io.constraints); // add peptide-specific constraints
 */
 //	printf("%d is the search_type\n",search_type) ;
-	print("371\n");
+	printf("371\n");
 	nistms_search(search_type, pio);
 
 	switch ( pio->error_code ) {
