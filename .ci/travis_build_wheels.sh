@@ -9,7 +9,8 @@ PYBINS=(
   )
 
 for PYBIN in ${PYBINS[@]}; do
-    "${PYBIN}/pip" install wheel
+    # Upgrade auditwheel to fix borked docker image from 26 Mar 2020
+    "${PYBIN}/pip" install auditwheel --upgrade
     "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 done
 
