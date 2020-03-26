@@ -443,6 +443,7 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 //			printf("%ld, ", pio->hit_list->casnos[i]);
 //			PyObject *py_cas_no = PyLong_FromLong(pio->hit_list->casnos[i]);
 //			PyDict_SetItemString(d, "cas_no", py_cas_no);
+			PyDict_SetItemString(d, "cas_no", PyLong_FromLong(0));
 			printf("446\n");
 //			printf("\n");
 
