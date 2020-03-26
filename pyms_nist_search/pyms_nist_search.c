@@ -435,23 +435,23 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 //			printf("%ld, ", pio->hit_list->stru_pos[i]);
 
 //			printf("%ld, ", pio->hit_list->spec_locs[i]);
-			printf("438\n");
+
 			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
-			printf("441\n");
+
 
 //			printf("%ld, ", pio->hit_list->casnos[i]);
 //			PyObject *py_cas_no = PyLong_FromLong(pio->hit_list->casnos[i]);
 //			PyDict_SetItemString(d, "cas_no", py_cas_no);
 			PyDict_SetItemString(d, "cas_no", PyLong_FromLong(0));
-			printf("446\n");
+
 //			printf("\n");
 
 			PyList_Append(py_hit_list, d);
 
 		}
 	}
-	printf("453\n");
+
 	return(py_hit_list);
 }
 
