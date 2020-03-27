@@ -70,7 +70,7 @@ print(f"Completed Full Search in {(datetime.datetime.now() - start_time).total_s
 start_time = datetime.datetime.now()
 print("Performing Quick Search")
 
-hit_list = search.spectrum_search(mass_spec)
+hit_list = search.spectrum_search(mass_spec, n_hits=10)
 
 for hit_no, hit in enumerate(hit_list):
 	print(f"Hit {hit_no}")

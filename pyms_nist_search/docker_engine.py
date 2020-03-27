@@ -56,6 +56,23 @@ from .search_result import SearchResult
 client = docker.from_env()
 
 
+def require_init(func):
+	"""
+	Decorator to ensure that functions do not run after the class has been unitialised
+
+	:param func: The function or method to wrap
+	"""
+	
+	def wrapper(cls, *args, **kwargs):
+		if not cls.initialised:
+			raise RuntimeError("""The Search Engine has been unitialised!
+Please create a new instance of the Search Engine and try again.""")
+		
+		func(cls, *args, **kwargs)
+	
+	return wrapper
+
+
 class Engine:
 	"""
 	Search engine for Linux and other platforms supporting Docker.
@@ -118,6 +135,7 @@ class Engine:
 		while retry_count < 240:
 			try:
 				if requests.get("http://localhost:5001/").text == "ready":
+					self.initialised = True
 					return
 				
 			except requests.exceptions.ConnectionError:
@@ -128,21 +146,26 @@ class Engine:
 			
 	def uninit(self):
 		"""
-		Uninitialize the Search Engine
+		Uninitialise the Search Engine
 		"""
 		
-		print("Shutting down docker server")
-		
-		if self.debug:
-			print("Server log follows:")
-			print(self.docker.logs(timestamps=True).decode("utf-8"))
-		
-		try:
-			self.docker.stop()
-			self.docker.remove()
-		except docker.errors.NotFound:
-			print("Unable to shut down the docker server")
+		if self.initialised:
+			
+			print("Shutting down docker server")
+			
+			if self.debug:
+				print("Server log follows:")
+				print(self.docker.logs(timestamps=True).decode("utf-8"))
+			
+			try:
+				self.docker.stop()
+				self.docker.remove()
+			except docker.errors.NotFound:
+				print("Unable to shut down the docker server")
+			
+			self.initialised = False
 	
+	@require_init
 	def spectrum_search(self, mass_spec, n_hits=5):
 		"""
 		Perform a Quick Spectrum Search of the mass spectral library
@@ -177,6 +200,7 @@ class Engine:
 		
 		raise TimeoutError("Unable to communicate with the search server.")
 	
+	@require_init
 	def full_spectrum_search(self, mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
@@ -210,6 +234,7 @@ class Engine:
 			
 		raise TimeoutError("Unable to communicate with the search server.")
 	
+	@require_init
 	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library, including reference data.
@@ -242,6 +267,7 @@ class Engine:
 	
 		raise TimeoutError("Unable to communicate with the search server.")
 	
+	@require_init
 	def get_reference_data(self, spec_loc):
 		"""
 		Get reference data from the library for the compound at the given location.
