@@ -4,10 +4,10 @@ PyMassSpec NIST Search
 
 .. image:: https://travis-ci.com/domdfcoding/pynist.svg?branch=master
 	:target: https://travis-ci.com/domdfcoding/pynist
-	:alt: Build Status
+	:alt: Linux Build Status
 .. image:: https://ci.appveyor.com/api/projects/status/82cs9prucypd1igb?svg=true
 	:target: https://ci.appveyor.com/project/domdfcoding/pyms-nist-search/branch/master
-	:alt: AppVeyor
+	:alt: Windows Build Status
 .. image:: https://readthedocs.org/projects/pymassspec/badge/?version=latest
 	:target: https://pymassspec.readthedocs.io/en/latest/?badge=latest
 	:alt: Documentation Status
@@ -17,11 +17,15 @@ PyMassSpec NIST Search
 .. image:: https://img.shields.io/pypi/pyversions/pyms_nist_search.svg
 	:target: https://pypi.org/project/pyms_nist_search/
 	:alt: PyPI - Python Version
+.. image:: https://img.shields.io/pypi/l/pyms-nist-search
+	:alt: PyPI - License
+	:target: https://www.gnu.org/licenses/lgpl-3.0.en.html
 
 
 
 PyMassSpec extension for searching mass spectra using NIST's Spectrum Search Engine
 
+PyMassSpec NIST Search is Free Software licensed under the `GNU Lesser General Public License Version 3 <https://www.gnu.org/licenses/lgpl-3.0.en.html>`_
 
 Usage
 ########

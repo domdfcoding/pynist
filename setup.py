@@ -14,7 +14,7 @@ VERSION = "0.3.7"
 
 modname = "pyms_nist_search"
 
-short_desc = "PyMassSpec extension for searching mass spectra using NIST's Spectrum Search Engine"
+short_desc = "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine"
 
 author = "Dominic Davis-Foster"
 author_email = "dominic@davis-foster.co.uk"
