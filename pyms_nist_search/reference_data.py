@@ -191,6 +191,8 @@ class ReferenceData(NISTBase):
 			class_dict["mass_spec"] = dict(self.mass_spec)
 		else:
 			class_dict["mass_spec"] = copy.copy(self.mass_spec)
+		
+		return class_dict
 	
 	def __getstate__(self):
 		return self.__dict__()
