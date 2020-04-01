@@ -819,50 +819,50 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 	PyObject *py_intensity_list = PyList_New(0);
 //	PyObject *py_synonym_list = PyList_New(0);
 	PyObject *py_synonyms_char_list = PyList_New(0);
-	printf("822\n");
+
 	int ok = PyArg_ParseTuple(args, "l", &input_spec_loc);
 //	printf("Parsed Args\n");
 //	printf("input_spec_locs = %ld", input_spec_loc);
-	printf("826\n");
+
 	get_spectrum( &io, input_spec_loc);
-	printf("828\n");
+
 //	printf("Search Complete\n");
 
 //	printf("Name: %s\n", io.aux_data->name);
 	PyObject *py_name = PyUnicode_FromFormat("%s", io.aux_data->name);
 	PyDict_SetItemString(record, "name", py_name);
-	printf("834\n");
+
 	PyObject *py_name_char_list = PyList_New(0);
 
 	for (int i = 0; i <= MAX_NAME_LEN; i++) {
 //		printf("%d ", io.aux_data->name[i]);
 		PyList_Append(py_name_char_list, PyLong_FromLong(io.aux_data->name[i]));
 	}
-	printf("841\n");
+
 	PyDict_SetItemString(record, "name_chars", py_name_char_list);
 
 //	printf("CAS: %ld\n", io.aux_data->casno);
 	PyObject *py_cas = PyLong_FromLong(io.aux_data->casno);
 	PyDict_SetItemString(record, "cas", py_cas);
-	printf("847\n");
+
 //	printf("NIST Num: %ld\n", io.aux_data->specno);
 	PyObject *py_nist_no = PyLong_FromLong(io.aux_data->specno);
 	PyDict_SetItemString(record, "nist_no", py_nist_no);
-	printf("851\n");
+
 //	printf("ID: %ld\n", io.aux_data->ident);
 	PyObject *py_id = PyLong_FromLong(io.aux_data->ident);
 	PyDict_SetItemString(record, "id", py_id);
-	printf("855\n");
+
 //	printf("MW: %d\n", io.aux_data->mw);
 	PyObject *py_mw = PyLong_FromLong(io.aux_data->mw);
 	PyDict_SetItemString(record, "mw", py_mw);
-	printf("859\n");
+
 //	printf("Exact Mass: %f##\n", io.aux_data->exact_mw);
 
 //	printf("Formula: %s\n", io.aux_data->formula);
 	PyObject *py_formula = PyUnicode_FromString(io.aux_data->formula);
 	PyDict_SetItemString(record, "formula", py_formula);
-	printf("865\n");
+
 //	printf("Contributor: %s\n", io.aux_data->contributor);
 	PyObject *py_contributor = PyUnicode_FromString(io.aux_data->contributor);
 	PyDict_SetItemString(record, "contributor", py_contributor);

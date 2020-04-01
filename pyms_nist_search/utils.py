@@ -98,7 +98,11 @@ def parse_name_chars(name_char_list):
 		elif dec == 252:
 			char = "η"
 		else:
-			char = chr(dec)
+			try:
+				char = chr(dec)
+			except ValueError:
+				print(f"Unable to parse character with code {dec}")
+				char = '�'
 		
 		if char != "\x00":
 			hit_name += char
