@@ -68,7 +68,7 @@ def require_init(func):
 			raise RuntimeError("""The Search Engine has been unitialised!
 Please create a new instance of the Search Engine and try again.""")
 		
-		func(cls, *args, **kwargs)
+		return func(cls, *args, **kwargs)
 	
 	return wrapper
 
