@@ -103,6 +103,10 @@ def parse_name_chars(name_char_list):
 			except ValueError:
 				print(f"Unable to parse character with code {dec}")
 				char = '�'
+				
+				# List of problem codes encountered so far:
+				# -26, which should be a μ (03BC)
+				
 		
 		if char != "\x00":
 			hit_name += char

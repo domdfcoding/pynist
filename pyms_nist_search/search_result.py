@@ -146,3 +146,9 @@ class SearchResult(NISTBase):
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
 				)
+	
+	def __getstate__(self):
+		return self.__dict__()
+	
+	def __setstate__(self, state):
+		self.__init__(**state)

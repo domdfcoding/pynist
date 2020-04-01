@@ -187,3 +187,10 @@ class ReferenceData(NISTBase):
 				mass_spec=copy.copy(self.mass_spec),
 				synonyms=self.synonyms[:],
 				)
+	
+	def __getstate__(self):
+		return self.__dict__()
+	
+	def __setstate__(self, state):
+		self.__init__(**state)
+
