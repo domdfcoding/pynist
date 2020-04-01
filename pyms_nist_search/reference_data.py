@@ -175,18 +175,22 @@ class ReferenceData(NISTBase):
 	def __repr__(self):
 		return f"Reference Data: {self.name} \t({self.cas})"
 	
-	def __dict__(self):
-		return dict(
-				name=self._name,
+	def __dict__(self, recursive=False):
+		class_dict = dict(
+				name=self.name,
 				cas=self.cas,
 				formula=self.formula,
 				contributor=self.contributor,
 				nist_no=self.nist_no,
 				id=self.id,
 				mw=self.mw,
-				mass_spec=copy.copy(self.mass_spec),
 				synonyms=self.synonyms[:],
 				)
+		
+		if recursive:
+			class_dict["mass_spec"] = dict(self.mass_spec)
+		else:
+			class_dict["mass_spec"] = copy.copy(self.mass_spec)
 	
 	def __getstate__(self):
 		return self.__dict__()

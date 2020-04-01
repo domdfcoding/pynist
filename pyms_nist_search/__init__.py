@@ -39,6 +39,7 @@ import sys
 from ._core import *
 from .reference_data import ReferenceData
 from .search_result import SearchResult
+from .json import PyNISTEncoder
 
 
 if sys.platform == "win32":
