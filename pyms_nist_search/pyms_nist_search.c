@@ -866,7 +866,7 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 //	printf("Contributor: %s\n", io.aux_data->contributor);
 	PyObject *py_contributor = PyUnicode_FromString(io.aux_data->contributor);
 	PyDict_SetItemString(record, "contributor", py_contributor);
-	printf("869\n");
+
 //	printf("MS Num Peaks: %d\n", io.libms->num_peaks);
 	for (int i=0; i < io.libms->num_peaks; i++) {
 //		printf("\tmz, Intensity: %d %d\n", io.libms->mass[i], io.libms->abund[i]);
@@ -875,34 +875,33 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 		PyList_Append(py_intensity_list, PyLong_FromLong(io.libms->abund[i]));
 //		printf("%d, %d\n", i, io.libms->num_peaks);
 	}
-	printf("878\n");
+
 	PyDict_SetItemString(record, "mass_list", py_mass_list);
 	PyDict_SetItemString(record, "intensity_list", py_intensity_list);
+
 	// Get synonyms in a list
 	int start_byte = 0;
 	unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
-	printf("884\n");
+
 	for (int i = 0; i <= io.aux_data->synonyms_len; i++) {
 		if (io.aux_data->synonyms[i] == 0) {
 			if (i-start_byte > 0) {
-				printf("888\n");
 //				slice_str(io.aux_data->synonyms, buffer, start_byte, i);
 //				printf("%s#\n", buffer);
 //				printf("%s\n", PyUnicode_FromString(buffer));
 //				PyList_Append(py_synonym_list, PyUnicode_FromFormat("%s", buffer));
 
 				PyObject *py_synonym_char_list = PyList_New(0);
-				printf("895\n");
+
 //				for (int i = 0; i <= MAX_NAME_LEN; i++) {
 //					PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
 //				}
 
-				// Hopeful Fix for Wine crash
+				// Fix for Wine crash
 				for ( size_t j = start_byte; j <= i; ++j ) {
 					PyList_Append(py_synonym_char_list, PyLong_FromLong(io.aux_data->synonyms[j]));
 				}
 
-				printf("899\n");
 				PyList_Append(py_synonyms_char_list, py_synonym_char_list);
 			}
 
@@ -910,10 +909,9 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 			char buffer[MAX_NAME_LEN];
 		}
 	}
-	printf("907\n");
+
 //	PyDict_SetItemString(record, "synonyms", py_synonym_list);
 	PyDict_SetItemString(record, "synonyms_chars", py_synonyms_char_list);
-	printf("910\n");
 
 	return record;
 }
