@@ -817,7 +817,7 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 	PyObject *record = PyDict_New();
 	PyObject *py_mass_list = PyList_New(0);
 	PyObject *py_intensity_list = PyList_New(0);
-	PyObject *py_synonym_list = PyList_New(0);
+//	PyObject *py_synonym_list = PyList_New(0);
 	PyObject *py_synonyms_char_list = PyList_New(0);
 	printf("822\n");
 	int ok = PyArg_ParseTuple(args, "l", &input_spec_loc);
@@ -886,16 +886,22 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 		if (io.aux_data->synonyms[i] == 0) {
 			if (i-start_byte > 0) {
 				printf("888\n");
-				slice_str(io.aux_data->synonyms, buffer, start_byte, i);
+//				slice_str(io.aux_data->synonyms, buffer, start_byte, i);
 //				printf("%s#\n", buffer);
 //				printf("%s\n", PyUnicode_FromString(buffer));
-				PyList_Append(py_synonym_list, PyUnicode_FromFormat("%s", buffer));
+//				PyList_Append(py_synonym_list, PyUnicode_FromFormat("%s", buffer));
 
 				PyObject *py_synonym_char_list = PyList_New(0);
 				printf("895\n");
-				for (int i = 0; i <= MAX_NAME_LEN; i++) {
-					PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
+//				for (int i = 0; i <= MAX_NAME_LEN; i++) {
+//					PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
+//				}
+
+				// Hopeful Fix for Wine crash
+				for ( size_t j = start_byte; j <= i; ++j ) {
+					PyList_Append(py_synonym_char_list, PyLong_FromLong(io.aux_data->synonyms[j]));
 				}
+
 				printf("899\n");
 				PyList_Append(py_synonyms_char_list, py_synonym_char_list);
 			}
@@ -905,7 +911,7 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 		}
 	}
 	printf("907\n");
-	PyDict_SetItemString(record, "synonyms", py_synonym_list);
+//	PyDict_SetItemString(record, "synonyms", py_synonym_list);
 	PyDict_SetItemString(record, "synonyms_chars", py_synonyms_char_list);
 	printf("910\n");
 
