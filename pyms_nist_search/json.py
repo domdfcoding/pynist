@@ -54,4 +54,4 @@ class PyNISTEncoder(PyMassSpecEncoder):
 		elif isinstance(o, NISTBase):
 			return dict(o)
 		else:
-			super().default(o)
+			return PyMassSpecEncoder.default(self, o)
