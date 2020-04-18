@@ -37,10 +37,12 @@ Custom json encoder to support PyMassSpec NIST Search classes
 
 # 3rd party
 from pyms.json import PyMassSpecEncoder
+from sdjson import register_encoder
 
 # this package
 from .base import NISTBase
 from pyms_nist_search.reference_data import ReferenceData
+from pyms_nist_search.search_result import SearchResult
 
 
 class PyNISTEncoder(PyMassSpecEncoder):
@@ -55,3 +57,14 @@ class PyNISTEncoder(PyMassSpecEncoder):
 			return dict(o)
 		else:
 			return PyMassSpecEncoder.default(self, o)
+		
+
+@register_encoder(ReferenceData)
+def encode_reference_data(obj):
+	return dict(obj)
+
+
+@register_encoder(SearchResult)
+def encode_search_result(obj):
+	return dict(obj)
+
