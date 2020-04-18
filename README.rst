@@ -64,3 +64,11 @@ For each of these hits, the reference data can be obtained as follows:
 
 	for hit in hit_list:
 		ref_data = search.get_reference_data(hit.spec_loc)
+
+
+TODO
+#####
+
+1. Build a user library for use in tests
+2. Allow user libraries to be used. IIRC they can't be currently.
+3. Write comprehensive tests using pytest
