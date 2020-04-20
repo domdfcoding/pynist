@@ -51,21 +51,21 @@ from pyms.Spectrum import MassSpectrum
 from .json import PyNISTEncoder
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-
+from ._core import NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
 
 client = docker.from_env()
 
 
 def require_init(func):
 	"""
-	Decorator to ensure that functions do not run after the class has been unitialised
+	Decorator to ensure that functions do not run after the class has been uninitialised
 
 	:param func: The function or method to wrap
 	"""
 	
 	def wrapper(cls, *args, **kwargs):
 		if not cls.initialised:
-			raise RuntimeError("""The Search Engine has been unitialised!
+			raise RuntimeError("""The Search Engine has been uninitialised!
 Please create a new instance of the Search Engine and try again.""")
 		
 		return func(cls, *args, **kwargs)
@@ -87,7 +87,7 @@ class Engine:
 	
 	"""
 	
-	def __init__(self, lib_path, lib_type, work_dir=None, debug=False):
+	def __init__(self, lib_path, lib_type=NISTMS_MAIN_LIB, work_dir=None, debug=False):
 		"""
 		:param lib_path: The path to the mass spectral library
 		:type lib_path: str or pathlib.Path
@@ -99,6 +99,9 @@ class Engine:
 		
 		if not os.path.exists(lib_path):
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+		
+		if lib_type not in {NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB}:
+			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 		
 		# # Check if the server is already running
 		# for container in client.containers.list(all=True, filters={"status": "running"}):
@@ -122,6 +125,7 @@ class Engine:
 				# stderr=False,
 				stdin_open=False,
 				volumes={lib_path: {'bind': '/mainlib', 'mode': 'ro'}},
+				environment=[f"LIBTYPE={lib_type}"],
 				)
 		
 		# TODO: Pass library type through to docker.

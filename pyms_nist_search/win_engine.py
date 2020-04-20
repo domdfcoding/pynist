@@ -56,7 +56,7 @@ class Engine:
 	Search engine for Windows systems
 	"""
 	
-	def __init__(self, lib_path, lib_type, work_dir=None, debug=False):
+	def __init__(self, lib_path, lib_type=NISTMS_MAIN_LIB, work_dir=None, debug=False):
 		"""
 		TODO: Search by Name. See page 13 of the documentation.
 		 Would also like to search by CAS number but DLL doesn't seem to support that
@@ -74,6 +74,9 @@ class Engine:
 		
 		if not os.path.exists(lib_path):
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+		
+		if lib_type not in {NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB}:
+			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 		
 		# Create work_dir if it doesn't exist
 		if not os.path.exists(work_dir):

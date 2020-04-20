@@ -1189,7 +1189,6 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 /**************************************************************************/
 
 
-
 static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir) {
 	num_libs     = 0;
 	lib_paths[0] = 0;
@@ -1243,7 +1242,6 @@ static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_
 	return(pio->error_code);
 }
 
-
 static PyObject *init_api(PyObject *self, PyObject *args) {
 	char *lib_path;
 	int lib_type;
@@ -1274,9 +1272,6 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
 
 	Py_RETURN_NONE;
 }
-
-
-
 
 static PyMethodDef Methods[] = {
 	{"_spectrum_search", spec_search, METH_VARARGS, "Searches the library with search type 'NISTMS_NO_PRE_SRCH'"},
