@@ -66,17 +66,14 @@ common_kwargs = dict(
 
 if pathlib.Path.cwd().name == "doc-source":
 	print(pathlib.Path.cwd().parent / "README.rst")
+	install_requires = (pathlib.Path.cwd().parent / "requirements.txt").read_text().split("\n")
 	common_kwargs["long_description"] = (pathlib.Path.cwd().parent / "README.rst").read_text() + '\n'
 else:
 	print(pathlib.Path("README.rst"))
+	install_requires = pathlib.Path("requirements.txt").read_text().split("\n")
 	common_kwargs["long_description"] = pathlib.Path("README.rst").read_text() + '\n'
 
-common_requirements = [
-		"PyMassSpec>=2.2.10",
-		"chemistry_tools>=0.2.5",
-		]
-
-docker_requirements = common_requirements + [
+docker_only_reqs = [
 		"docker>=4.2.0",
 		"requests>=2.22.0",
 		]
@@ -109,7 +106,7 @@ if __name__ == '__main__':
 		
 		setup(
 				**common_kwargs,
-				install_requires=common_requirements,
+				install_requires=[req for req in install_requires if req not in docker_only_reqs],
 				ext_modules=[extension],
 				data_files=data_files
 				)
@@ -126,6 +123,6 @@ if __name__ == '__main__':
 	
 		setup(
 				**common_kwargs,
-				install_requires=docker_requirements,
+				install_requires=install_requires,
 				ext_modules=[min_extension],
 				)
