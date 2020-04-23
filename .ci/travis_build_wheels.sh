@@ -34,7 +34,7 @@ for PYVERSION in ${PYVERSIONS[@]}; do
 
          ls /io
 
-         "${PYBIN}/python" -m pytest
+         "${PYBIN}/python" -m pytest /io/tests/
          # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
     done
 
