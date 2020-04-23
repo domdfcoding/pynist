@@ -241,14 +241,16 @@ class Engine:
 	@require_init
 	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
-		Perform a Full Spectrum Search of the mass spectral library, including reference data.
+		Perform a Full Spectrum Search of the mass spectral library,
+		including reference data.
 
 		:param mass_spec: The mass spectrum to search against the library
 		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
-		:return: List of tuples consisting of the possible identities for the mass spectrum and the reference data from the library
+		:return: List of tuples consisting of the possible identities
+			for the mass spectrum and the reference data from the library
 		:rtype: list of (SearchResult, ReferenceData) tuples
 		"""
 		

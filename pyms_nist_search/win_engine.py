@@ -45,7 +45,7 @@ from pyms.Spectrum import MassSpectrum
 
 # this package
 from . import _core
-from ._core import *
+# from ._core import *
 from .reference_data import ReferenceData
 from .search_result import SearchResult
 from .utils import pack
@@ -56,7 +56,7 @@ class Engine:
 	Search engine for Windows systems
 	"""
 	
-	def __init__(self, lib_path, lib_type=NISTMS_MAIN_LIB, work_dir=None, debug=False):
+	def __init__(self, lib_path, lib_type=_core.NISTMS_MAIN_LIB, work_dir=None, debug=False):
 		"""
 		TODO: Search by Name. See page 13 of the documentation.
 		 Would also like to search by CAS number but DLL doesn't seem to support that
@@ -75,7 +75,7 @@ class Engine:
 		if not os.path.exists(lib_path):
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
 		
-		if lib_type not in {NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB}:
+		if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 		
 		# Create work_dir if it doesn't exist
@@ -95,7 +95,8 @@ class Engine:
 		
 		pass
 	
-	def spectrum_search(self, mass_spec, n_hits=5):
+	@staticmethod
+	def spectrum_search(mass_spec, n_hits=5):
 		"""
 		Perform a Quick Spectrum Search of the mass spectral library
 
@@ -120,7 +121,8 @@ class Engine:
 		
 		return parsed_hit_list
 	
-	def full_spectrum_search(self, mass_spec, n_hits=5):
+	@staticmethod
+	def full_spectrum_search(mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
 		
@@ -147,14 +149,16 @@ class Engine:
 	
 	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
-		Perform a Full Spectrum Search of the mass spectral library, including reference data.
+		Perform a Full Spectrum Search of the mass spectral library, including
+		reference data.
 
 		:param mass_spec: The mass spectrum to search against the library
 		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
-		:return: List of tuples consisting of the possible identities for the mass spectrum and the reference data from the library
+		:return: List of tuples consisting of the possible identities for the
+			mass spectrum and the reference data from the library
 		:rtype: list of (SearchResult, ReferenceData) tuples
 		"""
 		
@@ -170,7 +174,8 @@ class Engine:
 		
 		return output_buffer
 	
-	def get_reference_data(self, spec_loc):
+	@staticmethod
+	def get_reference_data(spec_loc):
 		"""
 		Get reference data from the library for the compound at the given location.
 

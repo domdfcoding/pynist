@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 #  utils.py
 """
@@ -33,6 +33,9 @@ General utilities
 #  "FairCom" and "c-tree Plus" are trademarks of FairCom Corporation
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
+#
+
+import warnings
 
 
 def pack(mass_spec, top=20):
@@ -70,7 +73,9 @@ def parse_name_chars(name_char_list):
 	"""
 	
 	hit_name = ''
+	errors = []  # Buffer the errors to display at the end
 	
+	# TODO: can we do away with the -1?
 	for dec in name_char_list[:-1]:
 		if dec == 0:
 			break
@@ -101,15 +106,17 @@ def parse_name_chars(name_char_list):
 			try:
 				char = chr(dec)
 			except ValueError:
-				print(f"Unable to parse character with code {dec}")
+				errors.append(dec)
+				# print(f"Unable to parse character with code {dec}")
 				char = '�'
 				
 				# List of problem codes encountered so far:
 				# -26, which should be a μ (03BC)
 				
-		
 		if char != "\x00":
 			hit_name += char
 	
-	return hit_name
+	if errors:
+		warnings.warn(f"Unable to parse the following character codes for string {hit_name}: {errors}.")
 
+	return hit_name

@@ -117,3 +117,7 @@ build
 */constants.h
 
 _core.cpython*
+
+**/nist_jdx_files
+
+**/MoNA-export-GC-MS_Spectra.json

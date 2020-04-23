@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 #  base.py
 """
@@ -99,7 +99,7 @@ class NISTBase:
 		:type json_data: str
 		"""
 		
-		peak_dict = json.load(json_data)
+		peak_dict = json.loads(json_data)
 		
 		return cls.from_dict(peak_dict)
 	

@@ -1,5 +1,7 @@
-PyMassSpec >= 2.2.10
+PyMassSpec >= 2.2.19
 docker>=4.2.0
 requests >= 2.22.0
 chemistry_tools >= 0.2.5
 sdjson >= 0.2.2
+jinja2 >= 2.10.1
+importlib-resources >= 1.0.2

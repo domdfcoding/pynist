@@ -5,15 +5,24 @@ import sys
 
 if sys.platform == "win32":
 	FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\mainlib"
+	FULL_PATH_TO_USER_LIBRARY = "C:\\Users\\dom13\\Python\\01 GitHub Repos\\pynist\\tests\\\\MoNA-export-GC-MS_Spectra"
 	FULL_PATH_TO_WORK_DIR = "C:\\Users\\dom13\\Python\\00 Projects\\pynist"
 else:
 	FULL_PATH_TO_MAIN_LIBRARY = "/home/domdf/Python/mainlib"
+	FULL_PATH_TO_USER_LIBRARY = "/home/domdf/Python/01 GitHub Repos/pynist/tests/MoNA-export-GC-MS_Spectra"
 	FULL_PATH_TO_WORK_DIR = "/home/domdf/Python/00 Projects/pynist"
 	
 
+# search = pyms_nist_search.Engine(
+# 		FULL_PATH_TO_MAIN_LIBRARY,
+# 		pyms_nist_search.NISTMS_MAIN_LIB,
+# 		FULL_PATH_TO_WORK_DIR,
+# 		debug=True,
+# 		)
+
 search = pyms_nist_search.Engine(
-		FULL_PATH_TO_MAIN_LIBRARY,
-		pyms_nist_search.NISTMS_MAIN_LIB,
+		FULL_PATH_TO_USER_LIBRARY,
+		pyms_nist_search.NISTMS_USER_LIB,
 		FULL_PATH_TO_WORK_DIR,
 		debug=True,
 		)

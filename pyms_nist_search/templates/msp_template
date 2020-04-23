@@ -1,0 +1,10 @@
+Name: {{ ref_data.name }}
+{% for synonym in ref_data.synonyms %}Synon: {{ synonym }}{{ "\n" }}{% endfor %}Formula: {{ ref_data.formula }}
+MW: {{ ref_data.mw }}
+CAS#: {{ ref_data.cas }}
+NIST#: {{ ref_data.nist_no }}
+DB#: {{ ref_data.id }}
+Comments: {{ ref_data.contributor }}
+Num Peaks: {{ num_peaks }}
+{{ spec_block }}
+

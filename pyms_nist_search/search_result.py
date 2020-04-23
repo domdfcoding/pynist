@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 #  search_result.py
 """
@@ -46,19 +46,19 @@ class SearchResult(NISTBase):
 	"""
 	
 	def __init__(
-			self, name='', cas='', match_factor=0,
+			self, name='', cas='---', match_factor=0,
 			reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
 		"""
 		:param name: The name of the compound
 		:type name: str
 		:param cas: The CAS number of the compound
-		:type cas: str
+		:type cas: str, int
 		:param match_factor:
 		:type match_factor: int
 		:param reverse_match_factor:
 		:type reverse_match_factor: int
 		:param hit_prob:
-		:type hit_prob: float
+		:type hit_prob: int, float
 		:param spec_loc: The location of the reference spectrum in the library.
 		:type spec_loc: int
 		"""
@@ -146,9 +146,3 @@ class SearchResult(NISTBase):
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
 				)
-	
-	def __getstate__(self):
-		return self.__dict__()
-	
-	def __setstate__(self, state):
-		self.__init__(**state)
