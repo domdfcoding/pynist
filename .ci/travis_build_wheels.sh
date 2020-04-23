@@ -31,6 +31,9 @@ for PYVERSION in ${PYVERSIONS[@]}; do
 
          # Install pyms_nist_search and test
          "${PYBIN}/pip" install "$whl"
+
+         ls
+
          "${PYBIN}/python" -m pytest
          # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
     done
