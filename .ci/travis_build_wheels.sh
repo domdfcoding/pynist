@@ -6,9 +6,9 @@ rm -rf pyms_nist_search
 
 # Compile wheels
 PYVERSIONS=(
-  "cp36-cp36m",
-  "cp37-cp37m",
-  #"cp38-cp38m",
+  "cp36-cp36m"
+  "cp37-cp37m"
+  #"cp38-cp38m"
   )
 
 for PYVERSION in ${PYVERSIONS[@]}; do

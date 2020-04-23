@@ -127,10 +127,7 @@ class Engine:
 				volumes={lib_path: {'bind': '/mainlib', 'mode': 'ro'}},
 				environment=[f"LIBTYPE={lib_type}"],
 				)
-		
-		# TODO: Pass library type through to docker.
-		#  For now only User Libraries are supported
-		
+
 		atexit.register(self.uninit)
 		
 		retry_count = 0
