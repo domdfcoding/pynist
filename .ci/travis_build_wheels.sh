@@ -2,7 +2,7 @@
 set -e -x
 
 # Remove the pyms_nist_search directory to it doesn't interfere with tests
-rm -rf pyms_nist_search
+rm -rf /io/pyms_nist_search
 
 # Compile wheels
 PYVERSIONS=(
