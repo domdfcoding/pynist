@@ -16,6 +16,9 @@ for PYVERSION in ${PYVERSIONS[@]}; do
     "/opt/python/${PYVERSION}/bin/pip" install auditwheel --upgrade
     "/opt/python/${PYVERSION}/bin/pip" wheel /io/ -w wheelhouse/
 
+    # for diagnostics
+    ls wheelhouse
+
     # Bundle external shared libraries into the wheels
     for whl in wheelhouse/pyms_nist_search-${PYVERSION}*.whl; do
          "/opt/python/${PYVERSION}/bin/python" -m auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
