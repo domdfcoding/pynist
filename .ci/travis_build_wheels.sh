@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e -x
 
-# Remove the pyms_nist_search directory to it doesn't interfere with tests
-rm -rf /io/pyms_nist_search
 
 # Compile wheels
 PYVERSIONS=(
@@ -34,7 +32,13 @@ for PYVERSION in ${PYVERSIONS[@]}; do
 
          ls /io
 
+         # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
+         mv /io/pyms_nist_search /io/pyms_nist_search_tmp
+
          "${PYBIN}/python" -m pytest /io/tests/
+
+         mv /io/pyms_nist_search_tmp /io/pyms_nist_search
+
          # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
     done
 
