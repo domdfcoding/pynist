@@ -12,16 +12,19 @@ PYVERSIONS=(
   )
 
 for PYVERSION in ${PYVERSIONS[@]}; do
+
+    export PYBIN="/opt/python/${PYVERSION}/bin"
+
     # Upgrade auditwheel to fix borked docker image from 26 Mar 2020
-    "/opt/python/${PYVERSION}/bin/pip" install auditwheel --upgrade
-    "/opt/python/${PYVERSION}/bin/pip" wheel /io/ -w wheelhouse/
+    "${PYBIN}/pip" install auditwheel --upgrade
+    "${PYBIN}/pip" wheel /io/ -w wheelhouse/
 
     # for diagnostics
     ls wheelhouse
 
     # Bundle external shared libraries into the wheels
     for whl in wheelhouse/pyms_nist_search-*-${PYVERSION}*.whl; do
-         "/opt/python/${PYVERSION}/bin/python" -m auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
+         "${PYBIN}/python" -m auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
     done
 
     # Install pyms_nist_search and pytest
