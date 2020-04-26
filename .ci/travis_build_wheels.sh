@@ -9,7 +9,7 @@ PYVERSIONS=(
   #"cp38-cp38m"
   )
 
-export VERSION_NO="0.4.11"
+export VERSION_NO="0.4.12"
 
 for PYVERSION in ${PYVERSIONS[@]}; do
 
