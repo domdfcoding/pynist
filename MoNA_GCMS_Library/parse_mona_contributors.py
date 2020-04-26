@@ -158,6 +158,23 @@ class ContributorList(list):
 			self.append(new_contributor)
 			return new_contributor
 	
+	def get_contributor(self, contributor_name):
+		"""
+		Returns the :class:`Contributor` object representing the
+		contributor with the given name, or ``None`` if no such
+		contributor exists.
+		
+		:param contributor_name: The name of the contributor
+		:type contributor_name: str
+		
+		:rtype: :class:`Contributor`
+		"""
+		
+		if contributor_name in self:
+			return self[self.index(contributor_name)]
+		else:
+			return None
+	
 	def write_authors_file(self):
 		with importlib_resources.path(MoNA_GCMS_Library, "AUTHORS") as authors_file:
 			with open(str(authors_file), "w") as fp:

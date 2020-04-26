@@ -60,7 +60,10 @@ common_kwargs = dict(
 		license='LGPLv3',
 		name=modname,
 		version=VERSION,
-		packages=find_packages(exclude=("tests",)),
+		packages=find_packages(exclude=("tests", "MoNA_GCMS_Library")),
+		python_requires=">=3.6",
+		package_data={modname: ['pyms_nist_search/templates/*']},
+		include_package_data=True,
 		url=f"https://github.com/{github_username}/{modname}",
 		)
 
@@ -102,6 +105,8 @@ if __name__ == '__main__':
 				define_macros=build_macros,
 				libraries=libraries,
 				sources=['pyms_nist_search/pyms_nist_search.c'],
+				include_dirs=["pyms_nist_search"],
+				language="c",
 				)
 		
 		setup(
