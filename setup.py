@@ -124,6 +124,7 @@ if __name__ == '__main__':
 				name='pyms_nist_search._core',
 				define_macros=build_macros,
 				sources=['pyms_nist_search/pyms_nist_search_min.c'],
+				include_dirs=["pyms_nist_search"],
 				)
 	
 		setup(

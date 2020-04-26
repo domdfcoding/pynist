@@ -35,7 +35,7 @@ for PYVERSION in ${PYVERSIONS[@]}; do
          # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
          mv /io/pyms_nist_search /io/pyms_nist_search_tmp
 
-         "${PYBIN}/python" -m pytest /io/tests/
+         sudo "${PYBIN}/python" -m pytest /io/tests/
 
          mv /io/pyms_nist_search_tmp /io/pyms_nist_search
 
