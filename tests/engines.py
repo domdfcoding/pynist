@@ -4,7 +4,7 @@ import pathlib
 # this package
 import pyms_nist_search
 
-repo_root = pathlib.Path(pyms_nist_search.__file__).parent.parent.absolute()
+repo_root = pathlib.Path(__file__).parent.parent.absolute()
 
 
 FULL_PATH_TO_MAIN_LIBRARY = str(repo_root.parent / "mainlib")
