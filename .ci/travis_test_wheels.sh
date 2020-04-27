@@ -17,7 +17,7 @@ test_wheel() {
   # First argument is the python version number (36, 37 etc)
   # Second argument is the command to invoke the python interpreter
 
-  pyenv global "$($3)"
+  pyenv global "$3"
 
   python -m pip install pytest
 
@@ -25,7 +25,7 @@ test_wheel() {
   ls wheelhouse
 
   # Bundle external shared libraries into the wheels
-  PYVERSION=$($1)
+  PYVERSION="$1"
   define PYVERSION
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp${PYVERSION}-cp${PYVERSION}m-manylinux*.whl; do
 
