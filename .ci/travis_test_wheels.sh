@@ -23,6 +23,9 @@ test_wheel() {
 
   python --version
   which python
+
+  python -m pip install pip --upgrade
+  python -m pip install setuptools wheel --upgrade
   python -m pip install pytest
 
   # for diagnostics
