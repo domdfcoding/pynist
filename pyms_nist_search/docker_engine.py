@@ -119,7 +119,7 @@ class Engine:
 		try:
 			self.__launch_container(lib_path, lib_type)
 		except docker.errors.ImageNotFound:
-			warnings.warn("Docker Image not found. Downloading now")
+			print("Docker Image not found. Downloading now.")
 			client.images.pull("domdfcoding/pywine-pyms-nist")
 			self.__launch_container(lib_path, lib_type)
 		
