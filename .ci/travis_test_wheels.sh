@@ -30,7 +30,7 @@ for PYVERSION in ${PYVERSIONS[@]}; do
          # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
          mv pyms_nist_search pyms_nist_search_tmp
 
-         "${PYTHON}/python" -m pytest tests/
+         ${PYTHON} -m pytest tests/
 
          mv pyms_nist_search_tmp pyms_nist_search
 
