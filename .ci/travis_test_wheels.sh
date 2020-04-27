@@ -17,7 +17,10 @@ test_wheel() {
   # First argument is the python version number (36, 37 etc)
   # Second argument is the command to invoke the python interpreter
 
-  pyenv global "$3"
+  # Tell Pyenv which python version to use
+  PY_DOT=$(echo "$1" | sed 's/.\{1\}/&./g;s/.$//')
+  define PY_DOT
+  pyenv global PY_DOT
 
   python --version
   which python
@@ -44,6 +47,6 @@ test_wheel() {
 
 }
 
-test_wheel "36" "python3.6", "3.6"
-test_wheel "37" "python3.7", "3.7"
-# test_wheel "38" "python3.8.2"
+test_wheel "36" "3.6"
+test_wheel "37" "3.7"
+# test_wheel "38" "3.8"
