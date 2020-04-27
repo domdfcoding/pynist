@@ -16,7 +16,7 @@ for PYVERSION in ${PYVERSIONS[@]}; do
 
     PY_DOT=$(echo "${PYVERSION}" | sed 's/.\{1\}/&./g;s/.$//')
     declare PY_DOT
-    export PYTHON="python${PY_DOT}"
+    export PYTHON="/usr/bin/python${PY_DOT}"
 
     ${PYTHON} -m pip install pytest
 
