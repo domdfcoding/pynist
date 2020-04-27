@@ -19,7 +19,6 @@ test_wheel() {
 
   # Tell Pyenv which python version to use
   PY_DOT=$(echo "$1" | sed 's/.\{1\}/&./g;s/.$//')
-  declare PY_DOT
   pyenv global "${PY_DOT}"
 
   python --version
