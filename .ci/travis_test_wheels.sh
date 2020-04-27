@@ -31,14 +31,16 @@ test_wheel() {
   # for diagnostics
   ls wheelhouse
 
-   # Remove pyms_nist_search directory so it doesn't interfere with tests
-   rm -rf pyms_nist_search
+  # Remove pyms_nist_search directory so it doesn't interfere with tests
+  rm -rf pyms_nist_search
 
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
-  # Install pyms_nist_search and run tests
-  python -m pip install "$whl"
-  python -m pytest tests/
+    ls
+
+    # Install pyms_nist_search and run tests
+    python -m pip install "$whl" --upgrade
+    python -m pytest tests/
 
   # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
   done
