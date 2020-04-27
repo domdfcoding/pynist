@@ -19,9 +19,9 @@ test_wheel() {
 
   pyenv global "$3"
 
-  python --version
+  $2 --version
   which python
-  python -m pip install pytest
+  $2 -m pip install pytest
 
   # for diagnostics
   ls wheelhouse
@@ -30,12 +30,12 @@ test_wheel() {
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
        # Install pyms_nist_search and test
-       python -m pip install "$whl"
+       $2 -m pip install "$whl"
 
        # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
        mv pyms_nist_search pyms_nist_search_tmp
 
-       python -m pytest tests/
+       $2 -m pytest tests/
 
        mv pyms_nist_search_tmp pyms_nist_search
 
