@@ -19,10 +19,10 @@ for PYVERSION in ${PYVERSIONS[@]}; do
     "${PYBIN}/pip" install auditwheel --upgrade
 #    "${PYBIN}/pip" wheel /io/ -w /io/wheelhouse/
 
-    cd /io/pyms_nist_search/
+#    cd /io/
     ls
     "${PYBIN}"/python setup.py bdist_wheel -d /io/wheelhouse
-    cd /io/
+#    cd /io/
 
     # Bundle external shared libraries into the wheels
     for whl in /io/wheelhouse/pyms_nist_search-${VERSION_NO}-${PYVERSION}*.whl; do
