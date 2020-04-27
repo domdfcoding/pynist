@@ -17,12 +17,12 @@ for PYVERSION in ${PYVERSIONS[@]}; do
 
     # Upgrade auditwheel to fix borked docker image from 26 Mar 2020
     "${PYBIN}/pip" install auditwheel --upgrade
-#    "${PYBIN}/pip" wheel /io/ -w /io/wheelhouse/
+#    "${PYBIN}/pip" wheel /io/ -w /wheelhouse/
 
-#    cd /io/
+    cd /io/
     ls
-    "${PYBIN}"/python setup.py bdist_wheel -d /io/wheelhouse
-#    cd /io/
+    "${PYBIN}"/python setup.py bdist_wheel -d /wheelhouse
+    cd /
 
     # Bundle external shared libraries into the wheels
     for whl in /io/wheelhouse/pyms_nist_search-${VERSION_NO}-${PYVERSION}*.whl; do
