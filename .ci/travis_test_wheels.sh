@@ -11,7 +11,7 @@ export VERSION_NO="0.4.12"
 
 for PYVERSION in ${PYVERSIONS[@]}; do
 
-    export PYTHON="/usr/bin/python${PYVERSION}"
+    export PYTHON="python${PYVERSION}"
 
     ${PYTHON} -m pip install pytest
 
