@@ -26,7 +26,7 @@ test_wheel() {
 
   python -m pip install pip --upgrade
   python -m pip install setuptools wheel --upgrade
-  python -m pip install pytest, coverage, pytest-cov
+  python -m pip install pytest coverage pytest-cov
 
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
