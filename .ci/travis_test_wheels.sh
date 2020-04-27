@@ -31,19 +31,16 @@ test_wheel() {
   # for diagnostics
   ls wheelhouse
 
-  # Bundle external shared libraries into the wheels
+   # Remove pyms_nist_search directory so it doesn't interfere with tests
+   rm -rf pyms_nist_search
+
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
-       # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
-       mv pyms_nist_search pyms_nist_search_tmp
+  # Install pyms_nist_search and run tests
+  python -m pip install "$whl"
+  python -m pytest tests/
 
-       # Install pyms_nist_search and test
-       python -m pip install "$whl"
-       python -m pytest tests/
-
-       mv pyms_nist_search_tmp pyms_nist_search
-
-       # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
+  # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
   done
 
 }
