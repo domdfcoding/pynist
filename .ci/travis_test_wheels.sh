@@ -9,6 +9,9 @@ PYVERSIONS=(
 
 export VERSION_NO="0.4.12"
 
+# download docker image
+docker pull domdfcoding/pywine-pyms-nist
+
 for PYVERSION in ${PYVERSIONS[@]}; do
 
     PY_DOT=$(echo "${PYVERSION}" | sed 's/.\{1\}/&./g;s/.$//')
