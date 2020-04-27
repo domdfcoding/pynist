@@ -76,15 +76,15 @@ Please create a new instance of the Search Engine and try again.""")
 class Engine:
 	"""
 	Search engine for Linux and other platforms supporting Docker.
-	
+
 	The first time the engine is initialized it will download the latest
 	version of the docker image automatically.
-	
+
 	This can also be done manually, such as to upgrade to the latest version,
 	with the following bash command:
-	
+
 		$ docker pull domdfcoding/pywine-pyms-nist
-	
+
 	"""
 	
 	def __init__(self, lib_path, lib_type=NISTMS_MAIN_LIB, work_dir=None, debug=False):
@@ -115,6 +115,30 @@ class Engine:
 		
 		print("Launching Docker...")
 		
+		try:
+			self.__launch_container(lib_path, lib_type)
+		except docker.errors.ImageNotFound:
+			client.images.pull("domdfcoding/pywine-pyms-nist")
+			self.__launch_container(lib_path, lib_type)
+		
+		atexit.register(self.uninit)
+		
+		retry_count = 0
+		
+		# Wait for server to come online
+		while retry_count < 240:
+			try:
+				if requests.get("http://localhost:5001/").text == "ready":
+					self.initialised = True
+					return
+			
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+				retry_count += 1
+		
+		raise TimeoutError("Unable to communicate with the search server.")
+	
+	def __launch_container(self, lib_path, lib_type):
 		self.docker = client.containers.run(
 				"domdfcoding/pywine-pyms-nist",
 				ports={5001: 5001},
@@ -127,24 +151,7 @@ class Engine:
 				volumes={lib_path: {'bind': '/mainlib', 'mode': 'ro'}},
 				environment=[f"LIBTYPE={lib_type}"],
 				)
-
-		atexit.register(self.uninit)
-		
-		retry_count = 0
-		
-		# Wait for server to come online
-		while retry_count < 240:
-			try:
-				if requests.get("http://localhost:5001/").text == "ready":
-					self.initialised = True
-					return
-				
-			except requests.exceptions.ConnectionError:
-				time.sleep(0.5)
-				retry_count += 1
-		
-		raise TimeoutError("Unable to communicate with the search server.")
-			
+	
 	def uninit(self):
 		"""
 		Uninitialise the Search Engine
@@ -214,7 +221,7 @@ class Engine:
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
 		"""
-
+		
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
@@ -232,7 +239,7 @@ class Engine:
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
-			
+		
 		raise TimeoutError("Unable to communicate with the search server.")
 	
 	@require_init
@@ -267,7 +274,7 @@ class Engine:
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
-	
+		
 		raise TimeoutError("Unable to communicate with the search server.")
 	
 	@require_init
