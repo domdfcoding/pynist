@@ -19,6 +19,7 @@ test_wheel() {
 
   pyenv global "$3"
 
+  python --version
   python -m pip install pytest
 
   # for diagnostics
