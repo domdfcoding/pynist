@@ -7,7 +7,7 @@ PYVERSIONS=(
   #"38"
   )
 
-export VERSION_NO="0.4.12"
+export VERSION_NO="0.4.13"
 
 # download docker image
 docker pull domdfcoding/pywine-pyms-nist
