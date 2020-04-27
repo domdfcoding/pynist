@@ -26,14 +26,13 @@ for PYVERSION in ${PYVERSIONS[@]}; do
          # Install pyms_nist_search and test
          ${PYTHON} -m pip install "$whl"
 
-         ls /io
 
          # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
-         mv /io/pyms_nist_search /io/pyms_nist_search_tmp
+         mv pyms_nist_search pyms_nist_search_tmp
 
-         "${PYTHON}/python" -m pytest /io/tests/
+         "${PYTHON}/python" -m pytest tests/
 
-         mv /io/pyms_nist_search_tmp /io/pyms_nist_search
+         mv pyms_nist_search_tmp pyms_nist_search
 
          # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
     done
