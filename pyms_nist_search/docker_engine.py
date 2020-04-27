@@ -40,6 +40,7 @@ import atexit
 import json
 import os
 import time
+import warnings
 
 # 3rd party
 import docker
@@ -118,6 +119,7 @@ class Engine:
 		try:
 			self.__launch_container(lib_path, lib_type)
 		except docker.errors.ImageNotFound:
+			warnings.warn("Docker Image not found. Downloading now")
 			client.images.pull("domdfcoding/pywine-pyms-nist")
 			self.__launch_container(lib_path, lib_type)
 		
