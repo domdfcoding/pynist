@@ -44,6 +44,6 @@ test_wheel() {
 
 }
 
-test_wheel "36" "python3.6.10", "3.6"
-test_wheel "37" "python3.7.6", "3.7"
+test_wheel "36" "python3.6", "3.6"
+test_wheel "37" "python3.7", "3.7"
 # test_wheel "38" "python3.8.2"
