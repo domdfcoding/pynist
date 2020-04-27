@@ -25,7 +25,7 @@ for PYVERSION in ${PYVERSIONS[@]}; do
     cd /
 
     # Bundle external shared libraries into the wheels
-    for whl in /io/wheelhouse/pyms_nist_search-${VERSION_NO}-${PYVERSION}*.whl; do
+    for whl in /wheelhouse/pyms_nist_search-${VERSION_NO}-${PYVERSION}*.whl; do
          "${PYBIN}/python" -m auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
 
     done
