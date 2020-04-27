@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e -x
 
-
-# Compile wheels
 PYVERSIONS=(
   "cp36-cp36m"
   "cp37-cp37m"
@@ -11,7 +9,7 @@ PYVERSIONS=(
 
 export VERSION_NO="0.4.12"
 
-for PYVERSION in ${PYVERSIONS[@]}; do
+for PYVERSION in "${PYVERSIONS[@]}"; do
 
     export PYBIN="/opt/python/${PYVERSION}/bin"
 
@@ -19,8 +17,8 @@ for PYVERSION in ${PYVERSIONS[@]}; do
     "${PYBIN}/pip" install auditwheel --upgrade
 #    "${PYBIN}/pip" wheel /io/ -w /wheelhouse/
 
+    # Build wheel
     cd /io/
-    ls
     "${PYBIN}"/python setup.py bdist_wheel -d /wheelhouse
     cd /
 

@@ -26,27 +26,25 @@ test_wheel() {
 
   python -m pip install pip --upgrade
   python -m pip install setuptools wheel --upgrade
-  python -m pip install pytest
-
-  # for diagnostics
-  ls wheelhouse
-
-  # Remove pyms_nist_search directory so it doesn't interfere with tests
-  rm -rf pyms_nist_search
+  python -m pip install pytest, coverage, pytest-cov
 
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
-    ls
+    # Cleanup to prevent interference with tests
+    rm -rf pyms_nist_search
+    rm -rf pyms_nist_search.egg-info
 
     # Install pyms_nist_search and run tests
     python -m pip install "$whl" --upgrade
-    python -m pytest tests/
+    python -m pytest --cov=pyms_nist_search tests/
 
-  # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
+  # TODO: Upload coverage to coveralls
   done
 
 }
 
-test_wheel "36" "3.6"
-test_wheel "37" "3.7"
+for PYVERSION in "${PYVERSIONS[@]}"; do
+  test_wheel $PYVERSION
+#test_wheel "37" "3.7"
 # test_wheel "38" "3.8"
+done
