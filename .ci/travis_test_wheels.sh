@@ -11,7 +11,9 @@ export VERSION_NO="0.4.12"
 
 for PYVERSION in ${PYVERSIONS[@]}; do
 
-    export PYTHON="python${PYVERSION}"
+    PY_DOT=$(echo "${PYVERSION}" | sed 's/.\{1\}/&./g;s/.$//')
+    declare PY_DOT
+    export PYTHON="python${PY_DOT}"
 
     ${PYTHON} -m pip install pytest
 
