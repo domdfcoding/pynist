@@ -25,9 +25,7 @@ test_wheel() {
   ls wheelhouse
 
   # Bundle external shared libraries into the wheels
-  PYVERSION="$1"
-  define PYVERSION
-  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp${PYVERSION}-cp${PYVERSION}m-manylinux*.whl; do
+  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
        # Install pyms_nist_search and test
        python -m pip install "$whl"
