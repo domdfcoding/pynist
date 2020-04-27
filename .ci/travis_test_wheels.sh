@@ -32,7 +32,7 @@ test_wheel() {
 
     # Cleanup to prevent interference with tests
     rm -rf pyms_nist_search
-    rm -rf pyms_nist_search.egg-info
+    sudo rm -rf pyms_nist_search.egg-info  # Was getting "permission denied" without sudo
 
     # Install pyms_nist_search and run tests
     python -m pip install "$whl" --upgrade
@@ -40,7 +40,6 @@ test_wheel() {
 
   # TODO: Upload coverage to coveralls
   done
-
 }
 
 for PYVERSION in "${PYVERSIONS[@]}"; do
