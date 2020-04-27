@@ -34,12 +34,11 @@ test_wheel() {
   # Bundle external shared libraries into the wheels
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
-       # Install pyms_nist_search and test
-       python -m pip install "$whl"
-
        # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
        mv pyms_nist_search pyms_nist_search_tmp
 
+       # Install pyms_nist_search and test
+       python -m pip install "$whl"
        python -m pytest tests/
 
        mv pyms_nist_search_tmp pyms_nist_search
