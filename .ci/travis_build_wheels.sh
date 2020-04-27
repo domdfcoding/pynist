@@ -20,6 +20,7 @@ for PYVERSION in ${PYVERSIONS[@]}; do
 #    "${PYBIN}/pip" wheel /io/ -w /io/wheelhouse/
 
     cd /io/pyms_nist_search/
+    ls
     "${PYBIN}"/python setup.py bdist_wheel -d /io/wheelhouse
     cd /io/
 
