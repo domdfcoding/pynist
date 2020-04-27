@@ -12,33 +12,36 @@ export VERSION_NO="0.4.12"
 # download docker image
 docker pull domdfcoding/pywine-pyms-nist
 
-for PYVERSION in ${PYVERSIONS[@]}; do
 
-    PY_DOT=$(echo "${PYVERSION}" | sed 's/.\{1\}/&./g;s/.$//')
-    declare PY_DOT
-    export PYTHON="/usr/bin/python${PY_DOT}"
+test_wheel() {
+  # First argument is the python version number (36, 37 etc)
+  # Second argument is the command to invoke the python interpreter
 
-    ${PYTHON} -m pip install pytest
+  $2 -m pip install pytest
 
-    # for diagnostics
-    ls wheelhouse
+  # for diagnostics
+  ls wheelhouse
 
-    # Bundle external shared libraries into the wheels
-    for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp${PYVERSION}-cp${PYVERSION}m-manylinux*.whl; do
+  # Bundle external shared libraries into the wheels
+  PYVERSION=$($2)
+  define PYVERSION
+  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp${PYVERSION}-cp${PYVERSION}m-manylinux*.whl; do
 
-         # Install pyms_nist_search and test
-         ${PYTHON} -m pip install "$whl"
+       # Install pyms_nist_search and test
+       ${PYTHON} -m pip install "$whl"
 
+       # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
+       mv pyms_nist_search pyms_nist_search_tmp
 
-         # Move pyms_nist_search directory temporarily so it doesn't interfere with tests
-         mv pyms_nist_search pyms_nist_search_tmp
+       ${PYTHON} -m pytest tests/
 
-         ${PYTHON} -m pytest tests/
+       mv pyms_nist_search_tmp pyms_nist_search
 
-         mv pyms_nist_search_tmp pyms_nist_search
+       # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
+  done
 
-         # TODO: coverage with coverage, pytest-cov and coveralls, then upload to coveralls
-    done
+}
 
-done
-
+test_wheel "36" "python3.6.10"
+test_wheel "37" "python3.7.6"
+# test_wheel "38" "python3.8.2"
