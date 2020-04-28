@@ -45,7 +45,7 @@ test_script:
   - py -3.6 -m tox
 
 after_test:
-  - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
+  - ".ci\\build.cmd py setup.py bdist_wheel"
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
