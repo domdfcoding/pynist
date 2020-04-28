@@ -13,7 +13,7 @@ export VERSION_NO="0.4.13"
 docker pull domdfcoding/pywine-pyms-nist
 
 # Test tox with source package
-python -m pip install tox
+python3 -m pip install tox
 tox
 
 test_wheel() {
