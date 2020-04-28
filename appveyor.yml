@@ -4,23 +4,23 @@ clone_depth: 50  # The same depth Travis has
 environment:
   matrix:
     # Python36
-    - TOXENV: "py36"
-      TOX_APPVEYOR_X64: 0
+#    - TOXENV: "py36"
+#      TOX_APPVEYOR_X64: 0
     # Python37
-    - TOXENV: "py37"
-      TOX_APPVEYOR_X64: 0
+#    - TOXENV: "py37"
+#      TOX_APPVEYOR_X64: 0
     # Python38
-    - TOXENV: "py38"
-      TOX_APPVEYOR_X64: 1
+#    - TOXENV: "py38"
+#      TOX_APPVEYOR_X64: 0
     # Python36-x64
     - TOXENV: "py36"
-      TOX_APPVEYOR_X64: 1
+#      TOX_APPVEYOR_X64: 1
     # Python37-x64
     - TOXENV: "py37"
-      TOX_APPVEYOR_X64: 1
+#      TOX_APPVEYOR_X64: 1
     # Python38-x64
     - TOXENV: "py38"
-      TOX_APPVEYOR_X64: 1
+#      TOX_APPVEYOR_X64: 1
 
 #    - PYTHON: "C:\\Python36"
 #    - PYTHON: "C:\\Python37"
@@ -35,7 +35,8 @@ environment:
 install:
   # We need wheel installed to build wheels
 #  - "%PYTHON%\\python.exe -m pip install wheel Cython"
-  - py -3.6 -m pip install wheel Cython tox tox-appveyor
+  - py -3.6 -m pip install wheel Cython tox
+    #tox-appveyor
 
 build: off
 
