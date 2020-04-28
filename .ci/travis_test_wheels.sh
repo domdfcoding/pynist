@@ -15,6 +15,7 @@ docker pull domdfcoding/pywine-pyms-nist
 # Test tox with source package
 pyenv global 3.6
 python -m pip install tox
+sudo rm -rf pyms_nist_search.egg-info
 python -m tox
 
 test_wheel() {
