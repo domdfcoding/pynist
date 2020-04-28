@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -x
 
+ls /opt/python/
+
 PYVERSIONS=(
   "cp36-cp36m"
   "cp37-cp37m"
