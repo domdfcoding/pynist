@@ -6,12 +6,15 @@ environment:
   matrix:
     # Python36
 #    - TOXENV: "py36-windows"
+#       PYTHON: "C:\\Python36"
 #      TOX_APPVEYOR_X64: 0
     # Python37
 #    - TOXENV: "py37-windows"
+#       PYTHON: "C:\\Python37"
 #      TOX_APPVEYOR_X64: 0
     # Python38
 #    - TOXENV: "py38-windows"
+#       PYTHON: "C:\\Python38"
 #      TOX_APPVEYOR_X64: 0
     # Python36-x64
     - TOXENV: "py36-windows"
@@ -26,20 +29,12 @@ environment:
       PYTHON: "C:\\Python38-x64"
 #      TOX_APPVEYOR_X64: 1
 
-#    - PYTHON: "C:\\Python36"
-#    - PYTHON: "C:\\Python37"
-#    - PYTHON: "C:\\Python38"
-#    - PYTHON: "C:\\Python36-x64"
-#    - PYTHON: "C:\\Python37-x64"
-#    - PYTHON: "C:\\Python38-x64"
-
   pypi_password:
     secure: gjVIRU4iiSL61pXP6FoKsQ==
 
 install:
   # We need wheel installed to build wheels
-#  - "%PYTHON%\\python.exe -m pip install wheel Cython"
-  - py -3.6 -m pip install wheel Cython tox
+  - %PYTHON% -m pip install wheel Cython tox
     #tox-appveyor
 
 build: off
@@ -54,7 +49,6 @@ artifacts:
   # bdist_wheel puts your built wheel in the dist directory
   - path: dist\*.whl
     name: wheels
-
 
 #on_success:
 #  You can use this step to upload your artifacts to a public website.
