@@ -3,21 +3,44 @@ clone_depth: 50  # The same depth Travis has
 
 environment:
   matrix:
-    - PYTHON: "C:\\Python36"
-    - PYTHON: "C:\\Python37"
-    - PYTHON: "C:\\Python38"
-    - PYTHON: "C:\\Python36-x64"
-    - PYTHON: "C:\\Python37-x64"
-    - PYTHON: "C:\\Python38-x64"
+    # Python36
+    - TOXENV: "py36"
+    - TOX_APPVEYOR_X64: 0
+    # Python37
+    - TOXENV: "py37"
+    - TOX_APPVEYOR_X64: 0
+    # Python38
+    - TOXENV: "py38"
+    - TOX_APPVEYOR_X64: 1
+    # Python36-x64
+    - TOXENV: "py36"
+    - TOX_APPVEYOR_X64: 1
+    # Python37-x64
+    - TOXENV: "py37"
+    - TOX_APPVEYOR_X64: 1
+    # Python38-x64
+    - TOXENV: "py38"
+    - TOX_APPVEYOR_X64: 1
+
+#    - PYTHON: "C:\\Python36"
+#    - PYTHON: "C:\\Python37"
+#    - PYTHON: "C:\\Python38"
+#    - PYTHON: "C:\\Python36-x64"
+#    - PYTHON: "C:\\Python37-x64"
+#    - PYTHON: "C:\\Python38-x64"
 
   pypi_password:
     secure: gjVIRU4iiSL61pXP6FoKsQ==
 
 install:
   # We need wheel installed to build wheels
-  - "%PYTHON%\\python.exe -m pip install wheel Cython"
+#  - "%PYTHON%\\python.exe -m pip install wheel Cython"
+  - py -3.6 -m pip install wheel Cython tox tox-appveyor
 
 build: off
+
+test_script:
+  - py -3.6 -m tox
 
 after_test:
   - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
