@@ -41,8 +41,8 @@ import sys
 # print(pathlib.Path(__file__))
 if sys.platform == "win32":
 	python_base_dir = pathlib.Path(__file__).parent.parent.parent.parent
-	assert (python_base_dir / "nistdl64.dll").is_file()
-	assert (python_base_dir / "ctNt66_64.dll").is_file()
+	# assert (python_base_dir / "nistdl64.dll").is_file()
+	# assert (python_base_dir / "ctNt66_64.dll").is_file()
 	if not str(python_base_dir.absolute()) in os.environ["PATH"].split(":"):
 		os.environ["PATH"] += os.pathsep + str(python_base_dir.absolute())
 	del python_base_dir
