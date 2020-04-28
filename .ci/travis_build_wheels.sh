@@ -6,7 +6,7 @@ ls /opt/python/
 PYVERSIONS=(
   "cp36-cp36m"
   "cp37-cp37m"
-  "cp38-cp38m"
+  "cp38-cp38"
   )
 
 export VERSION_NO="0.4.13"

@@ -35,7 +35,7 @@ test_wheel() {
   rm -rf pyms_nist_search
   sudo rm -rf pyms_nist_search.egg-info  # Was getting "permission denied" without sudo
 
-  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
+  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1*-manylinux*.whl; do
 
     # Test tox with wheels
     python -m tox -r -e py$1-linux --installpkg "$whl"
