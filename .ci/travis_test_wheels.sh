@@ -15,7 +15,7 @@ docker pull domdfcoding/pywine-pyms-nist
 # Test tox with source package
 pyenv global 3.6
 python -m pip install tox
-tox
+python -m tox
 
 test_wheel() {
   # First argument is the python version number (36, 37 etc)
@@ -42,7 +42,7 @@ test_wheel() {
 #    python -m pip install "$whl" --upgrade
 
     # Test tox with wheels
-    tox -e py$1 --installpkg "$whl"
+    python -m tox -r -e py$1 --installpkg "$whl"
 
     python -m pytest --cov=pyms_nist_search tests/
 

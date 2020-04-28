@@ -111,8 +111,9 @@ build
 # NIST Library
 */mainlib
 
+**/.vagrant
 
-*/old
+**/old
 
 */constants.h
 
