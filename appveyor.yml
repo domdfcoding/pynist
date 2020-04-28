@@ -45,7 +45,7 @@ install:
 build: off
 
 test_script:
-  - if TOXENVpy -3.6 -m tox
+  - py -3.6 -m tox
 
 after_test:
   - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
