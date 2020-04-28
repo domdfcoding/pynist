@@ -9,6 +9,8 @@ PYVERSIONS=(
 
 export VERSION_NO="0.4.13"
 
+pyenv install -v 3.8
+
 # Test tox with source package
 pyenv global 3.6
 python -m pip install tox
@@ -20,7 +22,6 @@ test_wheel() {
 
   # Tell Pyenv which python version to use
   PY_DOT=$(echo "$1" | sed 's/.\{1\}/&./g;s/.$//')
-  pyenv install -v "${PY_DOT}" -n
   pyenv global "${PY_DOT}"
 
   python --version
