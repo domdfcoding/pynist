@@ -38,14 +38,13 @@ test_wheel() {
 
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
 
-    # Install pyms_nist_search and run tests
-#    python -m pip install pyms_nist_search --find-links wheelhouse/
-#    python -m pip install "$whl" --upgrade
-
     # Test tox with wheels
     python -m tox -r -e py$1 --installpkg "$whl"
 
-    python -m pytest --cov=pyms_nist_search tests/
+    # Install pyms_nist_search and run tests
+#    python -m pip install pyms_nist_search --find-links wheelhouse/
+#    python -m pip install "$whl" --upgrade
+#    python -m pytest --cov=pyms_nist_search tests/
 
   # TODO: Upload coverage to coveralls
   done
