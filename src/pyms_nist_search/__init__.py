@@ -35,8 +35,13 @@
 # stdlib
 import sys
 import os
+import pathlib
 
-print(os.getcwd())
+print(pathlib.Path.cwd())
+print(pathlib.Path(__file__))
+if sys.platform == "win32":
+	assert (pathlib.Path(__file__).parent.parent.parent.parent / "nistdl64.dll").is_file()
+	assert (pathlib.Path(__file__).parent.parent.parent.parent / "ctNt66_64.dll").is_file()
 
 # this package
 from ._core import *
