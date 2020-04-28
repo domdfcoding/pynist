@@ -23,5 +23,5 @@ search = pyms_nist_search.Engine(
 		FULL_PATH_TO_USER_LIBRARY,
 		pyms_nist_search.NISTMS_USER_LIB,
 		FULL_PATH_TO_WORK_DIR,
-		debug=True,
+		# debug=True,
 		)
