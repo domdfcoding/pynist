@@ -12,6 +12,9 @@ export VERSION_NO="0.4.13"
 # download docker image
 docker pull domdfcoding/pywine-pyms-nist
 
+# Test tox with source package
+python -m pip install tox
+tox
 
 test_wheel() {
   # First argument is the python version number (36, 37 etc)
@@ -28,18 +31,22 @@ test_wheel() {
   python -m pip install setuptools wheel --upgrade
   python -m pip install -r tests/requirements.txt
 
-#  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
-  # Cleanup to prevent interference with tests
-  rm -rf pyms_nist_search
-  sudo rm -rf pyms_nist_search.egg-info  # Was getting "permission denied" without sudo
+  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
+    # Cleanup to prevent interference with tests
+    rm -rf pyms_nist_search
+    sudo rm -rf pyms_nist_search.egg-info  # Was getting "permission denied" without sudo
 
-  # Install pyms_nist_search and run tests
-  python -m pip install pyms_nist_search --find-links wheelhouse/
-#  python -m pip install "$whl" --upgrade
-  python -m pytest --cov=pyms_nist_search tests/
+    # Install pyms_nist_search and run tests
+#    python -m pip install pyms_nist_search --find-links wheelhouse/
+#    python -m pip install "$whl" --upgrade
+
+    # Test tox with wheels
+    tox -e py$1 --installpkg "$whl"
+
+    python -m pytest --cov=pyms_nist_search tests/
 
   # TODO: Upload coverage to coveralls
-#  done
+  done
 }
 
 for PYVERSION in "${PYVERSIONS[@]}"; do
