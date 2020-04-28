@@ -34,7 +34,7 @@ environment:
 
 install:
   # We need wheel installed to build wheels
-  - %PYTHON% -m pip install wheel Cython tox
+  - "%PYTHON% -m pip install wheel Cython tox"
     #tox-appveyor
 
 build: off
