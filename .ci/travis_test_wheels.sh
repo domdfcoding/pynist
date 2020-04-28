@@ -9,7 +9,7 @@ PYVERSIONS=(
 
 export VERSION_NO="0.4.13"
 
-pyenv install -v 3.8
+#pyenv install -v 3.8
 
 # Test tox with source package
 pyenv global 3.6
