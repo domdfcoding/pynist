@@ -5,22 +5,22 @@ image: Visual Studio 2019
 environment:
   matrix:
     # Python36
-#    - TOXENV: "py36"
+#    - TOXENV: "py36-windows"
 #      TOX_APPVEYOR_X64: 0
     # Python37
-#    - TOXENV: "py37"
+#    - TOXENV: "py37-windows"
 #      TOX_APPVEYOR_X64: 0
     # Python38
-#    - TOXENV: "py38"
+#    - TOXENV: "py38-windows"
 #      TOX_APPVEYOR_X64: 0
     # Python36-x64
-    - TOXENV: "py36"
+    - TOXENV: "py36-windows"
 #      TOX_APPVEYOR_X64: 1
     # Python37-x64
-    - TOXENV: "py37"
+    - TOXENV: "py37-windows"
 #      TOX_APPVEYOR_X64: 1
     # Python38-x64
-    - TOXENV: "py38"
+    - TOXENV: "py38-windows"
 #      TOX_APPVEYOR_X64: 1
 
 #    - PYTHON: "C:\\Python36"
