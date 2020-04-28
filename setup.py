@@ -6,6 +6,8 @@ import sys
 
 from setuptools import Extension, find_packages, setup
 
+print(pathlib.Path.cwd())
+
 copyright = """
 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 """
@@ -94,11 +96,11 @@ if __name__ == '__main__':
 	if sys.platform == "win32":
 		
 		if sys.maxsize > 2 ** 32:
-			libraries = ['x64/nistdl64']
-			data_files = [('', ['x64/NISTDL64.dll', 'x64/ctNt66_64.dll'])]
+			libraries = ['pyms_nist_search/x64/nistdl64']
+			data_files = [('', ['pyms_nist_search/x64/NISTDL64.dll', 'pyms_nist_search/x64/ctNt66_64.dll'])]
 		else:
-			libraries = ['x86/nistdl32']
-			data_files = [('', ['x86/NISTDL32.dll', 'x86/ctNt66.dll'])]
+			libraries = ['pyms_nist_search/x86/nistdl32']
+			data_files = [('', ['pyms_nist_search/x86/NISTDL32.dll', 'pyms_nist_search/x86/ctNt66.dll'])]
 		
 		extension = Extension(
 				name='pyms_nist_search._core',
