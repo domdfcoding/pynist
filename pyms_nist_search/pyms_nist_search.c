@@ -70,8 +70,8 @@ This file is a modified version of the CALLDLL.C files from
 #include <io.h>
 
 
-#include "NISTMS.h"
-#include "NISTERR.h"
+#include "NISTMS.H"
+#include "NISTERR.H"
 
 
 #define MAX_NAME_LEN 120       /*  longest string returned for a name in hit list */
