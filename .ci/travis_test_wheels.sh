@@ -4,7 +4,7 @@ set -e -x
 PYVERSIONS=(
   "36"
   "37"
-  #"38"
+  "38"
   )
 
 export VERSION_NO="0.4.13"
@@ -20,6 +20,7 @@ test_wheel() {
 
   # Tell Pyenv which python version to use
   PY_DOT=$(echo "$1" | sed 's/.\{1\}/&./g;s/.$//')
+  pyenv install -v "${PY_DOT}"
   pyenv global "${PY_DOT}"
 
   python --version
