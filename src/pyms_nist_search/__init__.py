@@ -44,7 +44,7 @@ if sys.platform == "win32":
 	print(sys.path)
 	assert (pathlib.Path(__file__).parent.parent.parent.parent / "nistdl64.dll").is_file()
 	assert (pathlib.Path(__file__).parent.parent.parent.parent / "ctNt66_64.dll").is_file()
-	if not pathlib.Path(__file__).parent.parent.parent.parent.absolute() in os.environ["PATH"]:
+	if not str(pathlib.Path(__file__).parent.parent.parent.parent.absolute()) in os.environ["PATH"].split(":"):
 		os.environ["PATH"] += os.pathsep + str(pathlib.Path(__file__).parent.parent.parent.parent.absolute())
 
 # this package
