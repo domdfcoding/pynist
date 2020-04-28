@@ -97,11 +97,19 @@ if __name__ == '__main__':
 	if sys.platform == "win32":
 		
 		if sys.maxsize > 2 ** 32:
-			libraries = ['src/pyms_nist_search/x64/nistdl64']
-			data_files = [('', ['src/pyms_nist_search/x64/nistdl64.dll', 'src/pyms_nist_search/x64/ctNt66_64.dll'])]
+			x = 64
+			bit = 64
+			ctree = "ctNt66_64"
+			# libraries = ['src/pyms_nist_search/x64/nistdl64']
+			# data_files = [('', ['src/pyms_nist_search/x64/nistdl64.dll', 'src/pyms_nist_search/x64/ctNt66_64.dll'])]
 		else:
-			libraries = ['src/pyms_nist_search/x86/nistdl32']
-			data_files = [('', ['src/pyms_nist_search/x86/nistdl32.dll', 'src/pyms_nist_search/x86/ctNt66.dll'])]
+			x = 86
+			bit = 32
+			ctree = "ctNt66"
+			# libraries = ['src/pyms_nist_search/x86/nistdl32']
+			# data_files = [('', ['src/pyms_nist_search/x86/nistdl32.dll', 'src/pyms_nist_search/x86/ctNt66.dll'])]
+		libraries = [f'src/pyms_nist_search/x{x}/nistdl{bit}']
+		data_files = [('', [f'src/pyms_nist_search/x{x}/nistdl{bit}.dll', f'src/pyms_nist_search/x{x}/{ctree}.dll'])]
 		
 		extension = Extension(
 				name='pyms_nist_search._core',

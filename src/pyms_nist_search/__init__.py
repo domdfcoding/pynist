@@ -33,19 +33,19 @@
 
 
 # stdlib
-import sys
 import os
 import pathlib
+import sys
 
-print(pathlib.Path.cwd())
-print(pathlib.Path(__file__))
+# print(pathlib.Path.cwd())
+# print(pathlib.Path(__file__))
 if sys.platform == "win32":
-	print(os.environ['PATH'])
-	print(sys.path)
-	assert (pathlib.Path(__file__).parent.parent.parent.parent / "nistdl64.dll").is_file()
-	assert (pathlib.Path(__file__).parent.parent.parent.parent / "ctNt66_64.dll").is_file()
-	if not str(pathlib.Path(__file__).parent.parent.parent.parent.absolute()) in os.environ["PATH"].split(":"):
-		os.environ["PATH"] += os.pathsep + str(pathlib.Path(__file__).parent.parent.parent.parent.absolute())
+	python_base_dir = pathlib.Path(__file__).parent.parent.parent.parent
+	assert (python_base_dir / "nistdl64.dll").is_file()
+	assert (python_base_dir / "ctNt66_64.dll").is_file()
+	if not str(python_base_dir.absolute()) in os.environ["PATH"].split(":"):
+		os.environ["PATH"] += os.pathsep + str(python_base_dir.absolute())
+	del python_base_dir
 
 # this package
 from ._core import *
@@ -53,12 +53,11 @@ from .reference_data import ReferenceData
 from .search_result import SearchResult
 from .json import PyNISTEncoder
 
-
 if sys.platform == "win32":
 	from .win_engine import Engine
-	
 else:
 	from .docker_engine import Engine
+
 
 name = "PyMassSpec NIST Search"
 __author__ = 'Dominic Davis-Foster'
