@@ -115,7 +115,7 @@ build
 
 **/old
 
-*/constants.h
+/src/pyms_nist_search/constants.h
 
 _core.cpython*
 
