@@ -9,9 +9,6 @@ PYVERSIONS=(
 
 export VERSION_NO="0.4.13"
 
-# download docker image
-docker pull domdfcoding/pywine-pyms-nist
-
 # Test tox with source package
 pyenv global 3.6
 python -m pip install tox
@@ -19,8 +16,7 @@ sudo rm -rf pyms_nist_search.egg-info
 #python -m tox
 
 test_wheel() {
-  # First argument is the python version number (36, 37 etc)
-  # Second argument is the command to invoke the python interpreter
+  # First and only argument is the python version number (36, 37 etc)
 
   # Tell Pyenv which python version to use
   PY_DOT=$(echo "$1" | sed 's/.\{1\}/&./g;s/.$//')
@@ -41,17 +37,11 @@ test_wheel() {
     # Test tox with wheels
     python -m tox -r -e py$1 --installpkg "$whl"
 
-    # Install pyms_nist_search and run tests
-#    python -m pip install pyms_nist_search --find-links wheelhouse/
-#    python -m pip install "$whl" --upgrade
-#    python -m pytest --cov=pyms_nist_search tests/
-
   # TODO: Upload coverage to coveralls
   done
 }
 
+
 for PYVERSION in "${PYVERSIONS[@]}"; do
   test_wheel $PYVERSION
-#test_wheel "37" "3.7"
-# test_wheel "38" "3.8"
 done

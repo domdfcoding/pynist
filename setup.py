@@ -62,7 +62,8 @@ common_kwargs = dict(
 		license='LGPLv3',
 		name=modname,
 		version=VERSION,
-		packages=find_packages(exclude=("tests", "MoNA_GCMS_Library")),
+		packages=["pyms_nist_search"],
+		package_dir={'pyms_nist_search': 'src/pyms_nist_search'},
 		python_requires=">=3.6",
 		package_data={modname: ['pyms_nist_search/templates/*']},
 		include_package_data=True,
@@ -96,18 +97,18 @@ if __name__ == '__main__':
 	if sys.platform == "win32":
 		
 		if sys.maxsize > 2 ** 32:
-			libraries = ['pyms_nist_search/x64/nistdl64']
-			data_files = [('', ['pyms_nist_search/x64/nistdl64.dll', 'pyms_nist_search/x64/ctNt66_64.dll'])]
+			libraries = ['src/pyms_nist_search/x64/nistdl64']
+			data_files = [('', ['src/pyms_nist_search/x64/nistdl64.dll', 'src/pyms_nist_search/x64/ctNt66_64.dll'])]
 		else:
-			libraries = ['pyms_nist_search/x86/nistdl32']
-			data_files = [('', ['pyms_nist_search/x86/nistdl32.dll', 'pyms_nist_search/x86/ctNt66.dll'])]
+			libraries = ['src/pyms_nist_search/x86/nistdl32']
+			data_files = [('', ['src/pyms_nist_search/x86/nistdl32.dll', 'src/pyms_nist_search/x86/ctNt66.dll'])]
 		
 		extension = Extension(
 				name='pyms_nist_search._core',
 				define_macros=build_macros,
 				libraries=libraries,
-				sources=['pyms_nist_search/pyms_nist_search.c'],
-				include_dirs=["pyms_nist_search"],
+				sources=['src/pyms_nist_search/pyms_nist_search.c'],
+				include_dirs=["src/pyms_nist_search"],
 				language="c",
 				)
 		
@@ -125,8 +126,8 @@ if __name__ == '__main__':
 		min_extension = Extension(
 				name='pyms_nist_search._core',
 				define_macros=build_macros,
-				sources=['pyms_nist_search/pyms_nist_search_min.c'],
-				include_dirs=["pyms_nist_search"],
+				sources=['src/pyms_nist_search/pyms_nist_search_min.c'],
+				include_dirs=["src/pyms_nist_search"],
 				)
 	
 		setup(

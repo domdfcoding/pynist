@@ -34,6 +34,9 @@
 
 # stdlib
 import sys
+import os
+
+print(os.getcwd())
 
 # this package
 from ._core import *

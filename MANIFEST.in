@@ -1,7 +1,7 @@
 include requirements.txt
 include LICENSE
 include THIRD_PARTY_COPYRIGHT
-recursive-include pyms_nist_search *
+recursive-include src/pyms_nist_search *
 recursive-exclude **/__pycache__ *
 recursive-exclude MoNA_GCMS_Library *
-recursive-exclude pyms_nist_search *.so
+recursive-exclude src/pyms_nist_search *.so

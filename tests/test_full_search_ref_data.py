@@ -38,5 +38,5 @@ def test_different_n_hits():
 	for n_hits in range(1, 21):
 		print(f"Testing with {n_hits} hits")
 		hit_list = search.full_search_with_ref_data(spectrum, n_hits=n_hits)
-			
+		
 		assert len(hit_list) == n_hits

@@ -165,7 +165,8 @@ class Engine:
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
 		
-		hit_list = self.full_spectrum_search(mass_spec)[:n_hits]
+		hit_list = self.full_spectrum_search(mass_spec, n_hits)
+		
 		output_buffer = []
 		
 		for idx, hit in enumerate(hit_list):
