@@ -15,12 +15,15 @@ environment:
 #      TOX_APPVEYOR_X64: 0
     # Python36-x64
     - TOXENV: "py36-windows"
+      PYTHON: "C:\\Python36-x64"
 #      TOX_APPVEYOR_X64: 1
     # Python37-x64
     - TOXENV: "py37-windows"
+      PYTHON: "C:\\Python37-x64"
 #      TOX_APPVEYOR_X64: 1
     # Python38-x64
     - TOXENV: "py38-windows"
+      PYTHON: "C:\\Python38-x64"
 #      TOX_APPVEYOR_X64: 1
 
 #    - PYTHON: "C:\\Python36"
@@ -42,10 +45,10 @@ install:
 build: off
 
 test_script:
-  - py -3.6 -m tox
+  - if TOXENVpy -3.6 -m tox
 
 after_test:
-  - ".ci\\build.cmd py -3.6 setup.py bdist_wheel"
+  - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
