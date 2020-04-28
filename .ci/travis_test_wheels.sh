@@ -29,13 +29,13 @@ test_wheel() {
   python -m pip install -r tests/requirements.txt
 
 #  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
-  python -m pip install pyms_nist_search --find-links wheelhouse/
   # Cleanup to prevent interference with tests
   rm -rf pyms_nist_search
   sudo rm -rf pyms_nist_search.egg-info  # Was getting "permission denied" without sudo
 
   # Install pyms_nist_search and run tests
-  python -m pip install "$whl" --upgrade
+  python -m pip install pyms_nist_search --find-links wheelhouse/
+#  python -m pip install "$whl" --upgrade
   python -m pytest --cov=pyms_nist_search tests/
 
   # TODO: Upload coverage to coveralls
