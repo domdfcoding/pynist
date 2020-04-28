@@ -29,7 +29,7 @@ test_wheel() {
   python -m pip install -r tests/requirements.txt
 
 #  for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1m-manylinux*.whl; do
-  python -m pip install pyms_nist_search --find-links file://wheelhouse/
+  python -m pip install pyms_nist_search --find-links wheelhouse/
   # Cleanup to prevent interference with tests
   rm -rf pyms_nist_search
   sudo rm -rf pyms_nist_search.egg-info  # Was getting "permission denied" without sudo
