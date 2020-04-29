@@ -11,7 +11,7 @@ PYVERSIONS=(
   "cp38-cp38"
   )
 
-export VERSION_NO="0.4.13"
+export VERSION_NO="0.4.14"
 
 for PYVERSION in "${PYVERSIONS[@]}"; do
     cd /io/

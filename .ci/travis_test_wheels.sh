@@ -7,7 +7,7 @@ PYVERSIONS=(
   "38"
   )
 
-export VERSION_NO="0.4.13"
+export VERSION_NO="0.4.14"
 
 # Test tox with source package
 pyenv global 3.6
