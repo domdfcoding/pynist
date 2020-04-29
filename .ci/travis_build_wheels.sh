@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e -x
 
+echo "Available Python versions:"
 ls /opt/python/
+echo ""
 
 PYVERSIONS=(
   "cp36-cp36m"
@@ -12,15 +14,11 @@ PYVERSIONS=(
 export VERSION_NO="0.4.13"
 
 for PYVERSION in "${PYVERSIONS[@]}"; do
-
+    cd /io/
     export PYBIN="/opt/python/${PYVERSION}/bin"
 
-    # Upgrade auditwheel to fix borked docker image from 26 Mar 2020
-    "${PYBIN}/pip" install auditwheel --upgrade
-#    "${PYBIN}/pip" wheel /io/ -w /wheelhouse/
-
     # Build wheel
-    cd /io/
+    "${PYBIN}/pip" install wheel auditwheel --upgrade
     "${PYBIN}"/python setup.py bdist_wheel -d /wheelhouse
     cd /
 
@@ -29,6 +27,4 @@ for PYVERSION in "${PYVERSIONS[@]}"; do
          "${PYBIN}/python" -m auditwheel repair "$whl" --plat $PLAT -w /io/wheelhouse/
 
     done
-
 done
-

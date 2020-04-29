@@ -51,7 +51,7 @@ deploy:
   user: DomDF
   on:
     tags: true
-    python: '3.6'
+    condition: "$PLAT = manylinux1_x86_64"
   distributions: sdist
   skip_existing: true
   password:
