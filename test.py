@@ -1,5 +1,5 @@
 import datetime
-from pyms.Spectrum import MassSpectrum
+from pyms.Spectrum import MassSpectrum  # type: ignore
 import pyms_nist_search
 import sys
 

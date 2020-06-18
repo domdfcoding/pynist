@@ -1,4 +1,4 @@
-# 3rd party
+# stdlib
 import json
 import pickle
 
@@ -9,11 +9,22 @@ from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from pyms_nist_search import PyNISTEncoder, ReferenceData, SearchResult
-from .constants import test_string, test_int, test_float, test_list_ints, test_list_strs, test_numbers, test_tuple, test_lists, test_sequences
-from .constants import test_dictionary
+
+# this package
+from .constants import (
+		test_dictionary,
+		test_float,
+		test_int,
+		test_list_ints,
+		test_list_strs,
+		test_lists,
+		test_numbers,
+		test_sequences,
+		test_string,
+		test_tuple
+		)
 from .engines import search
 from .spectra import spectra
-
 
 # Get SearchResult and ReferenceData for Diphenylamine
 spectrum = spectra["Diphenylamine"]
@@ -44,19 +55,25 @@ def test_json_search_result():
 	assert json.dumps(hit, cls=PyNISTEncoder) == search_res_json
 	assert hit.to_json() == search_res_json
 	assert SearchResult.from_json(hit.to_json()) == hit
-	
+
 	with pytest.raises(json.decoder.JSONDecodeError):
 		ReferenceData.from_json(test_string)
-		
+
 	for obj in [
-			test_int, test_float, test_list_ints,
-			test_list_strs, test_dictionary, test_numbers,
-			test_tuple, test_lists, test_sequences,
+			test_int,
+			test_float,
+			test_list_ints,
+			test_list_strs,
+			test_dictionary,
+			test_numbers,
+			test_tuple,
+			test_lists,
+			test_sequences,
 			]:
 		print(obj)
 		with pytest.raises(TypeError):
 			SearchResult.from_json(obj)
-			
+
 
 def test_sdjson_search_result():
 	assert sdjson.dumps(hit) == search_res_json
@@ -70,13 +87,20 @@ def test_dict():
 	# 	ReferenceData.from_json(test_string)
 	#
 	for obj in [
-			test_string, test_int, test_float, test_list_ints,
-			test_list_strs, test_dictionary, test_numbers, test_tuple,
-			test_lists, test_sequences,
+			test_string,
+			test_int,
+			test_float,
+			test_list_ints,
+			test_list_strs,
+			test_dictionary,
+			test_numbers,
+			test_tuple,
+			test_lists,
+			test_sequences,
 			]:
 		with pytest.raises(TypeError):
 			SearchResult.from_dict(obj)
-	
+
 
 def test_str():
 	assert str(hit) == repr(hit) == "Search Result: DIPHENYLAMINE 	(916)"
@@ -85,14 +109,21 @@ def test_str():
 def test_eq():
 	# TODO: make another search result to test equality to
 	assert hit == hit
-	
+
 	for obj in [
-			test_string, test_int, test_float, test_list_ints,
-			test_list_strs, test_dictionary, test_numbers, test_tuple,
-			test_lists, test_sequences,
+			test_string,
+			test_int,
+			test_float,
+			test_list_ints,
+			test_list_strs,
+			test_dictionary,
+			test_numbers,
+			test_tuple,
+			test_lists,
+			test_sequences,
 			]:
 		assert hit != obj
-	
+
 	assert hit != ref_data
 	assert hit != ref_data.mass_spec
 

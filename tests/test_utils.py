@@ -1,4 +1,4 @@
-# stdlib
+# 3rd party
 import pytest  # type: ignore
 
 # this package
@@ -26,17 +26,17 @@ def test_parse_name_chars():
 			"γ-Butyrolactone": [231, 45, 66, 117, 116, 121, 114, 111, 108, 97, 99, 116, 111, 110, 101, 0],
 			"δ-Tocopherol": [235, 45, 84, 111, 99, 111, 112, 104, 101, 114, 111, 108, 0],
 			}
-	
+
 	for ascii, codes in test_strings.items():
 		assert utils.parse_name_chars(codes) == ascii
-	
+
 	# Extra 0s at end:
 	for i in range(5):
 		for ascii, codes in test_strings.items():
-			assert utils.parse_name_chars(codes + ([0]*i)) == ascii
-	
+			assert utils.parse_name_chars(codes + ([0] * i)) == ascii
+
 	# Test remaining special characters
-	
+
 	assert utils.parse_name_chars([238, 0]) == "ε"
 	assert utils.parse_name_chars([227, 0]) == "π"
 	assert utils.parse_name_chars([229, 0]) == "σ"
@@ -44,19 +44,19 @@ def test_parse_name_chars():
 	assert utils.parse_name_chars([234, 0]) == "ω"
 	assert utils.parse_name_chars([241, 0]) == "±"
 	assert utils.parse_name_chars([252, 0]) == "η"
-	
+
 	# Test unrecognised characters
 	for i in range(-31, 0):
 		with pytest.warns(UserWarning):
 			assert utils.parse_name_chars([i, 0]) == '�'
-	
+
 	# Test secret message
 	assert utils.parse_name_chars([
 			78, 111, 116, 104, 105, 110, 103, 32, 84, 111, 32,
 			83, 101, 101, 32, 72, 101, 114, 101, 0, 65, 108,
 			97, 110, 32, 84, 117, 114, 105, 110, 103, 0
 			]) == "Nothing To See Here"
-	
+
 	# Errors
 	with pytest.raises(TypeError):
 		utils.parse_name_chars(["a", "b", "c"])

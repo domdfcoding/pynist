@@ -1,18 +1,18 @@
 modname: pyms-nist-search
 import_name: pyms_nist_search
+repo_name: pynist
 copyright_years: "2020"
 author: "Dominic Davis-Foster"
 email: "dominic@davis-foster.co.uk"
 version: "0.4.14"
 username: "domdfcoding"
-license: 'GPLv3+'
+license: 'LGPLv3+'
 short_desc: "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine"
 
-enable_tests: False
 enable_conda: False
 
-#exclude_files:
-#  - tox
+exclude_files:
+  - setup
 
 #additional_ignore:
 #  - Tokens
@@ -33,10 +33,14 @@ python_versions:
 #travis_pypi_secure:
 
 # additional lines for MANIFEST.in
-#manifest_additional:
-#  - "recursive-include git_helper/templates *"
-#  - "recursive-include git_helper/init_repo_files *"
-#  - "include git_helper git_helper_schema.json"
+manifest_additional:
+  - "recursive-include src/pyms_nist_search/templates *"
+  - "recursive-include src/pyms_nist_search *.c"
+  - "recursive-include src/pyms_nist_search *.C"
+  - "recursive-include src/pyms_nist_search *.h"
+  - "recursive-include src/pyms_nist_search *.H"
+  - "recursive-include src/pyms_nist_search *.dll"
+  - "recursive-include src/pyms_nist_search *.lib"
 
 classifiers:
   - 'Development Status :: 4 - Beta'

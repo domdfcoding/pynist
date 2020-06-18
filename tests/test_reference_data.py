@@ -1,4 +1,4 @@
-# 3rd party
+# stdlib
 import json
 import pathlib
 import pickle
@@ -10,8 +10,20 @@ from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from pyms_nist_search import PyNISTEncoder, ReferenceData, SearchResult
-from .constants import test_string, test_int, test_float, test_list_ints, test_list_strs, test_numbers, test_tuple, test_lists, test_sequences
-from .constants import test_dictionary
+
+# this package
+from .constants import (
+		test_dictionary,
+		test_float,
+		test_int,
+		test_list_ints,
+		test_list_strs,
+		test_lists,
+		test_numbers,
+		test_sequences,
+		test_string,
+		test_tuple
+		)
 from .engines import search
 from .spectra import spectra
 
@@ -22,7 +34,6 @@ hit, ref_data = search.full_search_with_ref_data(spectrum, n_hits=1)[0]
 assert isinstance(hit, SearchResult)
 assert isinstance(ref_data, ReferenceData)
 assert isinstance(ref_data.mass_spec, MassSpectrum)
-
 
 ref_data_dict = {
 		"name": "DIPHENYLAMINE",
@@ -72,11 +83,17 @@ def test_json_ref_data():
 
 	with pytest.raises(json.decoder.JSONDecodeError):
 		ReferenceData.from_json(test_string)
-			
+
 	for obj in [
-			test_int, test_float, test_list_ints,
-			test_list_strs, test_dictionary, test_numbers,
-			test_tuple,	test_lists, test_sequences,
+			test_int,
+			test_float,
+			test_list_ints,
+			test_list_strs,
+			test_dictionary,
+			test_numbers,
+			test_tuple,
+			test_lists,
+			test_sequences,
 			]:
 		with pytest.raises(TypeError):
 			ReferenceData.from_json(obj)
@@ -90,11 +107,19 @@ def test_dict():
 	assert dict(ref_data) == ref_data.__dict__() == ref_data_dict_non_recursive
 	assert ref_data.__dict__(recursive=True) == ref_data_dict
 	assert ReferenceData.from_dict(dict(ref_data)) == ref_data
-	
+
 	for obj in [
-			test_string, test_int, test_float, test_list_ints,
-			test_list_strs, test_dictionary, test_numbers, test_tuple,
-			test_lists, test_sequences, test_lists,
+			test_string,
+			test_int,
+			test_float,
+			test_list_ints,
+			test_list_strs,
+			test_dictionary,
+			test_numbers,
+			test_tuple,
+			test_lists,
+			test_sequences,
+			test_lists,
 			]:
 		with pytest.raises(TypeError):
 			ReferenceData.from_dict(obj)
@@ -107,14 +132,21 @@ def test_str():
 def test_eq():
 	# TODO: make another search result to test equality to
 	assert ref_data == ref_data
-	
+
 	for obj in [
-			test_string, test_int, test_float, test_list_ints,
-			test_list_strs, test_dictionary, test_numbers, test_tuple,
-			test_lists, test_sequences,
+			test_string,
+			test_int,
+			test_float,
+			test_list_ints,
+			test_list_strs,
+			test_dictionary,
+			test_numbers,
+			test_tuple,
+			test_lists,
+			test_sequences,
 			]:
 		assert ref_data != obj
-	
+
 	assert ref_data != hit
 	assert ref_data != ref_data.mass_spec
 
@@ -137,14 +169,13 @@ def test_from_jcamp():
 	for obj in [123, 12.3, (12, 34), set(), dict(), list()]:
 		with pytest.raises(TypeError):
 			ReferenceData.from_jcamp(obj)
-	
+
 	with pytest.raises(FileNotFoundError):
 		ReferenceData.from_jcamp("non-existant_file.jdx")
-		
+
 	with pytest.raises(FileNotFoundError):
 		ReferenceData.from_jcamp(pathlib.Path("non-existant_file.jdx"))
-	
-	
+
+
 # TODO: from_mona_dict
 # TODO: to_msp
-

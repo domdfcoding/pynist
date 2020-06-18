@@ -1,83 +1,43 @@
 #!/usr/bin/env python
 """Setup script"""
 
-import pathlib
+# stdlib
 import sys
 
-from setuptools import Extension, find_packages, setup
+# 3rd party
+from setuptools import Extension, setup
 
-print(pathlib.Path.cwd())
-
-copyright = """
-2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
-"""
-
-VERSION = "0.4.14"
-
-modname = "pyms_nist_search"
-
-short_desc = "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine"
-
-author = "Dominic Davis-Foster"
-author_email = "dominic@davis-foster.co.uk"
-github_username = "domdfcoding"
-
-classifiers = [
-		"Development Status :: 4 - Beta",
-		# "Development Status :: 5 - Production/Stable",
-		# "Development Status :: 6 - Mature",
-		# "Development Status :: 7 - Inactive",
-
-		"Operating System :: Microsoft :: Windows",
-		"Operating System :: Microsoft :: Windows :: Windows 10",
-		"Operating System :: Microsoft :: Windows :: Windows 7",
-		"Operating System :: Microsoft :: Windows :: Windows 8.1",
-
-		"Operating System :: POSIX :: Linux",
-		# "Operating System :: OS Independent",
-
-		"Intended Audience :: Developers",
-		"Intended Audience :: Science/Research",
-
-		"License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
-
-		"Programming Language :: C",
-		"Programming Language :: Python :: 3.6",
-		"Programming Language :: Python :: 3.7",
-		"Programming Language :: Python :: 3.8",
-		"Programming Language :: Python :: 3 :: Only",
-		"Programming Language :: Python :: Implementation :: CPython",
-
-		# "Topic :: Database :: Front-Ends",
-		"Topic :: Scientific/Engineering :: Chemistry",
-		"Topic :: Software Development :: Libraries :: Python Modules",
-		]
+# this package
+from __pkginfo__ import (
+	__author__,
+	__license__,
+	__version__,
+	author_email,
+	classifiers,
+	modname,
+	short_desc,
+	long_description,
+	install_requires,
+	github_url,
+)
 
 
 common_kwargs = dict(
-		author=author,
+		author=__author__,
 		author_email=author_email,
 		classifiers=classifiers,
 		description=short_desc,
-		license='LGPLv3',
+		license=__license__,
 		name=modname,
-		version=VERSION,
+		version=__version__,
 		packages=["pyms_nist_search"],
 		package_dir={'pyms_nist_search': 'src/pyms_nist_search'},
 		python_requires=">=3.6",
-		package_data={modname: ['pyms_nist_search/templates/*']},
+		# package_data={modname: ['pyms_nist_search/templates/*']},
 		include_package_data=True,
-		url=f"https://github.com/{github_username}/{modname}",
+		url=github_url,
+		long_description=long_description,
 		)
-
-if pathlib.Path.cwd().name == "doc-source":
-	print(pathlib.Path.cwd().parent / "README.rst")
-	install_requires = (pathlib.Path.cwd().parent / "requirements.txt").read_text().split("\n")
-	common_kwargs["long_description"] = (pathlib.Path.cwd().parent / "README.rst").read_text() + '\n'
-else:
-	print(pathlib.Path("README.rst"))
-	install_requires = pathlib.Path("requirements.txt").read_text().split("\n")
-	common_kwargs["long_description"] = pathlib.Path("README.rst").read_text() + '\n'
 
 docker_only_reqs = [
 		"docker>=4.2.0",

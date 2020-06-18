@@ -3,10 +3,10 @@ import pathlib
 
 # 3rd party
 import requests
-# from pyms.Spectrum import MassSpectrum
 
 # this package
 from pyms_nist_search import ReferenceData
+# from pyms.Spectrum import MassSpectrum
 
 #
 # mz_int_pairs = [
@@ -40,17 +40,16 @@ from pyms_nist_search import ReferenceData
 #
 # 	return MassSpectrum(mass_list, intensity_list)
 
-
 spectra = {
 		# "Diphenylamine": make_ms_from_pairs(mz_int_pairs)
-		}
+}
 
 # Download required files from NIST Webbook
 nist_data_dir = pathlib.Path("nist_jdx_files")
-	
+
 if not nist_data_dir.exists():
 	nist_data_dir.mkdir(parents=True)
-	
+
 # Compounds from nist
 for cas in [
 		"122-39-4",
@@ -68,15 +67,14 @@ for cas in [
 		]:
 
 	jcamp_file = nist_data_dir / f"{cas}.jdx"
-		
+
 	if not jcamp_file.exists():
-		r = requests.get(
-				f"https://webbook.nist.gov/cgi/cbook.cgi?JCAMP=C{cas.replace('-', '')}&Index=0&Type=Mass")
+		r = requests.get(f"https://webbook.nist.gov/cgi/cbook.cgi?JCAMP=C{cas.replace('-', '')}&Index=0&Type=Mass")
 		jcamp_file.write_bytes(r.content)
-	
+
 	# Read ReferenceData from Jcamp File
 	ref_data = ReferenceData.from_jcamp(jcamp_file)
-	
+
 	# Fix for borneol
 	if ref_data.cas == "507-70-0":
 		spectra["Borneol"] = ref_data.mass_spec
