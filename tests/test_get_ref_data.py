@@ -1,5 +1,5 @@
 # 3rd party
-from pyms.Spectrum import MassSpectrum
+from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from pyms_nist_search import ReferenceData, SearchResult

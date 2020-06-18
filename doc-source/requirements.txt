@@ -1,10 +1,4 @@
-PyMassSpec >=2.2.20
-chemistry_tools >=0.2.5
-docker >=4.2.0
 extras_require
-importlib-resources >=1.0.2
-jinja2 >=2.10.1
-requests >=2.22.0
 sphinx >=3.0.3
 sphinx-notfound-page
 sphinx-prompt >=1.2.0

@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
 	github_username = "domdfcoding"
 
-	copy_pypi_2_github(g, "pyms-nist-search", "domdfcoding", pypi_name="pyms-nist-search")
+	copy_pypi_2_github(g, "pynist", "domdfcoding", pypi_name="pyms-nist-search")
 
 	rate = g.get_rate_limit()
 	used_requests = remaining_requests - rate.core.remaining

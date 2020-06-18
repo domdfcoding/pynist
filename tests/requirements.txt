@@ -1,3 +1,5 @@
-pytest
-coverage
-pytest-cov
+coverage >=5.1
+pytest >=5.1.1
+pytest-cov >=2.8.1
+pytest-randomly >=3.3.1
+pytest-rerunfailures >=9.0

@@ -3,14 +3,14 @@ import json
 import pickle
 
 # 3rd party
-import pytest
+import pytest  # type: ignore
 import sdjson
-from pyms.Spectrum import MassSpectrum
+from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from pyms_nist_search import PyNISTEncoder, ReferenceData, SearchResult
-from .constants import *
-from .constants import test_dict as test_dictionary
+from .constants import test_string, test_int, test_float, test_list_ints, test_list_strs, test_numbers, test_tuple, test_lists, test_sequences
+from .constants import test_dictionary
 from .engines import search
 from .spectra import spectra
 

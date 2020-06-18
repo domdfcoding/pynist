@@ -43,9 +43,9 @@ import warnings
 
 # 3rd party
 from domdf_python_tools.utils import chunks
-from pyms.Spectrum import MassSpectrum, normalize_mass_spec
-from pyms.Utils.jcamp import header_info_fields, JcampTagWarning, xydata_tags
-from pyms.Utils.Math import is_float
+from pyms.Spectrum import MassSpectrum, normalize_mass_spec  # type: ignore
+from pyms.Utils.jcamp import header_info_fields, JcampTagWarning, xydata_tags  # type: ignore
+from pyms.Utils.Math import is_float  # type: ignore
 
 # this package
 import pyms_nist_search.templates

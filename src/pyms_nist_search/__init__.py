@@ -48,7 +48,7 @@ if sys.platform == "win32":
 	del python_base_dir
 
 # this package
-from ._core import *
+from ._core import *  # type: ignore
 from .reference_data import ReferenceData
 from .search_result import SearchResult
 from .json import PyNISTEncoder

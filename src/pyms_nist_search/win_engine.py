@@ -41,11 +41,11 @@ import os
 import os.path
 
 # 3rd party
-from pyms.Spectrum import MassSpectrum
+from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
-from . import _core
-# from ._core import *
+from . import _core  # type: ignore
+# from ._core import *  # type: ignore
 from .reference_data import ReferenceData
 from .search_result import SearchResult
 from .utils import pack

@@ -3,14 +3,14 @@ Downloading source code
 *******************************
 
 The ``pyms-nist-search`` source code resides on publicly accessible GitHub servers,
-and can be accessed from the following URL: https://github.com/domdfcoding/pyms-nist-search"
+and can be accessed from the following URL: https://github.com/domdfcoding/pynist"
 
 If you have ``git`` installed, you can clone the repository with the following command:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/domdfcoding/pyms-nist-search"
-    > Cloning into 'pyms-nist-search'...
+    $ git clone https://github.com/domdfcoding/pynist"
+    > Cloning into 'pynist'...
     > remote: Enumerating objects: 47, done.
     > remote: Counting objects: 100% (47/47), done.
     > remote: Compressing objects: 100% (41/41), done.

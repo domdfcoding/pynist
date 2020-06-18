@@ -29,9 +29,9 @@
     :special-members:
 
 
-===================================
+=======================================
 :mod:`pyms_nist_search.docker_engine`
-===================================
+=======================================
 
 .. automodule:: pyms_nist_search.docker_engine
     :members:
@@ -49,9 +49,9 @@
     :special-members:
 
 
-===================================
+=======================================
 :mod:`pyms_nist_search.reference_data`
-===================================
+=======================================
 
 .. automodule:: pyms_nist_search.reference_data
     :members:
@@ -59,9 +59,9 @@
     :special-members:
 
 
-===================================
+=======================================
 :mod:`pyms_nist_search.search_result`
-===================================
+=======================================
 
 .. automodule:: pyms_nist_search.search_result
     :members:

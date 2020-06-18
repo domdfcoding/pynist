@@ -40,19 +40,18 @@ import atexit
 import json
 import os
 import time
-import warnings
 
 # 3rd party
-import docker
-import docker.errors
+import docker  # type: ignore
+import docker.errors  # type: ignore
 import requests
-from pyms.Spectrum import MassSpectrum
+from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from .json import PyNISTEncoder
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-from ._core import NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
+from ._core import NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB  # type: ignore
 
 client = docker.from_env()
 

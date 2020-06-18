@@ -36,7 +36,7 @@ Custom json encoder to support PyMassSpec NIST Search classes
 
 
 # 3rd party
-from pyms.json import PyMassSpecEncoder
+from pyms.json import PyMassSpecEncoder  # type: ignore
 from sdjson import register_encoder
 
 # this package

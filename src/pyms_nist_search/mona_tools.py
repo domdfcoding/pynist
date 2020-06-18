@@ -30,7 +30,7 @@ It could probably be its own package
 
 
 # 3rd party
-from pyms.Spectrum import MassSpectrum
+from pyms.Spectrum import MassSpectrum  # type: ignore
 
 
 def prep_match_list(match_list):

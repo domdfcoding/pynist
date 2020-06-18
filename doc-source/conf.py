@@ -24,7 +24,7 @@ from __pkginfo__ import __version__
 
 
 
-github_url = f"https://github.com/domdfcoding/pyms-nist-search"
+github_url = f"https://github.com/domdfcoding/pynist"
 
 rst_prolog = f""".. |pkgname| replace:: pyms-nist-search
 .. |pkgname2| replace:: ``pyms-nist-search``
@@ -92,7 +92,7 @@ html_show_sourcelink = False  # True will show link to source
 html_context = {
 		'display_github': True,
 		'github_user': 'domdfcoding',
-		'github_repo': 'pyms-nist-search',
+		'github_repo': 'pynist',
 		'github_version': 'master',
 		'conf_py_path': '/',
 		}

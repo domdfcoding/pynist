@@ -1,5 +1,5 @@
 # stdlib
-import pytest
+import pytest  # type: ignore
 
 # this package
 from pyms_nist_search import utils
