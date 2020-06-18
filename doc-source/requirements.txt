@@ -1,8 +1,15 @@
-sphinxcontrib-httpdomain
-sphinx
-PyMassSpec>=2.2.20
-docker>=4.2.0
-requests>=2.22.0
-chemistry_tools>=0.2.5
-jinja2 >= 2.10.1
-importlib-resources >= 1.0.2
+PyMassSpec >=2.2.20
+chemistry_tools >=0.2.5
+docker >=4.2.0
+extras_require
+importlib-resources >=1.0.2
+jinja2 >=2.10.1
+requests >=2.22.0
+sphinx >=3.0.3
+sphinx-notfound-page
+sphinx-prompt >=1.2.0
+sphinx-tabs >=1.1.13
+sphinx_autodoc_typehints >=1.10.3
+sphinx_rtd_theme
+sphinxcontrib-httpdomain >=1.7.0
+sphinxemoji >=0.1.6

@@ -1,0 +1,64 @@
+modname: pyms-nist-search
+import_name: pyms_nist_search
+copyright_years: "2020"
+author: "Dominic Davis-Foster"
+email: "dominic@davis-foster.co.uk"
+version: "0.4.14"
+username: "domdfcoding"
+license: 'GPLv3+'
+short_desc: "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine"
+
+enable_tests: False
+enable_conda: False
+
+#exclude_files:
+#  - tox
+
+#additional_ignore:
+#  - Tokens
+
+platforms:
+  - Windows
+  - Linux
+
+python_deploy_version: 3.6
+
+# Versions to run tests for
+python_versions:
+  - '3.6'
+  - '3.7'
+  - '3.8'
+
+# travis secure password for PyPI
+#travis_pypi_secure:
+
+# additional lines for MANIFEST.in
+#manifest_additional:
+#  - "recursive-include git_helper/templates *"
+#  - "recursive-include git_helper/init_repo_files *"
+#  - "include git_helper git_helper_schema.json"
+
+classifiers:
+  - 'Development Status :: 4 - Beta'
+#  - "Development Status :: 5 - Production/Stable"
+#  - "Development Status :: 6 - Mature"
+#  - "Development Status :: 7 - Inactive"
+  - 'Intended Audience :: Developers'
+  - 'Topic :: Utilities'
+  - "Operating System :: Microsoft :: Windows :: Windows 10"
+  - "Operating System :: Microsoft :: Windows :: Windows 7"
+  - "Operating System :: Microsoft :: Windows :: Windows 8.1"
+
+  - "Intended Audience :: Developers"
+  - "Intended Audience :: Science/Research"
+
+  - "Programming Language :: C"
+  - "Programming Language :: Python :: 3 :: Only"
+
+  # - "Topic :: Database :: Front-Ends"
+  - "Topic :: Scientific/Engineering :: Chemistry"
+  - "Topic :: Software Development :: Libraries :: Python Modules"
+
+
+#extra_sphinx_extensions:
+#  - tox_conf_directive

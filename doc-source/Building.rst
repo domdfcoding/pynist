@@ -2,7 +2,7 @@
 Building from source
 *********************
 
-To build the |pkgname2| package from source using ``setuptools``, run the following command:
+To build the ``pyms-nist-search`` package from source using ``setuptools``, run the following command:
 
 .. code-block:: bash
 
@@ -48,5 +48,12 @@ Different formats are available for built distributions
 
 
 .. literalinclude:: ../setup.py
+    :language: python
+    :linenos:
+
+**__pkginfo__.py**
+
+
+.. literalinclude:: ../__pkginfo__.py
     :language: python
     :linenos:
