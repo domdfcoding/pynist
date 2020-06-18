@@ -34,6 +34,10 @@ python_versions:
 
 # additional lines for MANIFEST.in
 manifest_additional:
+  - "include THIRD_PARTY_COPYRIGHT"
+  - "recursive-include src/pyms_nist_search *"
+  - "recursive-exclude MoNA_GCMS_Library *"
+  - "recursive-exclude src/pyms_nist_search *.so"
   - "recursive-include src/pyms_nist_search/templates *"
   - "recursive-include src/pyms_nist_search *.c"
   - "recursive-include src/pyms_nist_search *.C"
@@ -63,6 +67,12 @@ classifiers:
   - "Topic :: Scientific/Engineering :: Chemistry"
   - "Topic :: Software Development :: Libraries :: Python Modules"
 
-
-#extra_sphinx_extensions:
-#  - tox_conf_directive
+additional_ignore:
+  # NIST Library
+  - "*/mainlib"
+  - "**/.vagrant"
+  - "**/old"
+  - "/src/pyms_nist_search/constants.h"
+  - "_core.cpython*"
+  - "**/nist_jdx_files"
+  - "**/MoNA-export-GC-MS_Spectra.json"
