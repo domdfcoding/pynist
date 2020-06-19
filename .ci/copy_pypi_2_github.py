@@ -66,7 +66,7 @@ def get_file_from_pypi(url, tmpdir):
 	return True
 
 
-def copy_pypi_2_github(g, repo_name, github_username, *, release_message="", pypi_name=None):
+def copy_pypi_2_github(g, repo_name, github_username, *, release_message='', pypi_name=None):
 	repo_name = str(repo_name)
 	github_username = str(github_username)
 
@@ -119,7 +119,7 @@ https://pypi.org/project/{pypi_name}/{version}
 					continue
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 	gh_token = os.environ.get("GITHUB_TOKEN")
 	if not gh_token:
 		sys.stdout.flush()

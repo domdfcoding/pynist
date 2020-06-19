@@ -86,7 +86,7 @@ class SearchResult(NISTBase):
 		"""
 		Returns a score (out of 1000) representing the similarity of the searched
 		mass spectrum to the search result.
-		
+
 		:rtype: int
 		"""
 
@@ -107,7 +107,7 @@ class SearchResult(NISTBase):
 	@property
 	def hit_prob(self) -> float:
 		"""
-		
+
 		:rtype: float
 		"""
 
@@ -119,7 +119,7 @@ class SearchResult(NISTBase):
 		Returns a the location of the reference spectrum in the library.
 		This can then be searched using the `get_reference_data` method of the
 		search engine to obtain the reference data.
-		
+
 		:rtype: int
 		"""
 
@@ -129,9 +129,9 @@ class SearchResult(NISTBase):
 	def from_pynist(cls, pynist_dict: Dict[str, Any]):
 		"""
 		Create a :class:`SearchResult` object from the raw data returned by the C extension.
-		
+
 		:type pynist_dict: dict
-		
+
 		:rtype: SearchResult
 		"""
 

@@ -158,7 +158,7 @@ class ReferenceData(NISTBase):
 	def mw(self) -> int:
 		"""
 		Returns the molecular weight of the compound
-		
+
 		:rtype: int
 		"""
 
@@ -168,7 +168,7 @@ class ReferenceData(NISTBase):
 	def exact_mass(self) -> float:
 		"""
 		Returns the exact mass of the compound
-		
+
 		:rtype: float
 		"""
 
@@ -241,14 +241,14 @@ class ReferenceData(NISTBase):
 	def from_jcamp(cls, file_name: PathLike, ignore_warnings: bool = True):
 		"""
 		Create a ReferenceData object from a JCAMP-DX file
-	
+
 		:param file_name: Path of the file to read
 		:param ignore_warnings: Whether warnings about invalid tags should be shown. Default True
 		:type ignore_warnings: bool, optional
-	
+
 		:return: ReferenceData
 		:rtype: :class:`pyms_nist_search.reference_data.ReferenceData`
-	
+
 		:authors: Qiao Wang, Andrew Isaac, Vladimir Likic, David Kainer, Dominic Davis-Foster
 		"""
 

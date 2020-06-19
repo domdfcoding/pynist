@@ -15,15 +15,15 @@ if [ -z "$(git status --porcelain --untracked-files=no)" ] || [ "$1" == "-f" ]; 
 
   echo "Running autopep8"
 
-  autopep8 --in-place --select "$errors" -a --recursive pyms_nist_search/
-  autopep8 --in-place --select "$belligerent" -a -a -a -a -a --recursive pyms_nist_search/
+  autopep8 --in-place --select "$errors" -a --recursive src/pyms_nist_search/
+  autopep8 --in-place --select "$belligerent" -a -a -a -a -a --recursive src/pyms_nist_search/
 
   autopep8 --in-place --select "$errors" -a --recursive tests/
   autopep8 --in-place --select "$belligerent" -a -a -a -a -a --recursive tests/
 
   echo "Running flake8"
 
-    >&2 flake8 pyms_nist_search/
+    >&2 flake8 src/pyms_nist_search/
 
     >&2 flake8 tests/
 

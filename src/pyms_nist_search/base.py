@@ -92,7 +92,7 @@ class NISTBase:
 	def from_json(cls, json_data: Any):
 		"""
 		Construct an object from json data.
-		
+
 		:type json_data: str
 		"""
 
@@ -113,7 +113,7 @@ class NISTBase:
 	def to_json(self) -> str:
 		"""
 		Convert the object to json
-		
+
 		:rtype: str
 		"""
 

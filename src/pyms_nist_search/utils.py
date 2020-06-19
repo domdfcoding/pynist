@@ -55,7 +55,7 @@ def pack(mass_spec: MassSpectrum, top: int = 20):
 	:type mass_spec: pyms.Spectrum.MassSpectrum
 	:param top: The number of largest peaks to identify
 	:type top: int
-	
+
 	:rtype: str
 	"""
 

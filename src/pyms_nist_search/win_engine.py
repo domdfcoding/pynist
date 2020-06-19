@@ -128,11 +128,11 @@ class Engine:
 	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
-		
+
 		:param mass_spec: The mass spectrum to search against the library
 		:param n_hits: The number of hits to return
 		:type n_hits: int
-		
+
 		:return: List of possible identities for the mass spectrum
 		"""
 
