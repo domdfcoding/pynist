@@ -9,7 +9,8 @@ import sdjson
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
-from pyms_nist_search import PyNISTEncoder, ReferenceData, SearchResult
+from pyms_nist_search import ReferenceData, SearchResult
+from pyms_nist_search.json import *  # noqa
 
 # this package
 from .constants import (
@@ -77,7 +78,7 @@ ref_data_json = json.dumps(ref_data_dict)
 
 
 def test_json_ref_data():
-	assert json.dumps(ref_data, cls=PyNISTEncoder) == ref_data_json
+	assert sdjson.dumps(ref_data) == ref_data_json
 	assert ref_data.to_json() == ref_data_json
 	assert ReferenceData.from_json(ref_data.to_json()) == ref_data
 
@@ -104,8 +105,8 @@ def test_sdjson_ref_data():
 
 
 def test_dict():
-	assert dict(ref_data) == ref_data.__dict__() == ref_data_dict_non_recursive
-	assert ref_data.__dict__(recursive=True) == ref_data_dict
+	assert dict(ref_data) == ref_data.__dict__ == ref_data_dict_non_recursive
+	assert sdjson.loads(sdjson.dumps(ref_data)) == ref_data_dict
 	assert ReferenceData.from_dict(dict(ref_data)) == ref_data
 
 	for obj in [

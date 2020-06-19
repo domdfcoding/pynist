@@ -35,6 +35,7 @@ Base class for other PyMassSpec NIST Search classes
 
 # stdlib
 import json
+from typing import Any, Dict
 
 # 3rd party
 from chemistry_tools.cas import cas_int_to_string, check_cas_number
@@ -46,18 +47,16 @@ from .utils import parse_name_chars
 class NISTBase:
 	"""
 	Base class for other PyMassSpec NIST Search classes
+
+	:param name: The name of the compound
+	:type name: str
+	:param cas: The CAS number of the compound
+	:type cas: str
 	"""
 
-	def __init__(self, name='', cas='---'):
-		"""
+	def __init__(self, name: str = '', cas: str = '---') -> None:
 
-		:param name: The name of the compound
-		:type name: str
-		:param cas: The CAS number of the compound
-		:type cas: str
-		"""
-
-		self._name = name
+		self._name: str = str(name)
 
 		if isinstance(cas, int):
 			if check_cas_number(cas):
@@ -67,10 +66,10 @@ class NISTBase:
 
 		if cas == "0-00-0":
 			cas = "---"
-		self._cas = cas
+		self._cas: str = str(cas)
 
 	@property
-	def name(self):
+	def name(self) -> str:
 		"""
 		Returns the name of the compound.
 
@@ -80,7 +79,7 @@ class NISTBase:
 		return self._name
 
 	@property
-	def cas(self):
+	def cas(self) -> str:
 		"""
 		Returns the CAS number of the compound.
 
@@ -90,7 +89,7 @@ class NISTBase:
 		return self._cas
 
 	@classmethod
-	def from_json(cls, json_data):
+	def from_json(cls, json_data: Any):
 		"""
 		Construct an object from json data.
 		
@@ -102,7 +101,7 @@ class NISTBase:
 		return cls.from_dict(peak_dict)
 
 	@classmethod
-	def from_dict(cls, dictionary):
+	def from_dict(cls, dictionary: Dict[str, Any]):
 		"""
 		Construct an object from a dictionary.
 
@@ -111,7 +110,7 @@ class NISTBase:
 
 		return cls(**dictionary)
 
-	def to_json(self):
+	def to_json(self) -> str:
 		"""
 		Convert the object to json
 		
@@ -121,7 +120,7 @@ class NISTBase:
 		return json.dumps(dict(self))
 
 	@classmethod
-	def from_pynist(cls, pynist_dict):
+	def from_pynist(cls, pynist_dict: Dict[str, Any]):
 		"""
 		Create an object from the raw data returned by the C extension.
 
@@ -133,26 +132,27 @@ class NISTBase:
 				cas=cas_int_to_string(pynist_dict["cas_no"]),
 				)
 
+	@property
 	def __dict__(self):
 		return dict(
 				name=self._name,
 				cas=self.cas,
 				)
 
-	def __getstate__(self):
-		return self.__dict__()
+	def __getstate__(self) -> Dict[str, Any]:
+		return self.__dict__
 
 	def __setstate__(self, state):
 		self.__init__(**state)
 
 	def __iter__(self):
-		yield from self.__dict__().items()
+		yield from self.__dict__.items()
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return self.__repr__()
 
-	def __eq__(self, other):
+	def __eq__(self, other) -> bool:
 		if isinstance(other, self.__class__):
-			return self.__dict__() == other.__dict__()
+			return self.__dict__ == other.__dict__
 
 		return NotImplemented

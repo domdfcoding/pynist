@@ -8,7 +8,8 @@ import sdjson
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
-from pyms_nist_search import PyNISTEncoder, ReferenceData, SearchResult
+from pyms_nist_search import ReferenceData, SearchResult
+from pyms_nist_search.json import *  # noqa
 
 # this package
 from .constants import (
@@ -52,7 +53,7 @@ search_res_json = json.dumps(search_res_dict)
 
 
 def test_json_search_result():
-	assert json.dumps(hit, cls=PyNISTEncoder) == search_res_json
+	assert sdjson.dumps(hit) == search_res_json
 	assert hit.to_json() == search_res_json
 	assert SearchResult.from_json(hit.to_json()) == hit
 
@@ -80,7 +81,7 @@ def test_sdjson_search_result():
 
 
 def test_dict():
-	assert dict(hit) == hit.__dict__() == search_res_dict
+	assert dict(hit) == hit.__dict__ == search_res_dict
 	assert SearchResult.from_dict(dict(hit)) == hit
 	#
 	# with pytest.raises(json.decoder.JSONDecodeError):

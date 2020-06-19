@@ -37,31 +37,37 @@ Search engine for Linux and other platforms supporting Docker
 import atexit
 import json
 import os
+import pathlib
 import time
+from typing import Callable, List, Optional, Tuple, Union
 
 # 3rd party
 import docker  # type: ignore
 import docker.errors  # type: ignore
 import requests
+import sdjson
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
+from pyms_nist_search.json import *  # noqa
+
+# this package
 from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore
-from .json import PyNISTEncoder
 from .reference_data import ReferenceData
 from .search_result import SearchResult
+from .utils import PathLike
 
 client = docker.from_env()
 
 
-def require_init(func):
+def require_init(func: Callable) -> Callable:
 	"""
 	Decorator to ensure that functions do not run after the class has been uninitialised
 
 	:param func: The function or method to wrap
 	"""
 
-	def wrapper(cls, *args, **kwargs):
+	def wrapper(cls, *args, **kwargs) -> Callable:
 		if not cls.initialised:
 			raise RuntimeError(
 					"""The Search Engine has been uninitialised!
@@ -71,6 +77,7 @@ Please create a new instance of the Search Engine and try again."""
 		return func(cls, *args, **kwargs)
 
 	return wrapper
+
 
 
 class Engine:
@@ -87,7 +94,15 @@ class Engine:
 
 	"""
 
-	def __init__(self, lib_path, lib_type=NISTMS_MAIN_LIB, work_dir=None, debug=False):
+	initialised: bool
+
+	def __init__(
+			self,
+			lib_path: PathLike,
+			lib_type: int = NISTMS_MAIN_LIB,
+			work_dir: Optional[PathLike] = None,
+			debug: bool = False,
+			):
 		"""
 		:param lib_path: The path to the mass spectral library
 		:type lib_path: str or pathlib.Path
@@ -97,7 +112,10 @@ class Engine:
 		:type work_dir: str or pathlib.Path
 		"""
 
-		if not os.path.exists(lib_path):
+		if not isinstance(lib_path, pathlib.Path):
+			lib_path = pathlib.Path(lib_path)
+
+		if not lib_path.is_dir():
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
 
 		if lib_type not in {NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB}:
@@ -111,7 +129,7 @@ class Engine:
 		# else:
 		#
 
-		self.debug = debug
+		self.debug: bool = bool(debug)
 
 		print("Launching Docker...")
 
@@ -153,7 +171,7 @@ class Engine:
 				environment=[f"LIBTYPE={lib_type}"],
 				)
 
-	def uninit(self):
+	def uninit(self) -> None:
 		"""
 		Uninitialise the Search Engine
 		"""
@@ -175,12 +193,11 @@ class Engine:
 			self.initialised = False
 
 	@require_init
-	def spectrum_search(self, mass_spec, n_hits=5):
+	def spectrum_search(self, mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Quick Spectrum Search of the mass spectral library
 
 		:param mass_spec: The mass spectrum to search against the library
-		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
@@ -197,8 +214,7 @@ class Engine:
 		while retry_count < 240:
 			try:
 				res = requests.post(
-						f"http://localhost:5001/search/quick/?n_hits={n_hits}",
-						json=json.dumps(mass_spec, cls=PyNISTEncoder)
+						f"http://localhost:5001/search/quick/?n_hits={n_hits}", json=sdjson.dumps(mass_spec)
 						)
 				print(res.text)
 				return hit_list_from_json(res.text)
@@ -210,12 +226,11 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	def full_spectrum_search(self, mass_spec, n_hits=5):
+	def full_spectrum_search(self, mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
 
 		:param mass_spec: The mass spectrum to search against the library
-		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
@@ -232,8 +247,7 @@ class Engine:
 		while retry_count < 240:
 			try:
 				res = requests.post(
-						f"http://localhost:5001/search/spectrum/?n_hits={n_hits}",
-						json=json.dumps(mass_spec, cls=PyNISTEncoder)
+						f"http://localhost:5001/search/spectrum/?n_hits={n_hits}", json=sdjson.dumps(mass_spec)
 						)
 				return hit_list_from_json(res.text)
 
@@ -244,7 +258,7 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	def full_search_with_ref_data(self, mass_spec, n_hits=5):
+	def full_search_with_ref_data(self, mass_spec: MassSpectrum, n_hits: int = 5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library,
 		including reference data.
@@ -269,7 +283,7 @@ class Engine:
 			try:
 				res = requests.post(
 						f"http://localhost:5001/search/spectrum_with_ref_data/?n_hits={n_hits}",
-						json=json.dumps(mass_spec, cls=PyNISTEncoder)
+						json=sdjson.dumps(mass_spec)
 						)
 				return hit_list_with_ref_data_from_json(res.text)
 			except requests.exceptions.ConnectionError:
@@ -279,13 +293,11 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	def get_reference_data(self, spec_loc):
+	def get_reference_data(self, spec_loc: int) -> ReferenceData:
 		"""
 		Get reference data from the library for the compound at the given location.
 
 		:type spec_loc: int
-
-		:rtype: ReferenceData
 		"""
 
 		retry_count = 0
@@ -302,13 +314,11 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 
-def hit_list_from_json(json_data):
+def hit_list_from_json(json_data: str) -> List[SearchResult]:
 	"""
 	Parse json data into a list of SearchResult objects
 
 	:type json_data: str
-
-	:rtype: list of SearchResult
 	"""
 
 	raw_output = json.loads(json_data)
@@ -321,13 +331,11 @@ def hit_list_from_json(json_data):
 	return hit_list
 
 
-def hit_list_with_ref_data_from_json(json_data):
+def hit_list_with_ref_data_from_json(json_data: str) -> List[Tuple[SearchResult, ReferenceData]]:
 	"""
 	Parse json data into a list of (SearchResult, ReferenceData) tuples
 
 	:type json_data: str
-
-	:rtype: list of (SearchResult, ReferenceData) tuples
 	"""
 
 	raw_output = json.loads(json_data)

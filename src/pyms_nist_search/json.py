@@ -34,36 +34,4 @@ Custom json encoder to support PyMassSpec NIST Search classes
 #  All Rights Reserved.
 
 # 3rd party
-from pyms.json import PyMassSpecEncoder  # type: ignore
-from sdjson import register_encoder
-
-# this package
-from pyms_nist_search.reference_data import ReferenceData
-from pyms_nist_search.search_result import SearchResult
-
-# this package
-from .base import NISTBase
-
-
-class PyNISTEncoder(PyMassSpecEncoder):
-	"""
-	Custom json encoder to support PyMassSpec NIST Search classes
-	"""
-
-	def default(self, o):
-		if isinstance(o, ReferenceData):
-			return o.__dict__(recursive=True)
-		elif isinstance(o, NISTBase):
-			return dict(o)
-		else:
-			return PyMassSpecEncoder.default(self, o)
-
-
-@register_encoder(ReferenceData)
-def encode_reference_data(obj):
-	return dict(obj)
-
-
-@register_encoder(SearchResult)
-def encode_search_result(obj):
-	return dict(obj)
+from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa

@@ -35,7 +35,14 @@ General utilities
 #
 
 # stdlib
+import os
 import warnings
+from typing import Union
+import pathlib
+
+
+PathLike = Union[str, pathlib.Path, os.PathLike]
+
 
 
 def pack(mass_spec, top=20):

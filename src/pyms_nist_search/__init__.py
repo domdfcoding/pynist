@@ -47,7 +47,6 @@ if sys.platform == "win32":
 
 # this package
 from ._core import *  # type: ignore
-from .json import PyNISTEncoder
 from .reference_data import ReferenceData
 from .search_result import SearchResult
 
@@ -55,16 +54,17 @@ if sys.platform == "win32":
 
 	# this package
 	from .win_engine import Engine
+
 else:
 
 	# this package
 	from .docker_engine import Engine
 
-name = "PyMassSpec NIST Search"
-__author__ = 'Dominic Davis-Foster'
-__license__ = 'LGPLv3+'
-__maintainer_email__ = 'dominic@davis-foster.co.uk'
-__version__ = '0.4.14'
+name: str = "PyMassSpec NIST Search"
+__author__: str = 'Dominic Davis-Foster'
+__license__: str = 'LGPLv3+'
+__maintainer_email__: str = 'dominic@davis-foster.co.uk'
+__version__: str = '0.4.14'
 
-__copyright__ = "2020 Dominic Davis-Foster"
-__email__ = "dominic@davis-foster.co.uk"
+__copyright__: str = "2020 Dominic Davis-Foster"
+__email__: str = "dominic@davis-foster.co.uk"

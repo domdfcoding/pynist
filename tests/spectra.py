@@ -55,8 +55,7 @@ if not nist_data_dir.exists():
 for cas in [
 		"122-39-4",
 		"71-43-2",
-		"107-10-8",
-		# "50-37-3",  # LSD, shows up under synonym
+		"107-10-8",  # "50-37-3",  # LSD, shows up under synonym  # yapf: ignore
 		"57-13-6",
 		# "77-92-9", citric acid, shows up as diisopropyl malonate
 		# "118-96-7", tnt, being detected as n-sec-butyl-2,4-dinitrobenzenamine

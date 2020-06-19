@@ -33,6 +33,11 @@ Class to store search results from NIST MS Search
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
+# 3rd party
+from typing import Any, Dict
+
+from sdjson import register_encoder
+
 # this package
 from .base import NISTBase
 from .utils import parse_name_chars
@@ -133,6 +138,7 @@ class SearchResult(NISTBase):
 	def __repr__(self):
 		return f"Search Result: {self.name} \t({self.match_factor})"
 
+	@property
 	def __dict__(self):
 		return dict(
 				name=self._name,
@@ -142,3 +148,8 @@ class SearchResult(NISTBase):
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
 				)
+
+
+@register_encoder(SearchResult)
+def encode_search_result(obj: SearchResult) -> Dict[str, Any]:
+	return dict(obj)

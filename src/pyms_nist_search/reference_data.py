@@ -38,8 +38,10 @@ import copy
 import json
 import pathlib
 import warnings
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 # 3rd party
+import sdjson
 from domdf_python_tools.utils import chunks
 from pyms.Spectrum import MassSpectrum, normalize_mass_spec  # type: ignore
 from pyms.Utils.jcamp import JcampTagWarning, header_info_fields, xydata_tags  # type: ignore
@@ -47,62 +49,65 @@ from pyms.Utils.Math import is_float  # type: ignore
 
 # this package
 import pyms_nist_search.templates
+from pyms_nist_search.json import *  # noqa
 from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
 
 # this package
 from .base import NISTBase
 from .templates import *
-from .utils import parse_name_chars
+from .utils import parse_name_chars, PathLike
 
 
 class ReferenceData(NISTBase):
 	"""
 	Class to store reference data from NIST MS Search
+
+	:param name: The name of the compound
+	:type name: str
+	:param cas: The CAS number of the compound
+	:type cas: str
+	:param nist_no:
+	:param id:
+	:type id: str
+	:param mw:
+	:param formula: The formula of the compound
+	:type formula: str
+	:param contributor: The contributor to the library
+	:type contributor: str
+	:param mass_spec: The reference mass spectrum
+	:param synonyms: List of synonyms for the compound
 	"""
+
+	_exact_mass: float
+	_mass_spec: MassSpectrum
+	_synonyms: List[str]
 
 	def __init__(
 			self,
-			name='',
-			cas='---',
-			nist_no=0,
-			id='',
-			mw=0.0,
-			formula='',
-			contributor='',
-			mass_spec=None,
-			synonyms=None,
-			exact_mass=None,
-			):
+			name: str = '',
+			cas: str = '---',
+			nist_no: Union[int, str] = 0,
+			id: str = '',
+			mw: Union[float, str] = 0.0,
+			formula: str = '',
+			contributor: str = '',
+			mass_spec: Optional[MassSpectrum] = None,
+			synonyms: Optional[Sequence[str]] = None,
+			exact_mass: Optional[Any] = None,
+			) -> None:
 		"""
-		:param name: The name of the compound
-		:type name: str
-		:param cas: The CAS number of the compound
-		:type cas: str
-		:param nist_no:
-		:type nist_no: int or str
-		:param id:
-		:type id: str
-		:param mw:
-		:type mw: float or int or str
-		:param formula: The formula of the compound
-		:type formula: str
-		:param contributor: The contributor to the library
-		:type contributor: str
-		:param mass_spec: The reference mass spectrum
-		:type mass_spec: pyms.Spectrum.MassSpectrum
-		:param synonyms: List of synonyms for the compound
-		:type synonyms: list of str
+
 		"""
 
 		NISTBase.__init__(self, name, cas)
 
-		self._formula = str(formula)
-		self._contributor = str(contributor)
+		self._formula: str = str(formula)
+		self._contributor: str = str(contributor)
 
-		self._nist_no = int(nist_no)
-		self._id = str(id)
+		self._nist_no: int = int(nist_no)
+		self._id: str = str(id)
 
-		self._mw = int(mw)
+		self._mw: int = int(mw)
 
 		if not exact_mass:
 			self._exact_mass = float(mw)
@@ -122,7 +127,7 @@ class ReferenceData(NISTBase):
 			self._synonyms = [str(synonym) for synonym in synonyms]
 
 	@property
-	def formula(self):
+	def formula(self) -> str:
 		"""
 		Returns the formula of the compound.
 
@@ -132,7 +137,7 @@ class ReferenceData(NISTBase):
 		return self._formula
 
 	@property
-	def contributor(self):
+	def contributor(self) -> str:
 		"""
 		Returns the name of the contributor to the library.
 
@@ -142,15 +147,15 @@ class ReferenceData(NISTBase):
 		return self._contributor
 
 	@property
-	def nist_no(self):
+	def nist_no(self) -> int:
 		return self._nist_no
 
 	@property
-	def id(self):
+	def id(self) -> str:
 		return self._id
 
 	@property
-	def mw(self):
+	def mw(self) -> int:
 		"""
 		Returns the molecular weight of the compound
 		
@@ -160,7 +165,7 @@ class ReferenceData(NISTBase):
 		return self._mw
 
 	@property
-	def exact_mass(self):
+	def exact_mass(self) -> float:
 		"""
 		Returns the exact mass of the compound
 		
@@ -170,27 +175,23 @@ class ReferenceData(NISTBase):
 		return self._exact_mass
 
 	@property
-	def mass_spec(self):
+	def mass_spec(self) -> Optional[MassSpectrum]:
 		"""
 		Returns the mass spectrum of the compound.
-
-		:rtype: pyms.Spectrum.MassSpectrum
 		"""
 
 		return copy.copy(self._mass_spec)
 
 	@property
-	def synonyms(self):
+	def synonyms(self) -> List[str]:
 		"""
 		Returns a list of synonyms for the compound.
-
-		:rtype: list of str
 		"""
 
 		return self._synonyms[:]
 
 	@classmethod
-	def from_pynist(cls, pynist_dict):
+	def from_pynist(cls, pynist_dict: Dict[str, Any]):
 		"""
 		Create a :class:`ReferenceData` object from the raw data returned by the C extension.
 
@@ -211,10 +212,11 @@ class ReferenceData(NISTBase):
 				synonyms=[parse_name_chars(synonym) for synonym in pynist_dict["synonyms_chars"]],
 				)
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return f"Reference Data: {self.name} \t({self.cas})"
 
-	def __dict__(self, recursive=False):
+	@property
+	def __dict__(self):
 		class_dict = dict(
 				name=self.name,
 				cas=self.cas,
@@ -225,22 +227,22 @@ class ReferenceData(NISTBase):
 				mw=self.mw,
 				exact_mass=self.exact_mass,
 				synonyms=self.synonyms[:],
+				mass_spec=self.mass_spec,
 				)
 
-		if recursive:
-			class_dict["mass_spec"] = dict(self.mass_spec)
-		else:
-			class_dict["mass_spec"] = copy.copy(self.mass_spec)
+		# if recursive:
+		# 	class_dict["mass_spec"] = dict(self.mass_spec)
+		# else:
+		# 	class_dict["mass_spec"] = copy.copy(self.mass_spec)
 
 		return class_dict
 
 	@classmethod
-	def from_jcamp(cls, file_name, ignore_warnings=True):
+	def from_jcamp(cls, file_name: PathLike, ignore_warnings: bool = True):
 		"""
 		Create a ReferenceData object from a JCAMP-DX file
 	
 		:param file_name: Path of the file to read
-		:type file_name: str or pathlib.Path
 		:param ignore_warnings: Whether warnings about invalid tags should be shown. Default True
 		:type ignore_warnings: bool, optional
 	
@@ -266,7 +268,7 @@ class ReferenceData(NISTBase):
 			lines_list = file_name.open('r')
 			last_tag = None
 
-			header_info = {}  # Dictionary containing header information
+			header_info: Dict[str, Any] = {}  # Dictionary containing header information
 
 			for line in lines_list:
 
@@ -308,17 +310,17 @@ class ReferenceData(NISTBase):
 					mass_spec=MassSpectrum.from_jcamp(file_name),
 					)
 
-	def to_json(self):
+	def to_json(self) -> str:
 		"""
 		Convert the object to json
 
 		:rtype: str
 		"""
 
-		return json.dumps(self.__dict__(recursive=True))
+		return sdjson.dumps(self.__dict__)
 
 	@classmethod
-	def from_json(cls, json_data):
+	def from_json(cls, json_data: str):
 		"""
 		Construct an object from json data.
 
@@ -330,7 +332,7 @@ class ReferenceData(NISTBase):
 		return cls.from_dict(peak_dict)
 
 	@classmethod
-	def from_mona_dict(cls, mona_data: dict):
+	def from_mona_dict(cls, mona_data: Dict):
 		"""
 		Construct an object from Massbank of North America json data
 		that has been loaded into a dictionary.
@@ -338,10 +340,10 @@ class ReferenceData(NISTBase):
 		:type mona_data: dict
 		"""
 
-		compound: dict = mona_data["compound"][0]
-		names: list = compound["names"]
+		compound: Dict = mona_data["compound"][0]
+		names: List = compound["names"]
 		name: str = names[0]["name"]
-		synonyms: list = [name for name in names[1:]]
+		synonyms: List = [name for name in names[1:]]
 
 		properties_dict = parse_metadata(mona_data)
 
@@ -357,7 +359,7 @@ class ReferenceData(NISTBase):
 				**properties_dict,
 				)
 
-	def to_msp(self):
+	def to_msp(self) -> str:
 		"""
 		Returns the ReferenceData object as an MSP file similar to that produced by
 		NIST MS Search's export function
@@ -365,6 +367,9 @@ class ReferenceData(NISTBase):
 		:return:
 		:rtype:
 		"""
+
+		if not self.mass_spec:
+			raise ValueError("No mass spectrum included in the reference data.")
 
 		normalized_ms = normalize_mass_spec(self.mass_spec, max_intensity=999)
 		num_peaks = len(self.mass_spec)
@@ -383,3 +388,8 @@ class ReferenceData(NISTBase):
 				)
 
 		return msp_text
+
+
+@sdjson.register_encoder(ReferenceData)
+def encode_reference_data(obj: ReferenceData) -> Dict[str, Any]:
+	return dict(obj)

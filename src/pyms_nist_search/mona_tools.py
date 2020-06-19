@@ -27,24 +27,26 @@ It could probably be its own package
 #  MA 02110-1301, USA.
 #
 
+# stdlib
+from typing import Any, Dict, Iterable, List, Set
+
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 
-def prep_match_list(match_list):
+def prep_match_list(match_list: Iterable[str]) -> Set[str]:
 	"""
 	Prepare a list of matches for caseless matching with .casefold()
 	
 	:param match_list:
-	:type match_list: iterable
-	
+
 	:return:
-	:rtype: set
 	"""
+
 	return {x.casefold() for x in match_list}
 
 
-other_dbs = prep_match_list([
+other_dbs: Set[str] = prep_match_list([
 		"SMILES",
 		"InChI",
 		"InChIKey",
@@ -59,16 +61,16 @@ other_dbs = prep_match_list([
 		"hmdb",
 		])
 
-mona_skip_compound_props = prep_match_list([*other_dbs, 'compound class'])
+mona_skip_compound_props: Set[str] = prep_match_list([*other_dbs, 'compound class'])
 
-mona_skip_categories = prep_match_list([
+mona_skip_categories: Set[str] = prep_match_list([
 		"mass spectrometry",
 		"focused ion",
 		"spectral properties",
 		"acquisition properties",
 		])
 
-mona_skip_properties = prep_match_list([
+mona_skip_properties: Set[str] = prep_match_list([
 		"date",
 		"ionization mode",
 		"instrument",
@@ -129,13 +131,21 @@ mona_skip_properties = prep_match_list([
 		])
 
 
-def parse_metadata(mona_data):
-	compound: dict = mona_data["compound"][0]
-	compound_metadata: list = compound["metaData"]
-	metadata: list = mona_data["metaData"]
-	submitter: dict = mona_data["submitter"]
+def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
+	"""
 
-	properties_dict = {
+	:param mona_data:
+
+	:return:
+	:rtype:
+	"""
+
+	compound: Dict = mona_data["compound"][0]
+	compound_metadata: List = compound["metaData"]
+	metadata: List = mona_data["metaData"]
+	submitter: Dict = mona_data["submitter"]
+
+	properties_dict: Dict[str, Any] = {
 			"formula": '',
 			"mw": 0,
 			"exact_mass": 0.0,
@@ -149,7 +159,7 @@ def parse_metadata(mona_data):
 	else:
 		properties_dict["id"] = ''
 
-	prop_lookup = {
+	prop_lookup: Dict[str, str] = {
 			"accession": "id",
 			"exact mass": "exact_mass",
 			"author": "contributor",
@@ -237,15 +247,13 @@ def parse_metadata(mona_data):
 	return properties_dict
 
 
-def mass_spec_from_mona(mona_ms_string):
+def mass_spec_from_mona(mona_ms_string: str) -> MassSpectrum:
 	"""
 	Create a :class:`pyms.Spectrum.MassSpectrum` object from the MoNA JSON representation of the spectrum
 	
 	:param mona_ms_string:
-	:type mona_ms_string:
 
 	:return:
-	:rtype:
 	"""
 
 	return MassSpectrum.from_mz_int_pairs([val.split(":") for val in mona_ms_string.split(" ")])
