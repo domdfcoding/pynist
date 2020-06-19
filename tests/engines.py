@@ -20,6 +20,6 @@ FULL_PATH_TO_WORK_DIR = str(repo_root)
 
 search = pyms_nist_search.Engine(
 		FULL_PATH_TO_USER_LIBRARY,
-		pyms_nist_search.NISTMS_USER_LIB,
+		pyms_nist_search.NISTMS_USER_LIB,  # type: ignore  # TODO
 		FULL_PATH_TO_WORK_DIR,  # debug=True,
 		)

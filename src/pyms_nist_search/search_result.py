@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  search_result.py
 """
@@ -34,20 +33,17 @@ Class to store search results from NIST MS Search
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-
 # this package
-from .utils import parse_name_chars
 from .base import NISTBase
+from .utils import parse_name_chars
 
 
 class SearchResult(NISTBase):
 	"""
 	Class to store search results from NIST MS Search
 	"""
-	
-	def __init__(
-			self, name='', cas='---', match_factor=0,
-			reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
+
+	def __init__(self, name='', cas='---', match_factor=0, reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
 		"""
 		:param name: The name of the compound
 		:type name: str
@@ -62,15 +58,15 @@ class SearchResult(NISTBase):
 		:param spec_loc: The location of the reference spectrum in the library.
 		:type spec_loc: int
 		"""
-		
+
 		NISTBase.__init__(self, name, cas)
-		
+
 		self._match_factor = int(match_factor)
 		self._reverse_match_factor = int(reverse_match_factor)
-		
+
 		self._hit_prob = float(hit_prob)
 		self._spec_loc = int(spec_loc)
-	
+
 	@property
 	def match_factor(self):
 		"""
@@ -79,9 +75,9 @@ class SearchResult(NISTBase):
 		
 		:rtype: int
 		"""
-		
+
 		return int(self._match_factor)
-	
+
 	@property
 	def reverse_match_factor(self):
 		"""
@@ -93,16 +89,16 @@ class SearchResult(NISTBase):
 		"""
 
 		return int(self._reverse_match_factor)
-	
+
 	@property
 	def hit_prob(self):
 		"""
 		
 		:rtype: float
 		"""
-		
+
 		return float(self._hit_prob)
-	
+
 	@property
 	def spec_loc(self):
 		"""
@@ -114,7 +110,7 @@ class SearchResult(NISTBase):
 		"""
 
 		return int(self._spec_loc)
-	
+
 	@classmethod
 	def from_pynist(cls, pynist_dict):
 		"""
@@ -130,13 +126,13 @@ class SearchResult(NISTBase):
 				cas=pynist_dict["cas_no"],
 				match_factor=pynist_dict["sim_num"],
 				reverse_match_factor=pynist_dict["rev_sim_num"],
-				hit_prob=pynist_dict["hit_prob"]/100,
+				hit_prob=pynist_dict["hit_prob"] / 100,
 				spec_loc=pynist_dict["spec_loc"],
 				)
-	
+
 	def __repr__(self):
 		return f"Search Result: {self.name} \t({self.match_factor})"
-		
+
 	def __dict__(self):
 		return dict(
 				name=self._name,

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  pynist_search_server.py
 """
@@ -34,7 +33,6 @@ Search engine for Windows systems
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-
 # stdlib
 import atexit
 import os
@@ -55,7 +53,7 @@ class Engine:
 	"""
 	Search engine for Windows systems
 	"""
-	
+
 	def __init__(self, lib_path, lib_type=_core.NISTMS_MAIN_LIB, work_dir=None, debug=False):
 		"""
 		TODO: Search by Name. See page 13 of the documentation.
@@ -68,33 +66,33 @@ class Engine:
 		:param work_dir: The path to the working directory
 		:type work_dir: str or pathlib.Path
 		"""
-		
+
 		if work_dir is None:
 			work_dir = os.getcwd()
-		
+
 		if not os.path.exists(lib_path):
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
-		
+
 		if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-		
+
 		# Create work_dir if it doesn't exist
 		if not os.path.exists(work_dir):
 			os.mkdir(work_dir)
-		
+
 		self.debug = debug
-		
+
 		_core._init_api(str(lib_path), lib_type, str(work_dir))
-		
+
 		atexit.register(self.uninit)
-	
+
 	def uninit(self):
 		"""
 		Uninitialize the Search Engine
 		"""
-		
+
 		pass
-	
+
 	@staticmethod
 	def spectrum_search(mass_spec, n_hits=5):
 		"""
@@ -108,19 +106,19 @@ class Engine:
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
 		"""
-		
+
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
-		
+
 		hit_list = _core._spectrum_search(pack(mass_spec, len(mass_spec)))[:n_hits]
-		
+
 		parsed_hit_list = []
-		
+
 		for hit in hit_list:
 			parsed_hit_list.append(SearchResult.from_pynist(hit))
-		
+
 		return parsed_hit_list
-	
+
 	@staticmethod
 	def full_spectrum_search(mass_spec, n_hits=5):
 		"""
@@ -134,19 +132,19 @@ class Engine:
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
 		"""
-		
+
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
-		
+
 		hit_list = _core._full_spectrum_search(pack(mass_spec, len(mass_spec)))[:n_hits]
-		
+
 		parsed_hit_list = []
-		
+
 		for hit in hit_list:
 			parsed_hit_list.append(SearchResult.from_pynist(hit))
-		
+
 		return parsed_hit_list
-	
+
 	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
 		Perform a Full Spectrum Search of the mass spectral library, including
@@ -161,20 +159,20 @@ class Engine:
 			mass spectrum and the reference data from the library
 		:rtype: list of (SearchResult, ReferenceData) tuples
 		"""
-		
+
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
-		
+
 		hit_list = self.full_spectrum_search(mass_spec, n_hits)
-		
+
 		output_buffer = []
-		
+
 		for idx, hit in enumerate(hit_list):
 			ref_data = self.get_reference_data(hit.spec_loc)
 			output_buffer.append((hit, ref_data))
-		
+
 		return output_buffer
-	
+
 	@staticmethod
 	def get_reference_data(spec_loc):
 		"""
@@ -184,7 +182,7 @@ class Engine:
 
 		:rtype: ReferenceData
 		"""
-		
+
 		reference_data = _core._get_reference_data(spec_loc)
-		
+
 		return ReferenceData.from_pynist(reference_data)

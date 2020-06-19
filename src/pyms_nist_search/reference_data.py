@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  reference_data.py
 """
@@ -34,7 +33,6 @@ Class to store reference data from NIST MS Search
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-
 # stdlib
 import copy
 import json
@@ -44,25 +42,35 @@ import warnings
 # 3rd party
 from domdf_python_tools.utils import chunks
 from pyms.Spectrum import MassSpectrum, normalize_mass_spec  # type: ignore
-from pyms.Utils.jcamp import header_info_fields, JcampTagWarning, xydata_tags  # type: ignore
+from pyms.Utils.jcamp import JcampTagWarning, header_info_fields, xydata_tags  # type: ignore
 from pyms.Utils.Math import is_float  # type: ignore
 
 # this package
 import pyms_nist_search.templates
 from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
+
+# this package
 from .base import NISTBase
-from .utils import parse_name_chars
 from .templates import *
+from .utils import parse_name_chars
 
 
 class ReferenceData(NISTBase):
 	"""
 	Class to store reference data from NIST MS Search
 	"""
-	
+
 	def __init__(
-			self, name='', cas='---', nist_no=0, id='', mw=0.0,
-			formula='', contributor='', mass_spec=None, synonyms=None,
+			self,
+			name='',
+			cas='---',
+			nist_no=0,
+			id='',
+			mw=0.0,
+			formula='',
+			contributor='',
+			mass_spec=None,
+			synonyms=None,
 			exact_mass=None,
 			):
 		"""
@@ -85,34 +93,34 @@ class ReferenceData(NISTBase):
 		:param synonyms: List of synonyms for the compound
 		:type synonyms: list of str
 		"""
-		
+
 		NISTBase.__init__(self, name, cas)
-		
+
 		self._formula = str(formula)
 		self._contributor = str(contributor)
-		
+
 		self._nist_no = int(nist_no)
 		self._id = str(id)
-		
+
 		self._mw = int(mw)
 
 		if not exact_mass:
 			self._exact_mass = float(mw)
 		else:
 			self._exact_mass = float(exact_mass)
-		
+
 		if mass_spec is None:
 			self._mass_spec = None
 		elif isinstance(mass_spec, dict):
 			self._mass_spec = MassSpectrum(**mass_spec)
 		else:
 			self._mass_spec = copy.copy(mass_spec)
-		
+
 		if synonyms is None:
 			self._synonyms = []
 		else:
 			self._synonyms = [str(synonym) for synonym in synonyms]
-	
+
 	@property
 	def formula(self):
 		"""
@@ -120,9 +128,9 @@ class ReferenceData(NISTBase):
 
 		:rtype: str
 		"""
-		
+
 		return self._formula
-	
+
 	@property
 	def contributor(self):
 		"""
@@ -130,17 +138,17 @@ class ReferenceData(NISTBase):
 
 		:rtype: str
 		"""
-		
+
 		return self._contributor
-	
+
 	@property
 	def nist_no(self):
 		return self._nist_no
-	
+
 	@property
 	def id(self):
 		return self._id
-	
+
 	@property
 	def mw(self):
 		"""
@@ -148,9 +156,9 @@ class ReferenceData(NISTBase):
 		
 		:rtype: int
 		"""
-		
+
 		return self._mw
-	
+
 	@property
 	def exact_mass(self):
 		"""
@@ -158,9 +166,9 @@ class ReferenceData(NISTBase):
 		
 		:rtype: float
 		"""
-		
+
 		return self._exact_mass
-	
+
 	@property
 	def mass_spec(self):
 		"""
@@ -168,9 +176,9 @@ class ReferenceData(NISTBase):
 
 		:rtype: pyms.Spectrum.MassSpectrum
 		"""
-		
+
 		return copy.copy(self._mass_spec)
-	
+
 	@property
 	def synonyms(self):
 		"""
@@ -178,9 +186,9 @@ class ReferenceData(NISTBase):
 
 		:rtype: list of str
 		"""
-		
+
 		return self._synonyms[:]
-	
+
 	@classmethod
 	def from_pynist(cls, pynist_dict):
 		"""
@@ -190,7 +198,7 @@ class ReferenceData(NISTBase):
 
 		:rtype: ReferenceData
 		"""
-		
+
 		return cls(
 				name=parse_name_chars(pynist_dict["name_chars"]),
 				cas=pynist_dict["cas"],
@@ -202,10 +210,10 @@ class ReferenceData(NISTBase):
 				mass_spec=MassSpectrum(pynist_dict["mass_list"], pynist_dict["intensity_list"]),
 				synonyms=[parse_name_chars(synonym) for synonym in pynist_dict["synonyms_chars"]],
 				)
-	
+
 	def __repr__(self):
 		return f"Reference Data: {self.name} \t({self.cas})"
-	
+
 	def __dict__(self, recursive=False):
 		class_dict = dict(
 				name=self.name,
@@ -218,14 +226,14 @@ class ReferenceData(NISTBase):
 				exact_mass=self.exact_mass,
 				synonyms=self.synonyms[:],
 				)
-		
+
 		if recursive:
 			class_dict["mass_spec"] = dict(self.mass_spec)
 		else:
 			class_dict["mass_spec"] = copy.copy(self.mass_spec)
-		
+
 		return class_dict
-	
+
 	@classmethod
 	def from_jcamp(cls, file_name, ignore_warnings=True):
 		"""
@@ -241,27 +249,27 @@ class ReferenceData(NISTBase):
 	
 		:authors: Qiao Wang, Andrew Isaac, Vladimir Likic, David Kainer, Dominic Davis-Foster
 		"""
-		
+
 		with warnings.catch_warnings():
-			
+
 			if ignore_warnings:
 				warnings.simplefilter("ignore", JcampTagWarning)
-			
+
 			if not isinstance(file_name, (str, pathlib.Path)):
 				raise TypeError("'file_name' must be a string or a pathlib.Path object")
-			
+
 			if not isinstance(file_name, pathlib.Path):
 				file_name = pathlib.Path(file_name)
-			
+
 			# Commented this line because it also gets printed when the MassSpectrum is created
 			# print(f" -> Reading JCAMP file '{file_name}'")
 			lines_list = file_name.open('r')
 			last_tag = None
-			
+
 			header_info = {}  # Dictionary containing header information
-			
+
 			for line in lines_list:
-				
+
 				if len(line.strip()):
 					if line.startswith("##"):
 						# key word or information
@@ -269,13 +277,13 @@ class ReferenceData(NISTBase):
 						current_tag = fields[0] = fields[0].lstrip("##").upper()
 						last_tag = fields[0]
 						fields[1] = fields[1].strip()
-						
+
 						if current_tag.upper().startswith("END"):
 							break
-						
+
 						elif current_tag in xydata_tags:
 							continue
-						
+
 						elif current_tag in header_info_fields:
 							if fields[1].isdigit():
 								header_info[current_tag] = int(fields[1])
@@ -285,11 +293,11 @@ class ReferenceData(NISTBase):
 								header_info[current_tag] = fields[1]
 						else:
 							warnings.warn(current_tag, JcampTagWarning)
-					
+
 					else:
 						if last_tag in header_info:
 							header_info[last_tag] += f"{line}"
-			
+
 			return cls(
 					name=header_info["TITLE"],
 					cas=header_info["CAS REGISTRY NO"],
@@ -299,16 +307,16 @@ class ReferenceData(NISTBase):
 					mw=header_info["MW"],
 					mass_spec=MassSpectrum.from_jcamp(file_name),
 					)
-	
+
 	def to_json(self):
 		"""
 		Convert the object to json
 
 		:rtype: str
 		"""
-		
+
 		return json.dumps(self.__dict__(recursive=True))
-	
+
 	@classmethod
 	def from_json(cls, json_data):
 		"""
@@ -316,11 +324,11 @@ class ReferenceData(NISTBase):
 
 		:type json_data: str
 		"""
-		
+
 		peak_dict = json.loads(json_data)
 		# peak_dict["mass_spec"] = MassSpectrum.from_dict(peak_dict["mass_spec"])
 		return cls.from_dict(peak_dict)
-	
+
 	@classmethod
 	def from_mona_dict(cls, mona_data: dict):
 		"""
@@ -329,26 +337,26 @@ class ReferenceData(NISTBase):
 
 		:type mona_data: dict
 		"""
-		
+
 		compound: dict = mona_data["compound"][0]
 		names: list = compound["names"]
 		name: str = names[0]["name"]
 		synonyms: list = [name for name in names[1:]]
-		
+
 		properties_dict = parse_metadata(mona_data)
-		
+
 		# Remove unwanted properties
 		del properties_dict['license']
 
 		mass_spec = mass_spec_from_mona(mona_data["spectrum"])
-		
+
 		return cls(
 				name=name,
 				mass_spec=mass_spec,
 				synonyms=synonyms,
 				**properties_dict,
 				)
-	
+
 	def to_msp(self):
 		"""
 		Returns the ReferenceData object as an MSP file similar to that produced by
@@ -357,21 +365,21 @@ class ReferenceData(NISTBase):
 		:return:
 		:rtype:
 		"""
-		
+
 		normalized_ms = normalize_mass_spec(self.mass_spec, max_intensity=999)
 		num_peaks = len(self.mass_spec)
 
 		mz_int_pairs = [f"{mz} {intensity}" for mz, intensity in normalized_ms.iter_peaks()]
-		
+
 		spec_block = []
-		
+
 		for row in list(chunks(mz_int_pairs, 5)):
 			spec_block.append("; ".join(x for x in row))
-		
+
 		msp_text = msp_template.render(
 				ref_data=self,
 				num_peaks=num_peaks,
 				spec_block="\n".join(spec_block),
 				)
-		
+
 		return msp_text

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  mona_tools.py
 """
@@ -28,7 +27,6 @@ It could probably be its own package
 #  MA 02110-1301, USA.
 #
 
-
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
@@ -44,38 +42,91 @@ def prep_match_list(match_list):
 	:rtype: set
 	"""
 	return {x.casefold() for x in match_list}
-	
-	
+
+
 other_dbs = prep_match_list([
-		"SMILES", "InChI", "InChIKey", 'kegg', 'chebi', 'pubchem cid',
-		'chemspider', 'PubChem', 'lipidbank', 'knapsack', 'lipidmaps', "hmdb",
+		"SMILES",
+		"InChI",
+		"InChIKey",
+		'kegg',
+		'chebi',
+		'pubchem cid',
+		'chemspider',
+		'PubChem',
+		'lipidbank',
+		'knapsack',
+		'lipidmaps',
+		"hmdb",
 		])
-		
+
 mona_skip_compound_props = prep_match_list([*other_dbs, 'compound class'])
 
-
 mona_skip_categories = prep_match_list([
-		"mass spectrometry", "focused ion", "spectral properties", "acquisition properties",
+		"mass spectrometry",
+		"focused ion",
+		"spectral properties",
+		"acquisition properties",
 		])
 
 mona_skip_properties = prep_match_list([
-				"date", "ionization mode", "instrument", "instrument type",
-				'chromatography type', 'column', 'guard column', 'mobile phase',
-				'column temperature', 'flow rate', 'injection volume',
-				'injection', 'injection temperature', 'data transformation',
-				'chromatogram', 'retention index', 'retention index type',
-				'detector voltage', "derivatization type", 'derivatization formula',
-				'derivatization mass', 'scan range', "ms level", 'comment',
-				'oven temperature', 'retention time', 'whole', "copyright",
-				'transfer line temperature', "publication", 'ion source temperature',
-				"ionization energy", 'scannumber', 'quantmass', 'intensity', 'origin',
-				"modelion", "modelionheight", 'modelionarea', 'integratedheight',
-				'integratedarea', "comments", 'sample file', 'sample type', 'species',
-				'organ', 'annotation', 'biological matrix used sample preparation',
-				'collision energy', 'precursor type', 'carrier gas', 'recalibrate',
-				'column temperature gradient', 'transferline temperature',
-				'sample introduction', 'derivatization', 'ionization',
-				])
+		"date",
+		"ionization mode",
+		"instrument",
+		"instrument type",
+		'chromatography type',
+		'column',
+		'guard column',
+		'mobile phase',
+		'column temperature',
+		'flow rate',
+		'injection volume',
+		'injection',
+		'injection temperature',
+		'data transformation',
+		'chromatogram',
+		'retention index',
+		'retention index type',
+		'detector voltage',
+		"derivatization type",
+		'derivatization formula',
+		'derivatization mass',
+		'scan range',
+		"ms level",
+		'comment',
+		'oven temperature',
+		'retention time',
+		'whole',
+		"copyright",
+		'transfer line temperature',
+		"publication",
+		'ion source temperature',
+		"ionization energy",
+		'scannumber',
+		'quantmass',
+		'intensity',
+		'origin',
+		"modelion",
+		"modelionheight",
+		'modelionarea',
+		'integratedheight',
+		'integratedarea',
+		"comments",
+		'sample file',
+		'sample type',
+		'species',
+		'organ',
+		'annotation',
+		'biological matrix used sample preparation',
+		'collision energy',
+		'precursor type',
+		'carrier gas',
+		'recalibrate',
+		'column temperature gradient',
+		'transferline temperature',
+		'sample introduction',
+		'derivatization',
+		'ionization',
+		])
 
 
 def parse_metadata(mona_data):
@@ -92,12 +143,12 @@ def parse_metadata(mona_data):
 			"contributor": '',
 			"license": '',
 			}
-	
+
 	if "id" in mona_data:
 		properties_dict["id"] = mona_data["id"]
 	else:
 		properties_dict["id"] = ''
-	
+
 	prop_lookup = {
 			"accession": "id",
 			"exact mass": "exact_mass",
@@ -109,11 +160,11 @@ def parse_metadata(mona_data):
 			"cas": "cas",
 			"license": "license",
 			}
-	
+
 	def set_prop_value(property_name, prop_):
 		if not properties_dict[property_name]:
 			properties_dict[property_name] = prop_["value"]
-	
+
 	def parse_compound_prop(prop_):
 		# Put props in order of priority
 		for prop_name in ["molecular formula", "total exact mass", "cas number", "cas"]:
@@ -122,7 +173,7 @@ def parse_metadata(mona_data):
 				break
 		else:
 			print(prop_)
-	
+
 	def parse_property(prop_):
 		# Put props in order of priority
 		for prop_name in ["accession", "exact mass", "author", "institution", "accurate mass", "license"]:
@@ -131,11 +182,11 @@ def parse_metadata(mona_data):
 				break
 		else:
 			print(prop_)
-	
+
 	for prop in compound_metadata:
 		if prop["name"].casefold() in mona_skip_compound_props:
 			continue
-		
+
 		elif not prop["computed"]:
 			parse_compound_prop(prop)
 		# prioritise not computed
@@ -144,18 +195,21 @@ def parse_metadata(mona_data):
 		else:
 			# Unknown property
 			print(prop)
-	
+
 	for prop in metadata:
 		if "category" in prop and prop["category"].casefold() in mona_skip_categories:
 			continue
-		
+
 		elif prop["name"].casefold() in prep_match_list([
-				*mona_skip_properties, 'data format', 'institution',
-				'formula', "ion type",
+				*mona_skip_properties,
+				'data format',
+				'institution',
+				'formula',
+				"ion type",
 				]):
 			# todo: 'data format'
 			continue
-		
+
 		elif not prop["computed"]:
 			# prioritise not computed
 			parse_property(prop)
@@ -164,13 +218,13 @@ def parse_metadata(mona_data):
 		else:
 			# Unknown property
 			print(prop)
-	
+
 	if not properties_dict["contributor"] and "institution" in submitter:
 		properties_dict["contributor"] = submitter["institution"]
-	
+
 	if not properties_dict["mw"]:
 		properties_dict["mw"] = properties_dict["exact_mass"]
-	
+
 	# ignored following keys
 	#  dateCreated
 	#  lastUpdated
@@ -179,7 +233,7 @@ def parse_metadata(mona_data):
 	#  splash
 	#  tags
 	#  library
-	
+
 	return properties_dict
 
 
@@ -193,6 +247,5 @@ def mass_spec_from_mona(mona_ms_string):
 	:return:
 	:rtype:
 	"""
-	
-	return MassSpectrum.from_mz_int_pairs(
-			[val.split(":") for val in mona_ms_string.split(" ")])
+
+	return MassSpectrum.from_mz_int_pairs([val.split(":") for val in mona_ms_string.split(" ")])

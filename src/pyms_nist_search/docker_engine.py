@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  docker_engine.py
 """
@@ -34,7 +33,6 @@ Search engine for Linux and other platforms supporting Docker
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-
 # stdlib
 import atexit
 import json
@@ -48,10 +46,10 @@ import requests
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
+from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore
 from .json import PyNISTEncoder
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-from ._core import NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB  # type: ignore
 
 client = docker.from_env()
 
@@ -62,14 +60,16 @@ def require_init(func):
 
 	:param func: The function or method to wrap
 	"""
-	
+
 	def wrapper(cls, *args, **kwargs):
 		if not cls.initialised:
-			raise RuntimeError("""The Search Engine has been uninitialised!
-Please create a new instance of the Search Engine and try again.""")
-		
+			raise RuntimeError(
+					"""The Search Engine has been uninitialised!
+Please create a new instance of the Search Engine and try again."""
+					)
+
 		return func(cls, *args, **kwargs)
-	
+
 	return wrapper
 
 
@@ -86,7 +86,7 @@ class Engine:
 		$ docker pull domdfcoding/pywine-pyms-nist
 
 	"""
-	
+
 	def __init__(self, lib_path, lib_type=NISTMS_MAIN_LIB, work_dir=None, debug=False):
 		"""
 		:param lib_path: The path to the mass spectral library
@@ -96,13 +96,13 @@ class Engine:
 		:param work_dir: The path to the working directory
 		:type work_dir: str or pathlib.Path
 		"""
-		
+
 		if not os.path.exists(lib_path):
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
-		
+
 		if lib_type not in {NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB}:
 			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-		
+
 		# # Check if the server is already running
 		# for container in client.containers.list(all=True, filters={"status": "running"}):
 		# 	if container.name == "pyms-nist-server":
@@ -110,35 +110,35 @@ class Engine:
 		# 		break
 		# else:
 		#
-		
+
 		self.debug = debug
-		
+
 		print("Launching Docker...")
-		
+
 		try:
 			self.__launch_container(lib_path, lib_type)
 		except docker.errors.ImageNotFound:
 			print("Docker Image not found. Downloading now.")
 			client.images.pull("domdfcoding/pywine-pyms-nist")
 			self.__launch_container(lib_path, lib_type)
-		
+
 		atexit.register(self.uninit)
-		
+
 		retry_count = 0
-		
+
 		# Wait for server to come online
 		while retry_count < 240:
 			try:
 				if requests.get("http://localhost:5001/").text == "ready":
 					self.initialised = True
 					return
-			
+
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
-		
+
 		raise TimeoutError("Unable to communicate with the search server.")
-	
+
 	def __launch_container(self, lib_path, lib_type):
 		self.docker = client.containers.run(
 				"domdfcoding/pywine-pyms-nist",
@@ -152,28 +152,28 @@ class Engine:
 				volumes={lib_path: {'bind': '/mainlib', 'mode': 'ro'}},
 				environment=[f"LIBTYPE={lib_type}"],
 				)
-	
+
 	def uninit(self):
 		"""
 		Uninitialise the Search Engine
 		"""
-		
+
 		if self.initialised:
-			
+
 			print("Shutting down docker server")
-			
+
 			if self.debug:
 				print("Server log follows:")
 				print(self.docker.logs(timestamps=True).decode("utf-8"))
-			
+
 			try:
 				self.docker.stop()
 				self.docker.remove()
 			except docker.errors.NotFound:
 				print("Unable to shut down the docker server")
-			
+
 			self.initialised = False
-	
+
 	@require_init
 	def spectrum_search(self, mass_spec, n_hits=5):
 		"""
@@ -187,12 +187,12 @@ class Engine:
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
 		"""
-		
+
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
-		
+
 		retry_count = 0
-		
+
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
@@ -202,13 +202,13 @@ class Engine:
 						)
 				print(res.text)
 				return hit_list_from_json(res.text)
-			
+
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
-		
+
 		raise TimeoutError("Unable to communicate with the search server.")
-	
+
 	@require_init
 	def full_spectrum_search(self, mass_spec, n_hits=5):
 		"""
@@ -222,12 +222,12 @@ class Engine:
 		:return: List of possible identities for the mass spectrum
 		:rtype: list of SearchResult
 		"""
-		
+
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
-		
+
 		retry_count = 0
-		
+
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
@@ -236,13 +236,13 @@ class Engine:
 						json=json.dumps(mass_spec, cls=PyNISTEncoder)
 						)
 				return hit_list_from_json(res.text)
-			
+
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
-		
+
 		raise TimeoutError("Unable to communicate with the search server.")
-	
+
 	@require_init
 	def full_search_with_ref_data(self, mass_spec, n_hits=5):
 		"""
@@ -258,12 +258,12 @@ class Engine:
 			for the mass spectrum and the reference data from the library
 		:rtype: list of (SearchResult, ReferenceData) tuples
 		"""
-		
+
 		if not isinstance(mass_spec, MassSpectrum):
 			raise TypeError("`mass_spec` must be a pyms.Spectrum.MassSpectrum object.")
-		
+
 		retry_count = 0
-		
+
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
@@ -275,9 +275,9 @@ class Engine:
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
-		
+
 		raise TimeoutError("Unable to communicate with the search server.")
-	
+
 	@require_init
 	def get_reference_data(self, spec_loc):
 		"""
@@ -287,18 +287,18 @@ class Engine:
 
 		:rtype: ReferenceData
 		"""
-		
+
 		retry_count = 0
-		
+
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
 				res = requests.post(f"http://localhost:5001/search/loc/{spec_loc}")
 				return ReferenceData(**json.loads(res.text))
-			
+
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
-		
+
 		raise TimeoutError("Unable to communicate with the search server.")
 
 
@@ -310,14 +310,14 @@ def hit_list_from_json(json_data):
 
 	:rtype: list of SearchResult
 	"""
-	
+
 	raw_output = json.loads(json_data)
-	
+
 	hit_list = []
-	
+
 	for hit in raw_output:
 		hit_list.append(SearchResult(**hit))
-	
+
 	return hit_list
 
 
@@ -329,12 +329,12 @@ def hit_list_with_ref_data_from_json(json_data):
 
 	:rtype: list of (SearchResult, ReferenceData) tuples
 	"""
-	
+
 	raw_output = json.loads(json_data)
-	
+
 	hit_list = []
-	
+
 	for hit, ref_data in raw_output:
 		hit_list.append((SearchResult(**hit), ReferenceData(**ref_data)))
-	
+
 	return hit_list

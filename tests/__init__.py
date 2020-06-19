@@ -6,5 +6,5 @@ import sys
 sys.path.remove(os.getcwd())
 
 # this package
-from .spectra import spectra
 from .engines import search
+from .spectra import spectra

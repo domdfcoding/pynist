@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  utils.py
 """
@@ -35,6 +34,7 @@ General utilities
 #  All Rights Reserved.
 #
 
+# stdlib
 import warnings
 
 
@@ -50,15 +50,15 @@ def pack(mass_spec, top=20):
 	
 	:rtype: str
 	"""
-	
+
 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
-	
+
 	values.sort(key=lambda s: s[1], reverse=True)
 	norm = values[0][1]
-	
+
 	spectrum = [(a, 999.0 * b / norm) for (a, b) in values[:top]]
 	spectrum.sort()
-	return "*".join(["%.2f\t%.2f" % (a, b) for (a, b) in spectrum]) + "*"
+	return "*".join([f"{a:.2f}\t{b:.2f}" for (a, b) in spectrum]) + "*"
 
 
 def parse_name_chars(name_char_list):
@@ -71,15 +71,15 @@ def parse_name_chars(name_char_list):
 	:return: The parsed name
 	:rtype: str
 	"""
-	
+
 	hit_name = ''
 	errors = []  # Buffer the errors to display at the end
-	
+
 	# TODO: can we do away with the -1?
 	for dec in name_char_list[:-1]:
 		if dec == 0:
 			break
-		
+
 		if dec == 224:
 			char = "α"
 		elif dec == 225:
@@ -109,13 +109,13 @@ def parse_name_chars(name_char_list):
 				errors.append(dec)
 				# print(f"Unable to parse character with code {dec}")
 				char = '�'
-				
+
 				# List of problem codes encountered so far:
 				# -26, which should be a μ (03BC)
-				
+
 		if char != "\x00":
 			hit_name += char
-	
+
 	if errors:
 		warnings.warn(f"Unable to parse the following character codes for string {hit_name}: {errors}.")
 

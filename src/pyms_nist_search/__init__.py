@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
 #
 #  __init__.py
 #
@@ -31,7 +30,6 @@
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-
 # stdlib
 import os
 import pathlib
@@ -49,15 +47,18 @@ if sys.platform == "win32":
 
 # this package
 from ._core import *  # type: ignore
+from .json import PyNISTEncoder
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-from .json import PyNISTEncoder
 
 if sys.platform == "win32":
+
+	# this package
 	from .win_engine import Engine
 else:
-	from .docker_engine import Engine
 
+	# this package
+	from .docker_engine import Engine
 
 name = "PyMassSpec NIST Search"
 __author__ = 'Dominic Davis-Foster'

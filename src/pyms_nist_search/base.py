@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  base.py
 """
@@ -34,7 +33,6 @@ Base class for other PyMassSpec NIST Search classes
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-
 # stdlib
 import json
 
@@ -49,7 +47,7 @@ class NISTBase:
 	"""
 	Base class for other PyMassSpec NIST Search classes
 	"""
-	
+
 	def __init__(self, name='', cas='---'):
 		"""
 
@@ -58,19 +56,19 @@ class NISTBase:
 		:param cas: The CAS number of the compound
 		:type cas: str
 		"""
-		
+
 		self._name = name
-		
+
 		if isinstance(cas, int):
 			if check_cas_number(cas):
 				cas = "---"
 			else:
 				cas = cas_int_to_string(cas)
-			
+
 		if cas == "0-00-0":
 			cas = "---"
 		self._cas = cas
-	
+
 	@property
 	def name(self):
 		"""
@@ -78,9 +76,9 @@ class NISTBase:
 
 		:rtype: str
 		"""
-		
+
 		return self._name
-	
+
 	@property
 	def cas(self):
 		"""
@@ -88,9 +86,9 @@ class NISTBase:
 
 		:rtype: str
 		"""
-		
+
 		return self._cas
-	
+
 	@classmethod
 	def from_json(cls, json_data):
 		"""
@@ -98,11 +96,11 @@ class NISTBase:
 		
 		:type json_data: str
 		"""
-		
+
 		peak_dict = json.loads(json_data)
-		
+
 		return cls.from_dict(peak_dict)
-	
+
 	@classmethod
 	def from_dict(cls, dictionary):
 		"""
@@ -110,16 +108,16 @@ class NISTBase:
 
 		:type dictionary: dict
 		"""
-		
+
 		return cls(**dictionary)
-	
+
 	def to_json(self):
 		"""
 		Convert the object to json
 		
 		:rtype: str
 		"""
-		
+
 		return json.dumps(dict(self))
 
 	@classmethod
@@ -129,12 +127,12 @@ class NISTBase:
 
 		:type pynist_dict: dict
 		"""
-		
+
 		return cls(
 				name=parse_name_chars(pynist_dict["hit_name_chars"]),
 				cas=cas_int_to_string(pynist_dict["cas_no"]),
 				)
-	
+
 	def __dict__(self):
 		return dict(
 				name=self._name,
@@ -143,19 +141,18 @@ class NISTBase:
 
 	def __getstate__(self):
 		return self.__dict__()
-	
+
 	def __setstate__(self, state):
 		self.__init__(**state)
-	
+
 	def __iter__(self):
-		for key, value in self.__dict__().items():
-			yield key, value
-	
+		yield from self.__dict__().items()
+
 	def __str__(self):
 		return self.__repr__()
-	
+
 	def __eq__(self, other):
 		if isinstance(other, self.__class__):
 			return self.__dict__() == other.__dict__()
-		
+
 		return NotImplemented
