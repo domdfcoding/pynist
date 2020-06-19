@@ -36,10 +36,9 @@ Search engine for Linux and other platforms supporting Docker
 # stdlib
 import atexit
 import json
-import os
 import pathlib
 import time
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple
 
 # 3rd party
 import docker  # type: ignore
@@ -79,7 +78,6 @@ Please create a new instance of the Search Engine and try again."""
 	return wrapper
 
 
-
 class Engine:
 	"""
 	Search engine for Linux and other platforms supporting Docker.
@@ -105,11 +103,9 @@ class Engine:
 			):
 		"""
 		:param lib_path: The path to the mass spectral library
-		:type lib_path: str or pathlib.Path
 		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
 		:type lib_type: int
 		:param work_dir: The path to the working directory
-		:type work_dir: str or pathlib.Path
 		"""
 
 		if not isinstance(lib_path, pathlib.Path):
@@ -173,7 +169,7 @@ class Engine:
 
 	def uninit(self) -> None:
 		"""
-		Uninitialise the Search Engine
+		Uninitialize the Search Engine
 		"""
 
 		if self.initialised:
@@ -202,7 +198,6 @@ class Engine:
 		:type n_hits: int
 
 		:return: List of possible identities for the mass spectrum
-		:rtype: list of SearchResult
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -226,7 +221,11 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	def full_spectrum_search(self, mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
+	def full_spectrum_search(
+			self,
+			mass_spec: MassSpectrum,
+			n_hits: int = 5,
+			) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
 
@@ -235,7 +234,6 @@ class Engine:
 		:type n_hits: int
 
 		:return: List of possible identities for the mass spectrum
-		:rtype: list of SearchResult
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -258,19 +256,19 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	def full_search_with_ref_data(self, mass_spec: MassSpectrum, n_hits: int = 5):
+	def full_search_with_ref_data(self,
+									mass_spec: MassSpectrum,
+									n_hits: int = 5) -> List[Tuple[SearchResult, ReferenceData]]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library,
 		including reference data.
 
 		:param mass_spec: The mass spectrum to search against the library
-		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
 		:return: List of tuples consisting of the possible identities
 			for the mass spectrum and the reference data from the library
-		:rtype: list of (SearchResult, ReferenceData) tuples
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):

@@ -35,8 +35,8 @@ Search engine for Windows systems
 
 # stdlib
 import atexit
-import os
-import os.path
+import pathlib
+from typing import List, Optional, Tuple
 
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
@@ -46,7 +46,7 @@ from . import _core  # type: ignore
 # from ._core import *  # type: ignore
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-from .utils import pack
+from .utils import PathLike, pack
 
 
 class Engine:
@@ -54,31 +54,40 @@ class Engine:
 	Search engine for Windows systems
 	"""
 
-	def __init__(self, lib_path, lib_type=_core.NISTMS_MAIN_LIB, work_dir=None, debug=False):
+	def __init__(
+			self,
+			lib_path: PathLike,
+			lib_type: int = _core.NISTMS_MAIN_LIB,
+			work_dir: Optional[PathLike] = None,
+			debug: bool = False,
+			):
 		"""
 		TODO: Search by Name. See page 13 of the documentation.
 		 Would also like to search by CAS number but DLL doesn't seem to support that
 
 		:param lib_path: The path to the mass spectral library
-		:type lib_path: str or pathlib.Path
 		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
 		:type lib_type: int
 		:param work_dir: The path to the working directory
-		:type work_dir: str or pathlib.Path
 		"""
 
-		if work_dir is None:
-			work_dir = os.getcwd()
+		if not isinstance(lib_path, pathlib.Path):
+			lib_path = pathlib.Path(lib_path)
 
-		if not os.path.exists(lib_path):
+		if work_dir is None:
+			work_dir = pathlib.Path.cwd()
+		elif not isinstance(work_dir, pathlib.Path):
+			work_dir = pathlib.Path(work_dir)
+
+		# Create work_dir if it doesn't exist
+		if not work_dir.is_dir():
+			work_dir.mkdir()
+
+		if not lib_path.is_dir():
 			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
 
 		if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-
-		# Create work_dir if it doesn't exist
-		if not os.path.exists(work_dir):
-			os.mkdir(work_dir)
 
 		self.debug = debug
 
@@ -86,25 +95,21 @@ class Engine:
 
 		atexit.register(self.uninit)
 
-	def uninit(self):
+	def uninit(self) -> None:
 		"""
 		Uninitialize the Search Engine
 		"""
 
-		pass
-
 	@staticmethod
-	def spectrum_search(mass_spec, n_hits=5):
+	def spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Quick Spectrum Search of the mass spectral library
 
 		:param mass_spec: The mass spectrum to search against the library
-		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
 		:return: List of possible identities for the mass spectrum
-		:rtype: list of SearchResult
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -120,17 +125,15 @@ class Engine:
 		return parsed_hit_list
 
 	@staticmethod
-	def full_spectrum_search(mass_spec, n_hits=5):
+	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library
 		
 		:param mass_spec: The mass spectrum to search against the library
-		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 		
 		:return: List of possible identities for the mass spectrum
-		:rtype: list of SearchResult
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -145,19 +148,21 @@ class Engine:
 
 		return parsed_hit_list
 
-	def full_search_with_ref_data(self, mass_spec, n_hits=5):
+	def full_search_with_ref_data(
+			self,
+			mass_spec: MassSpectrum,
+			n_hits: int = 5,
+			) -> List[Tuple[SearchResult, ReferenceData]]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library, including
 		reference data.
 
 		:param mass_spec: The mass spectrum to search against the library
-		:type mass_spec: pyms.Spectrum.MassSpectrum
 		:param n_hits: The number of hits to return
 		:type n_hits: int
 
 		:return: List of tuples consisting of the possible identities for the
 			mass spectrum and the reference data from the library
-		:rtype: list of (SearchResult, ReferenceData) tuples
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -174,13 +179,11 @@ class Engine:
 		return output_buffer
 
 	@staticmethod
-	def get_reference_data(spec_loc):
+	def get_reference_data(spec_loc: int) -> ReferenceData:
 		"""
 		Get reference data from the library for the compound at the given location.
 
 		:type spec_loc: int
-
-		:rtype: ReferenceData
 		"""
 
 		reference_data = _core._get_reference_data(spec_loc)

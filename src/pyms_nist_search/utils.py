@@ -36,16 +36,17 @@ General utilities
 
 # stdlib
 import os
-import warnings
-from typing import Union
 import pathlib
+import warnings
+from typing import Sequence, Union
 
+# 3rd party
+from pyms.Spectrum import MassSpectrum  # type: ignore
 
 PathLike = Union[str, pathlib.Path, os.PathLike]
 
 
-
-def pack(mass_spec, top=20):
+def pack(mass_spec: MassSpectrum, top: int = 20):
 	"""
 	Convert a pyms.Spectrum.MassSpectrum object into a string.
 
@@ -65,10 +66,11 @@ def pack(mass_spec, top=20):
 
 	spectrum = [(a, 999.0 * b / norm) for (a, b) in values[:top]]
 	spectrum.sort()
+
 	return "*".join([f"{a:.2f}\t{b:.2f}" for (a, b) in spectrum]) + "*"
 
 
-def parse_name_chars(name_char_list):
+def parse_name_chars(name_char_list: Sequence[int]) -> str:
 	"""
 	Takes a list of Unicode character codes and converts them to characters,
 	taking into account the special codes used by the NIST DLL.

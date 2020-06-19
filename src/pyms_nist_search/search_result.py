@@ -33,9 +33,10 @@ Class to store search results from NIST MS Search
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
 
-# 3rd party
+# stdlib
 from typing import Any, Dict
 
+# 3rd party
 from sdjson import register_encoder
 
 # this package
@@ -48,7 +49,15 @@ class SearchResult(NISTBase):
 	Class to store search results from NIST MS Search
 	"""
 
-	def __init__(self, name='', cas='---', match_factor=0, reverse_match_factor=0, hit_prob=0.0, spec_loc=0):
+	def __init__(
+			self,
+			name: str = '',
+			cas: str = '---',
+			match_factor: int = 0,
+			reverse_match_factor: int = 0,
+			hit_prob: float = 0.0,
+			spec_loc: int = 0,
+			) -> None:
 		"""
 		:param name: The name of the compound
 		:type name: str
@@ -66,14 +75,14 @@ class SearchResult(NISTBase):
 
 		NISTBase.__init__(self, name, cas)
 
-		self._match_factor = int(match_factor)
-		self._reverse_match_factor = int(reverse_match_factor)
+		self._match_factor: int = int(match_factor)
+		self._reverse_match_factor: int = int(reverse_match_factor)
 
-		self._hit_prob = float(hit_prob)
-		self._spec_loc = int(spec_loc)
+		self._hit_prob: float = float(hit_prob)
+		self._spec_loc: int = int(spec_loc)
 
 	@property
-	def match_factor(self):
+	def match_factor(self) -> int:
 		"""
 		Returns a score (out of 1000) representing the similarity of the searched
 		mass spectrum to the search result.
@@ -84,7 +93,7 @@ class SearchResult(NISTBase):
 		return int(self._match_factor)
 
 	@property
-	def reverse_match_factor(self):
+	def reverse_match_factor(self) -> int:
 		"""
 		Returns a score (out of 1000) representing the similarity of the searched
 		mass spectrum to the search result, but ignoring any peaks that are in
@@ -96,7 +105,7 @@ class SearchResult(NISTBase):
 		return int(self._reverse_match_factor)
 
 	@property
-	def hit_prob(self):
+	def hit_prob(self) -> float:
 		"""
 		
 		:rtype: float
@@ -105,7 +114,7 @@ class SearchResult(NISTBase):
 		return float(self._hit_prob)
 
 	@property
-	def spec_loc(self):
+	def spec_loc(self) -> int:
 		"""
 		Returns a the location of the reference spectrum in the library.
 		This can then be searched using the `get_reference_data` method of the
@@ -117,7 +126,7 @@ class SearchResult(NISTBase):
 		return int(self._spec_loc)
 
 	@classmethod
-	def from_pynist(cls, pynist_dict):
+	def from_pynist(cls, pynist_dict: Dict[str, Any]):
 		"""
 		Create a :class:`SearchResult` object from the raw data returned by the C extension.
 		
@@ -135,7 +144,7 @@ class SearchResult(NISTBase):
 				spec_loc=pynist_dict["spec_loc"],
 				)
 
-	def __repr__(self):
+	def __repr__(self) -> str:
 		return f"Search Result: {self.name} \t({self.match_factor})"
 
 	@property

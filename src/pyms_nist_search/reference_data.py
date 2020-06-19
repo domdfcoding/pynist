@@ -55,7 +55,7 @@ from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
 # this package
 from .base import NISTBase
 from .templates import *
-from .utils import parse_name_chars, PathLike
+from .utils import PathLike, parse_name_chars
 
 
 class ReferenceData(NISTBase):
