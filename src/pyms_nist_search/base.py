@@ -54,7 +54,7 @@ class NISTBase:
 	:type cas: str
 	"""
 
-	def __init__(self, name: str = '', cas: str = '---') -> None:
+	def __init__(self, name: str = "", cas: str = "---") -> None:
 
 		self._name: str = str(name)
 

@@ -40,19 +40,19 @@ ref_data_dict = {
 		"name": "DIPHENYLAMINE",
 		"cas": "0-0-0",
 		"formula": "C12H11N",
-		"contributor": 'MASS SPECTROSCOPY SOC. OF JAPAN (MSSJ)',
+		"contributor": "MASS SPECTROSCOPY SOC. OF JAPAN (MSSJ)",
 		"nist_no": 5698,
 		"id": "5319",
 		"mw": 169,
 		"exact_mass": 169.0,
 		"synonyms": [],
 		"mass_spec": {
-	"intensity_list": [  # yapf: disable
+	"intensity_list": [  # yapf: disable  # noqa: E122
 		13, 6, 8, 37, 23, 71, 15, 7, 25, 16, 47, 45, 7, 10, 9, 9, 10,
 		61, 13, 51, 14, 10, 6, 10, 9, 6, 4, 5, 10, 4, 26, 7, 5, 5, 13,
 		4, 5, 16, 12, 27, 16, 10, 12, 27, 178, 329, 999, 137, 8,
 		],
-	"mass_list": [  # yapf: disable
+	"mass_list": [  # yapf: disable  # noqa: E122
 		18, 28, 38, 39, 50, 51, 52, 62, 63, 64, 65, 66, 71, 72, 74, 75,
 		76, 77, 78, 84, 85, 89, 90, 91, 92, 93, 102, 103, 104, 114, 115,
 		116, 117, 127, 128, 129, 130, 139, 140, 141, 142, 143, 154, 166,
@@ -65,7 +65,7 @@ ref_data_dict_non_recursive = {
 		"name": "DIPHENYLAMINE",
 		"cas": "0-0-0",
 		"formula": "C12H11N",
-		"contributor": 'MASS SPECTROSCOPY SOC. OF JAPAN (MSSJ)',
+		"contributor": "MASS SPECTROSCOPY SOC. OF JAPAN (MSSJ)",
 		"nist_no": 5698,
 		"id": "5319",
 		"mw": 169,

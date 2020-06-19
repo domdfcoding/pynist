@@ -265,7 +265,7 @@ class ReferenceData(NISTBase):
 
 			# Commented this line because it also gets printed when the MassSpectrum is created
 			# print(f" -> Reading JCAMP file '{file_name}'")
-			lines_list = file_name.open('r')
+			lines_list = file_name.open("r")
 			last_tag = None
 
 			header_info: Dict[str, Any] = {}  # Dictionary containing header information
@@ -275,7 +275,7 @@ class ReferenceData(NISTBase):
 				if len(line.strip()):
 					if line.startswith("##"):
 						# key word or information
-						fields = line.split('=', 1)
+						fields = line.split("=", 1)
 						current_tag = fields[0] = fields[0].lstrip("##").upper()
 						last_tag = fields[0]
 						fields[1] = fields[1].strip()
@@ -348,7 +348,7 @@ class ReferenceData(NISTBase):
 		properties_dict = parse_metadata(mona_data)
 
 		# Remove unwanted properties
-		del properties_dict['license']
+		del properties_dict["license"]
 
 		mass_spec = mass_spec_from_mona(mona_data["spectrum"])
 
@@ -363,7 +363,7 @@ class ReferenceData(NISTBase):
 		"""
 		Returns the ReferenceData object as an MSP file similar to that produced by
 		NIST MS Search's export function
-		
+
 		:return:
 		:rtype:
 		"""

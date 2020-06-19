@@ -37,7 +37,7 @@ from pyms.Spectrum import MassSpectrum  # type: ignore
 def prep_match_list(match_list: Iterable[str]) -> Set[str]:
 	"""
 	Prepare a list of matches for caseless matching with .casefold()
-	
+
 	:param match_list:
 
 	:return:
@@ -50,18 +50,18 @@ other_dbs: Set[str] = prep_match_list([
 		"SMILES",
 		"InChI",
 		"InChIKey",
-		'kegg',
-		'chebi',
-		'pubchem cid',
-		'chemspider',
-		'PubChem',
-		'lipidbank',
-		'knapsack',
-		'lipidmaps',
+		"kegg",
+		"chebi",
+		"pubchem cid",
+		"chemspider",
+		"PubChem",
+		"lipidbank",
+		"knapsack",
+		"lipidmaps",
 		"hmdb",
 		])
 
-mona_skip_compound_props: Set[str] = prep_match_list([*other_dbs, 'compound class'])
+mona_skip_compound_props: Set[str] = prep_match_list([*other_dbs, "compound class"])
 
 mona_skip_categories: Set[str] = prep_match_list([
 		"mass spectrometry",
@@ -75,59 +75,59 @@ mona_skip_properties: Set[str] = prep_match_list([
 		"ionization mode",
 		"instrument",
 		"instrument type",
-		'chromatography type',
-		'column',
-		'guard column',
-		'mobile phase',
-		'column temperature',
-		'flow rate',
-		'injection volume',
-		'injection',
-		'injection temperature',
-		'data transformation',
-		'chromatogram',
-		'retention index',
-		'retention index type',
-		'detector voltage',
+		"chromatography type",
+		"column",
+		"guard column",
+		"mobile phase",
+		"column temperature",
+		"flow rate",
+		"injection volume",
+		"injection",
+		"injection temperature",
+		"data transformation",
+		"chromatogram",
+		"retention index",
+		"retention index type",
+		"detector voltage",
 		"derivatization type",
-		'derivatization formula',
-		'derivatization mass',
-		'scan range',
+		"derivatization formula",
+		"derivatization mass",
+		"scan range",
 		"ms level",
-		'comment',
-		'oven temperature',
-		'retention time',
-		'whole',
+		"comment",
+		"oven temperature",
+		"retention time",
+		"whole",
 		"copyright",
-		'transfer line temperature',
+		"transfer line temperature",
 		"publication",
-		'ion source temperature',
+		"ion source temperature",
 		"ionization energy",
-		'scannumber',
-		'quantmass',
-		'intensity',
-		'origin',
+		"scannumber",
+		"quantmass",
+		"intensity",
+		"origin",
 		"modelion",
 		"modelionheight",
-		'modelionarea',
-		'integratedheight',
-		'integratedarea',
+		"modelionarea",
+		"integratedheight",
+		"integratedarea",
 		"comments",
-		'sample file',
-		'sample type',
-		'species',
-		'organ',
-		'annotation',
-		'biological matrix used sample preparation',
-		'collision energy',
-		'precursor type',
-		'carrier gas',
-		'recalibrate',
-		'column temperature gradient',
-		'transferline temperature',
-		'sample introduction',
-		'derivatization',
-		'ionization',
+		"sample file",
+		"sample type",
+		"species",
+		"organ",
+		"annotation",
+		"biological matrix used sample preparation",
+		"collision energy",
+		"precursor type",
+		"carrier gas",
+		"recalibrate",
+		"column temperature gradient",
+		"transferline temperature",
+		"sample introduction",
+		"derivatization",
+		"ionization",
 		])
 
 
@@ -146,18 +146,18 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
 	submitter: Dict = mona_data["submitter"]
 
 	properties_dict: Dict[str, Any] = {
-			"formula": '',
+			"formula": "",
 			"mw": 0,
 			"exact_mass": 0.0,
-			"cas": '',
-			"contributor": '',
-			"license": '',
+			"cas": "",
+			"contributor": "",
+			"license": "",
 			}
 
 	if "id" in mona_data:
 		properties_dict["id"] = mona_data["id"]
 	else:
-		properties_dict["id"] = ''
+		properties_dict["id"] = ""
 
 	prop_lookup: Dict[str, str] = {
 			"accession": "id",
@@ -212,12 +212,12 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
 
 		elif prop["name"].casefold() in prep_match_list([
 				*mona_skip_properties,
-				'data format',
-				'institution',
-				'formula',
+				"data format",
+				"institution",
+				"formula",
 				"ion type",
 				]):
-			# todo: 'data format'
+			# todo: "data format"
 			continue
 
 		elif not prop["computed"]:
@@ -250,7 +250,7 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
 def mass_spec_from_mona(mona_ms_string: str) -> MassSpectrum:
 	"""
 	Create a :class:`pyms.Spectrum.MassSpectrum` object from the MoNA JSON representation of the spectrum
-	
+
 	:param mona_ms_string:
 
 	:return:

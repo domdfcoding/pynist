@@ -60,7 +60,7 @@ def main():
 			contributor.add_contribution(**properties_dict)
 			
 			# MSP
-			del properties_dict['license']
+			del properties_dict["license"]
 			
 			ref_data = ReferenceData(
 					name=name,
@@ -76,5 +76,5 @@ def main():
 	contributors.write_authors_file()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()

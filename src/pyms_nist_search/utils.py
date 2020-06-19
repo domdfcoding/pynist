@@ -81,7 +81,7 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 	:rtype: str
 	"""
 
-	hit_name = ''
+	hit_name = ""
 	errors = []  # Buffer the errors to display at the end
 
 	# TODO: can we do away with the -1?
@@ -117,7 +117,7 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 			except ValueError:
 				errors.append(dec)
 				# print(f"Unable to parse character with code {dec}")
-				char = '�'
+				char = "�"
 
 				# List of problem codes encountered so far:
 				# -26, which should be a μ (03BC)

@@ -163,7 +163,7 @@ class Engine:
 				# stdout=False,
 				# stderr=False,
 				stdin_open=False,
-				volumes={lib_path: {'bind': '/mainlib', 'mode': 'ro'}},
+				volumes={lib_path: {"bind": "/mainlib", "mode": "ro"}},
 				environment=[f"LIBTYPE={lib_type}"],
 				)
 
@@ -256,9 +256,11 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	def full_search_with_ref_data(self,
-									mass_spec: MassSpectrum,
-									n_hits: int = 5) -> List[Tuple[SearchResult, ReferenceData]]:
+	def full_search_with_ref_data(
+			self,
+			mass_spec: MassSpectrum,
+			n_hits: int = 5,
+			) -> List[Tuple[SearchResult, ReferenceData]]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library,
 		including reference data.

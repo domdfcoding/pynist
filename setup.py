@@ -31,9 +31,9 @@ common_kwargs = dict(
 		name=modname,
 		version=__version__,
 		packages=["pyms_nist_search"],
-		package_dir={'pyms_nist_search': 'src/pyms_nist_search'},
+		package_dir={"pyms_nist_search": "src/pyms_nist_search"},
 		python_requires=">=3.6",
-		# package_data={modname: ['pyms_nist_search/templates/*']},
+		# package_data={modname: ["pyms_nist_search/templates/*"]},
 		include_package_data=True,
 		url=github_url,
 		long_description=long_description,
@@ -45,14 +45,14 @@ docker_only_reqs = [
 		]
 
 build_macros = [
-		('INTERNALBUILD', '1'),
-		('WIN32', '1'),
-		('MSTXTDATA', '1'),
+		("INTERNALBUILD", "1"),
+		("WIN32", "1"),
+		("MSTXTDATA", "1"),
 		]
 
 ##############################
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	
 	if sys.platform == "win32":
 		
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 			x = 64
 			bit = 64
 			ctree = "ctNt66_64"
-			# libraries = ['src/pyms_nist_search/x64/nistdl64']
+			# libraries = ["src/pyms_nist_search/x64/nistdl64']
 			# data_files = [('', ['src/pyms_nist_search/x64/nistdl64.dll', 'src/pyms_nist_search/x64/ctNt66_64.dll'])]
 		else:
 			x = 86
