@@ -84,20 +84,17 @@ class ReferenceData(NISTBase):
 
 	def __init__(
 			self,
-			name: str = '',
-			cas: str = '---',
+			name: str = "",
+			cas: str = "---",
 			nist_no: Union[int, str] = 0,
-			id: str = '',
+			id: str = "",
 			mw: Union[float, str] = 0.0,
-			formula: str = '',
-			contributor: str = '',
+			formula: str = "",
+			contributor: str = "",
 			mass_spec: Optional[MassSpectrum] = None,
 			synonyms: Optional[Sequence[str]] = None,
 			exact_mass: Optional[Any] = None,
 			) -> None:
-		"""
-
-		"""
 
 		NISTBase.__init__(self, name, cas)
 
