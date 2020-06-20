@@ -1,58 +1,51 @@
-language: generic
-dist: bionic
-
-env:
-  global:
-    secure: ENyjVN6N1b30TCfz7jM8c0bQx7q9hiOyONbryphy+uSJbrNlo1+cuk6ct/dQdJ9sAPx6jWDYah/5CrSSZ8gqo7X58gSiNJZ72pgFX07Vfk8aSWH7SMsL07wm+fB5tiyOxRnEA9HrshvgpU+Ky/Gwzf7K3z4mA84ejtXFWTVdCd7SePVupWolibDi2Ca5Ggkp/0DTI1HcNWOhflqWmOMizb1O7DaN2NEsuMmdcJOteyPAPzLMMh1+O6dUadrgzbVIcglIXi6gx4FSWPKrqrzYRJHfi6A2j6fmZEB4HFAJ/4FdXU42NwwmCZbKhIWBPwzLJ+o8AEQgRtWRRqkLjuPnOUOTtY5pHLvABkQ0MJaiJzezIMtxh7Lz2Lp827SidjaawEjZOs0JA0+/NuibBbsijVLBs6W9ezG1PUHZovWX52r5ningcFvyCjW68DE9EGDD7V12yfE0OBYpiVIXlFyUnDtG9fzs4/8E65jm6VI9Hv+9T4i6X+aMTLmjcp0YrI3GK6PfL1vJ7NwkM1MWaZ37SIEST+Ex9iiqVVJt5pvCSqbuYdm4qTzKyQgyn7FR3v1fk857nA0FRpP4W0AwGXIn+5SAZtdYQXOTnyj+rYH7ocoHRu5/Ixivpy3CoJ1q4TTUyh7o6bWQUe7XRpZuRQ/k+nHF8jin+9wLrjH+eCI1/IU=
-
-matrix:
-  include:
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-           PLAT=manylinux1_x86_64
-#    - sudo: required
-#      services:
-#        - docker
-#      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
-#           PRE_CMD=linux32
-#           PLAT=manylinux1_i686
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
-           PLAT=manylinux2010_x86_64
-    - sudo: required
-      services:
-        - docker
-      env: DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
-           PLAT=manylinux2014_x86_64
-
-before_install:
-  - chmod +x .ci/travis_build_wheels.sh
-  - chmod +x .ci/travis_test_wheels.sh
-  - chmod +x .ci/travis_deploy.sh
+language: python
+dist: xenial
+cache: pip
+python:
+  - '3.6'
+  - '3.7'
+  - '3.8'
 
 install:
-  - docker pull $DOCKER_IMAGE
+
+  - pip install pip  --upgrade
+  - pip install tox tox-travis
+
 
 script:
-  - docker run --rm -e PLAT=$PLAT -v `pwd`:/io $DOCKER_IMAGE $PRE_CMD /io/.ci/travis_build_wheels.sh  || travis_terminate 1;
-  - ls wheelhouse/
-  # Run pytest
-  - .ci/travis_test_wheels.sh || travis_terminate 1;
-  # Deploy to PyPI
-  - .ci/travis_deploy.sh || travis_terminate 1;
+  - tox
 
-# Deploy sdist
-deploy:
-  provider: pypi
-  user: DomDF
-  on:
-    tags: true
-    condition: "$PLAT = manylinux1_x86_64"
-  distributions: sdist
-  skip_existing: true
-  password:
-    secure: QnXLN+hldpAr7WQy3Y06J7ulnWghkoT+lc1bMbKve9GxJC4mvsuuTCXlVbbtjrXfmagm0+15v0GdPGtYiAfYGTjTewiToXjspdjPKrzgLaOewIkY6gzegSk4zSU8wxdDXeS0EiPqYpdFeXUJ1hhA1lsYsQxcm8wQZ50X2UdlHN0VgXq849xCGbPpauVKwk8pXdoUjpIu9eLIxdiieqrMCJNdydhJ95iHRK8lxkgLMrq1FbZy6hfCDsM1GwVhl12qKV2k9I2U+VOt/wtpSftmNy9P03Zra/8Bu9DgcKRdg7MZ5yiB3crJ38zAHwRycUh4WdXEt2UQLgIdBkS20QJAut8M3grg3AqI7YXGhX4ltsQkF7+JS6GRXADnoqeNqzfxuqygXVa+B8qIorCY36NnexbG/4BVYkzPFE5XhZzxgm5RbkBySXSrD5Hw86reDds5AgRXjHGQ2Pn8vANQLCTZ6Q58bCbCETiEEsTq9SsoOAzfDlPsQeoMT3f1Qe7yIgI9wXLvPE2BFTzmMgvLNRbdzL6Ot62xiw5J7Yi6B53WE9jvDVU+OEKiHsbJDddMyI6Dm9Ho9TKBDfAj1KKRNE5l0Gf1B9+F65zCJn+eOAC/nu99xpymvICUo9Xf8mHeW00AX+L0i6sNDaTd4nOuxzLLkjkI2Cn/Xfo1Z1TSkw5tX4M=
+
+stages:
+  - test
+  - deploy_pypi
+
+  - deploy_releases
+
+jobs:
+  include:
+    - stage: deploy_pypi
+      python: "3.6"
+      script: skip
+      deploy:
+        on:
+          tags: true
+          repo: domdfcoding/whiptail
+        provider: pypi
+        user: "DomDF"
+        password:
+          secure: QnXLN+hldpAr7WQy3Y06J7ulnWghkoT+lc1bMbKve9GxJC4mvsuuTCXlVbbtjrXfmagm0+15v0GdPGtYiAfYGTjTewiToXjspdjPKrzgLaOewIkY6gzegSk4zSU8wxdDXeS0EiPqYpdFeXUJ1hhA1lsYsQxcm8wQZ50X2UdlHN0VgXq849xCGbPpauVKwk8pXdoUjpIu9eLIxdiieqrMCJNdydhJ95iHRK8lxkgLMrq1FbZy6hfCDsM1GwVhl12qKV2k9I2U+VOt/wtpSftmNy9P03Zra/8Bu9DgcKRdg7MZ5yiB3crJ38zAHwRycUh4WdXEt2UQLgIdBkS20QJAut8M3grg3AqI7YXGhX4ltsQkF7+JS6GRXADnoqeNqzfxuqygXVa+B8qIorCY36NnexbG/4BVYkzPFE5XhZzxgm5RbkBySXSrD5Hw86reDds5AgRXjHGQ2Pn8vANQLCTZ6Q58bCbCETiEEsTq9SsoOAzfDlPsQeoMT3f1Qe7yIgI9wXLvPE2BFTzmMgvLNRbdzL6Ot62xiw5J7Yi6B53WE9jvDVU+OEKiHsbJDddMyI6Dm9Ho9TKBDfAj1KKRNE5l0Gf1B9+F65zCJn+eOAC/nu99xpymvICUo9Xf8mHeW00AX+L0i6sNDaTd4nOuxzLLkjkI2Cn/Xfo1Z1TSkw5tX4M=
+        distributions: sdist
+        skip_existing: true
+
+
+    - stage: deploy_releases
+      python: "3.6"
+      install:
+        - pip install PyGithub requests
+      script: skip
+      deploy:
+        on:
+          repo: domdfcoding/whiptail
+        provider: script
+        script: python .ci/copy_pypi_2_github.py || return 1;
