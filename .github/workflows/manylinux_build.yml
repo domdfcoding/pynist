@@ -57,9 +57,11 @@ jobs:
               # TODO: Upload coverage to coveralls
             done
           done
-#      - name: Publish wheels to PyPI
-#        env:
-#          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-#          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-#        run: |
-#          twine upload wheelhouse/*-manylinux*.whl
+      - name: Upload distribution 📦 to PyPI
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.pypi_password }}
+          packages_dir: wheelhouse/
+          skip_existing: true
