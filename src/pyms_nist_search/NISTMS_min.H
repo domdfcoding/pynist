@@ -291,7 +291,7 @@ Adapted from ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
 	Weight:  sparm->bNumReplicates  = cntls->pep_bNumReplicates
 	Weight:  sparm->bQ_TOF          = cntls->pep_bQ_TOF
 	Weight:  sparm->cThreshold      = cntls->pep_cThreshold
-
+	*/
 
 	/* types of element list */
 	#define NISTMS_EXACT 0  /* Elements in hit must be same as elements in */
