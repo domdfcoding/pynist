@@ -45,7 +45,7 @@ jobs:
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
+          name: wheels
           path: wheelhouse/
 #      - name: Publish wheels to PyPI
 #        env:

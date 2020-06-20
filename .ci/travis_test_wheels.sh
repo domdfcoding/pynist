@@ -13,7 +13,7 @@ export VERSION_NO="0.4.14"
 pyenv global 3.6
 python -m pip install tox
 sudo rm -rf pyms_nist_search.egg-info
-python -m tox
+#python -m tox
 
 test_wheel() {
   # First and only argument is the python version number (36, 37 etc)
