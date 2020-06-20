@@ -5,7 +5,7 @@ on:
   - push
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -42,6 +42,11 @@ jobs:
 #          system-packages: 'lrzip-devel zlib-devel'
           package-path: ''
           pip-wheel-args: '--no-deps'
+      - name: Upload Artifacts 🚀
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: wheelhouse/
 #      - name: Publish wheels to PyPI
 #        env:
 #          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
