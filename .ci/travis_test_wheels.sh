@@ -36,8 +36,8 @@ test_wheel() {
   for whl in wheelhouse/pyms_nist_search-${VERSION_NO}-cp$1-cp$1*-manylinux*.whl; do
 
     # Test tox with wheels
-#    python -m tox -r -e py$1 --installpkg "$whl"
-     pip install "$whl"
+    python -m tox -r -e py$1 --installpkg "$whl"
+#     pip install "$whl"
 
   # TODO: Upload coverage to coveralls
   done
