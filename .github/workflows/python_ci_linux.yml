@@ -38,20 +38,15 @@ jobs:
         run: "python -m tox"
 
       - name: Coveralls Parallel
-        uses: coverallsapp/github-action@v1.1.1
+        uses: AndreMiras/coveralls-python-action@develop
         with:
-          github-token: ${{ secrets.github_token }}
-#          flag-name: run-${{ matrix.python-version }}
           parallel: true
-        env:
-          COVERALLS_FLAG_NAME: run-${{ matrix.python-version }}
 
   finish:
-      needs: tests
-      runs-on: ubuntu-latest
-      steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@v1.1.1
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel-finished: true
