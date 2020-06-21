@@ -102,6 +102,7 @@ A copy of the MassBank of North America database, in JSON, MSP and NIST Library 
 This library was created on 22 April 2020 using the "parse_mona_json.py" script and Lib2Nist.
 Licensed under the CC BY 4.0 License.
 For a list of contributors, see the file `MoNA_GCMS_Library/AUTHORS`
+
 .. TODO: add links.
 
 Installation

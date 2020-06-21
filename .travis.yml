@@ -30,7 +30,7 @@ jobs:
       deploy:
         on:
           tags: true
-          repo: domdfcoding/whiptail
+          repo: domdfcoding/pynist
         provider: pypi
         user: "DomDF"
         password:
@@ -46,6 +46,6 @@ jobs:
       script: skip
       deploy:
         on:
-          repo: domdfcoding/whiptail
+          repo: domdfcoding/pynist
         provider: script
         script: python .ci/copy_pypi_2_github.py || return 1;
