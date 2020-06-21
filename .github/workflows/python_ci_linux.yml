@@ -41,8 +41,10 @@ jobs:
         uses: coverallsapp/github-action@v1.1.1
         with:
           github-token: ${{ secrets.github_token }}
-          flag-name: run-${{ matrix.python-version }}
+#          flag-name: run-${{ matrix.python-version }}
           parallel: true
+        env:
+          COVERALLS_FLAG_NAME: run-${{ matrix.python-version }}
 
   finish:
       needs: tests
