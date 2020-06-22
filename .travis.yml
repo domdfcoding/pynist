@@ -12,7 +12,7 @@ script:
   - tox -e mypy
 
 stages:
-  - mypy
+  - test
   - deploy_releases
 
 jobs:
