@@ -63,7 +63,7 @@ jobs:
       - name: Build source distribution 📦
         run: |
           tox -e build
-          rm dist/*.wheel
+          rm dist/*.whl
 
       - name: Upload distribution 📦 to PyPI
         if: startsWith(github.ref, 'refs/tags/')

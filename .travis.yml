@@ -3,42 +3,20 @@ dist: xenial
 cache: pip
 python:
   - '3.6'
-  - '3.7'
-  - '3.8'
 
 install:
-
   - pip install pip  --upgrade
   - pip install tox tox-travis
 
-
 script:
-  - tox
-
+  - tox -e mypy
 
 stages:
-  - test
-  - deploy_pypi
-
+  - mypy
   - deploy_releases
 
 jobs:
   include:
-    - stage: deploy_pypi
-      python: "3.6"
-      script: skip
-      deploy:
-        on:
-          tags: true
-          repo: domdfcoding/pynist
-        provider: pypi
-        user: "DomDF"
-        password:
-          secure: QnXLN+hldpAr7WQy3Y06J7ulnWghkoT+lc1bMbKve9GxJC4mvsuuTCXlVbbtjrXfmagm0+15v0GdPGtYiAfYGTjTewiToXjspdjPKrzgLaOewIkY6gzegSk4zSU8wxdDXeS0EiPqYpdFeXUJ1hhA1lsYsQxcm8wQZ50X2UdlHN0VgXq849xCGbPpauVKwk8pXdoUjpIu9eLIxdiieqrMCJNdydhJ95iHRK8lxkgLMrq1FbZy6hfCDsM1GwVhl12qKV2k9I2U+VOt/wtpSftmNy9P03Zra/8Bu9DgcKRdg7MZ5yiB3crJ38zAHwRycUh4WdXEt2UQLgIdBkS20QJAut8M3grg3AqI7YXGhX4ltsQkF7+JS6GRXADnoqeNqzfxuqygXVa+B8qIorCY36NnexbG/4BVYkzPFE5XhZzxgm5RbkBySXSrD5Hw86reDds5AgRXjHGQ2Pn8vANQLCTZ6Q58bCbCETiEEsTq9SsoOAzfDlPsQeoMT3f1Qe7yIgI9wXLvPE2BFTzmMgvLNRbdzL6Ot62xiw5J7Yi6B53WE9jvDVU+OEKiHsbJDddMyI6Dm9Ho9TKBDfAj1KKRNE5l0Gf1B9+F65zCJn+eOAC/nu99xpymvICUo9Xf8mHeW00AX+L0i6sNDaTd4nOuxzLLkjkI2Cn/Xfo1Z1TSkw5tX4M=
-        distributions: sdist
-        skip_existing: true
-
-
     - stage: deploy_releases
       python: "3.6"
       install:
