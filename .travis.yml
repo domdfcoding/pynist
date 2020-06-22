@@ -4,19 +4,20 @@ cache: pip
 python:
   - '3.6'
 
-install:
-  - pip install pip  --upgrade
-  - pip install tox tox-travis
-
-script:
-  - tox -e mypy
-
 stages:
-  - test
+  - mypy
   - deploy_releases
 
 jobs:
   include:
+    - stage: mypy
+      python: "3.6"
+      install:
+        - pip install pip  --upgrade
+        - pip install tox tox-travis
+      script:
+        - tox -e mypy
+
     - stage: deploy_releases
       python: "3.6"
       install:
