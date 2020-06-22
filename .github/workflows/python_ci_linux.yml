@@ -53,7 +53,8 @@ jobs:
         parallel-finished: true
     - name: Build source distribution 📦
       run: |
-        python -m pip install --upgrade pip setuptools wheel tox
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install --upgrade tox
         tox -e build
         rm dist/*.wheel
     - name: Upload distribution 📦 to PyPI
