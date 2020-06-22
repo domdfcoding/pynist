@@ -1,2 +1,7 @@
 [run]
 relative_files = True
+
+[paths]
+pyms_nist_search =
+    src/pyms_nist_search/
+    .tox/py3*/lib/python3*/site-packages/pyms_nist_search/
