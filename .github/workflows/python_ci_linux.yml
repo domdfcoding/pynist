@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-          uses: "actions/checkout@v2"
+        uses: "actions/checkout@v2"
 
       - name: Setup Python 🐍
         uses: "actions/setup-python@v1"
@@ -74,6 +74,6 @@ jobs:
           skip_existing: true
 
       - name: Coveralls Finished
-          uses: AndreMiras/coveralls-python-action@develop
-          with:
-            parallel-finished: true
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          parallel-finished: true
