@@ -12,7 +12,7 @@ PyMassSpec NIST Search
 	:target: https://ci.appveyor.com/project/domdfcoding/pyms-nist-search/branch/master
 	:alt: Windows Build Status
 
-.. start shields 
+.. start shields
 
 .. list-table::
 	:stub-columns: 1
@@ -32,7 +32,7 @@ PyMassSpec NIST Search
 .. |docs| image:: https://img.shields.io/readthedocs/pynist/latest?logo=read-the-docs
 	:target: https://pynist.readthedocs.io/en/latest/?badge=latest
 	:alt: Documentation Status
-	
+
 .. |docs_check| image:: https://github.com/domdfcoding/pynist/workflows/Docs%20Check/badge.svg
 	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Docs+Check%22
 	:alt: Docs Check Status
@@ -61,7 +61,7 @@ PyMassSpec NIST Search
 	:target: https://pypi.org/project/pyms-nist-search/
 	:alt: PyPI - Package Version
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/pyms-nist-search
+.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/pyms-nist-search?logo=python&logoColor=white
 	:target: https://pypi.org/project/pyms-nist-search/
 	:alt: PyPI - Supported Python Versions
 
@@ -74,8 +74,8 @@ PyMassSpec NIST Search
 	:alt: PyPI - Wheel
 
 .. |license| image:: https://img.shields.io/github/license/domdfcoding/pynist
-	:alt: License
 	:target: https://github.com/domdfcoding/pynist/blob/master/LICENSE
+	:alt: License
 
 .. |language| image:: https://img.shields.io/github/languages/top/domdfcoding/pynist
 	:alt: GitHub top language
