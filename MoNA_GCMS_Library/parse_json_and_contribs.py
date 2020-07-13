@@ -28,7 +28,6 @@ the MoNA library, in a more efficient manner than doing them separately.
 #  MA 02110-1301, USA.
 #
 
-
 # stdlib
 import pathlib
 
@@ -40,35 +39,35 @@ from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
 
 def main():
 	contributors = MoNA_GCMS_Library.parse_mona_contributors.ContributorList()
-	
+
 	# Create ReferenceData and write to file
 	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", "w") as msp_fp:
-		
+
 		for comp in MoNA_GCMS_Library.parse_mona_json.load_mona_json():
-			
+
 			compound: dict = comp["compound"][0]
 			names: list = compound["names"]
 			name: str = names[0]["name"]
 			synonyms: list = [name for name in names[1:]]
 
 			mass_spec = mass_spec_from_mona(comp["spectrum"])
-			
+
 			properties_dict = parse_metadata(comp)
-			
+
 			# Contributors
 			contributor = contributors.add_contributor(properties_dict["contributor"])
 			contributor.add_contribution(**properties_dict)
-			
+
 			# MSP
 			del properties_dict["license"]
-			
+
 			ref_data = ReferenceData(
 					name=name,
 					mass_spec=mass_spec,
 					synonyms=synonyms,
 					**properties_dict,
 					)
-			
+
 			msp = ref_data.to_msp()
 			print(msp)
 			msp_fp.write(msp)

@@ -28,7 +28,6 @@ licensed under.
 #  MA 02110-1301, USA.
 #
 
-
 # 3rd party
 import importlib_resources
 
@@ -41,20 +40,20 @@ from pyms_nist_search.mona_tools import parse_metadata
 class Contributor:
 	"""
 	Class to model contributor to MoNA library
-	
+
 	:param name: The name of the contributor
 	:type name: str
 	:param contributions: A list of records contributed
 	:type contributions: list of Record
 	"""
-	
+
 	def __init__(self, name, contributions=None):
 		self.name = name
 		if contributions:
 			self.contributions = contributions
 		else:
 			self.contributions = []
-	
+
 	def __eq__(self, other):
 		if isinstance(other, str):
 			return self.name == other
@@ -62,7 +61,7 @@ class Contributor:
 			return self.name == other.name
 		else:
 			return NotImplemented
-	
+
 	@classmethod
 	def from_mona_dict(cls, mona_data: dict):
 		"""
@@ -71,57 +70,57 @@ class Contributor:
 
 		:type mona_data: dict
 		"""
-	
+
 	def add_contribution(self, id, license=None, **kwargs):
 		"""
 		Add a contribution made by this Contributor, and return the
 		new :class:`Record` object created.
-		
+
 		:param id: The ID of the contribution
 		:type id: str
 		:param license: The license the contribution is licensed under
 		:type license: str
-		
+
 		:return: A :class:`Record` object representing the contribution
 		:rtype: :class:`Record`
 		"""
-		
+
 		if not license:
 			record = Record(id)
 		else:
 			record = Record(id, license, **kwargs)
-			
+
 		self.add_record(record)
 		return record
-			
+
 	def add_record(self, record):
 		"""
-		Add a :class:`Record` object representing a contribution made 
+		Add a :class:`Record` object representing a contribution made
 		by this Contributor.
-		
+
 		:param record: A :class:`Record` object representing the contribution
-		:type record: :class:`Record` 
+		:type record: :class:`Record`
 		"""
-		
+
 		self.contributions.append(record)
-		
+
 
 class Record:
 	"""
 	Class to model a Mass Spectrum record in the MoNA library
-	
+
 	:param id: The ID of the record
 	:type id: str
 	:param license: The license of the record. Default CC BY 4.0
 	:type license: str, optional
-	
+
 	Any additional arguments are ignored
 	"""
-	
+
 	def __init__(self, id, license="CC BY 4.0", **kwargs):
 		self.id = id
 		self.license = license
-	
+
 	@classmethod
 	def from_mona_dict(cls, mona_data: dict):
 		"""
@@ -130,7 +129,7 @@ class Record:
 
 		:type mona_data: dict
 		"""
-		
+
 		properties_dict = parse_metadata(mona_data)
 
 		if not properties_dict["license"]:
@@ -140,45 +139,46 @@ class Record:
 
 
 class ContributorList(list):
+
 	def add_contributor(self, contributor_name):
 		"""
 		Add a new contributor to the list and return
 		the :class:`Contributor` object representing them.
-		
+
 		:param contributor_name: The name of the contributor
 		:type contributor_name: str
-		
+
 		:rtype: :class:`Contributor`
 		"""
-		
+
 		if contributor_name in self:
 			return self[self.index(contributor_name)]
 		else:
 			new_contributor = Contributor(contributor_name)
 			self.append(new_contributor)
 			return new_contributor
-	
+
 	def get_contributor(self, contributor_name):
 		"""
 		Returns the :class:`Contributor` object representing the
 		contributor with the given name, or ``None`` if no such
 		contributor exists.
-		
+
 		:param contributor_name: The name of the contributor
 		:type contributor_name: str
-		
+
 		:rtype: :class:`Contributor`
 		"""
-		
+
 		if contributor_name in self:
 			return self[self.index(contributor_name)]
 		else:
 			return None
-	
+
 	def write_authors_file(self):
 		with importlib_resources.path(MoNA_GCMS_Library, "AUTHORS") as authors_file:
 			with open(str(authors_file), "w") as fp:
-				
+
 				for contributor in self:
 					print(contributor.name)
 					fp.write(f"{contributor.name}\n")
@@ -193,18 +193,18 @@ class ContributorList(list):
 							fp.write(f"\tid: {record.id} \t License: {record.license}\n")
 					print()
 					fp.write("\n")
-	
+
 	@classmethod
 	def from_mona_dict(cls, mona_data):
 		contributors = cls()
-		
+
 		for comp in mona_data:
 			record = Record.from_mona_dict(comp)
 			name = parse_metadata(comp)["contributor"]
-			
+
 			contributor = contributors.add_contributor(name)
 			contributor.contributions.append(record)
-			
+
 		return contributors
 
 
