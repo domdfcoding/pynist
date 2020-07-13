@@ -64,7 +64,7 @@ From ftp://chemdata.nist.gov/mass-spc/v1_7/NISTDLL3.zip
 #define WRN_NO_SPECTRA_TO_COMPARE -304
 #define WRN_TOO_MANY_HITS -305
 #define WRN_COULD_NOT_FIND_IDKEY -306
-     
+
 /* MAINMSDB.C */
 #define ERR_BAD_DBNUM -400
 #define ERR_SEARCH_LIBS_STRING -401

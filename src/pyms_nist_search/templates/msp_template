@@ -7,4 +7,3 @@ DB#: {{ ref_data.id }}
 Comments: {{ ref_data.contributor }}
 Num Peaks: {{ num_peaks }}
 {{ spec_block }}
-

@@ -65,7 +65,7 @@ This file is a modified version of the CALLDLL.C files from
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <ctype.h>    
+#include <ctype.h>
 #include <memory.h>
 
 
@@ -77,7 +77,7 @@ This file is a modified version of the CALLDLL.C files from
 
 #ifdef WIN32
 	#define MAX_FINAL_HITS 6000   /*  largest number of spectra in final hit list */                              /*  This value MUST be >= 120 */
-#else                             
+#else
 	#define MAX_FINAL_HITS 1000   /*  largest number of spectra in final hit list */
 								  /*  This value MUST be >= 120 */
 #endif
@@ -364,4 +364,3 @@ PyInit__core(void)
 
 	return py_module;
 }
-

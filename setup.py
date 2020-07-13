@@ -53,9 +53,9 @@ build_macros = [
 ##############################
 
 if __name__ == "__main__":
-	
+
 	if sys.platform == "win32":
-		
+
 		if sys.maxsize > 2 ** 32:
 			x = 64
 			bit = 64
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 			# data_files = [('', ['src/pyms_nist_search/x86/nistdl32.dll', 'src/pyms_nist_search/x86/ctNt66.dll'])]
 		libraries = [f'src/pyms_nist_search/x{x}/nistdl{bit}']
 		data_files = [('', [f'src/pyms_nist_search/x{x}/nistdl{bit}.dll', f'src/pyms_nist_search/x{x}/{ctree}.dll'])]
-		
+
 		extension = Extension(
 				name='pyms_nist_search._core',
 				define_macros=build_macros,
@@ -79,25 +79,25 @@ if __name__ == "__main__":
 				include_dirs=["src/pyms_nist_search"],
 				language="c",
 				)
-		
+
 		setup(
 				**common_kwargs,
 				install_requires=[req for req in install_requires if req not in docker_only_reqs],
 				ext_modules=[extension],
 				data_files=data_files
 				)
-	
+
 	else:
 		# On platforms other than windows, build the minimal C extension that just contains the variables,
 		# as well as the Python files that are required for cross compatibility.
-		
+
 		min_extension = Extension(
 				name='pyms_nist_search._core',
 				define_macros=build_macros,
 				sources=['src/pyms_nist_search/pyms_nist_search_min.c'],
 				include_dirs=["src/pyms_nist_search"],
 				)
-	
+
 		setup(
 				**common_kwargs,
 				install_requires=install_requires,

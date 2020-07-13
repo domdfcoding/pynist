@@ -24,5 +24,4 @@
 #  MA 02110-1301, USA.
 #
 
-
 from . import parse_mona_contributors, parse_mona_json

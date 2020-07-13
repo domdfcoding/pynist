@@ -65,7 +65,7 @@ This file is a modified version of the CALLDLL.C files from
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <ctype.h>    
+#include <ctype.h>
 #include <memory.h>
 #include <io.h>
 
@@ -78,7 +78,7 @@ This file is a modified version of the CALLDLL.C files from
 
 #ifdef WIN32
 	#define MAX_FINAL_HITS 6000   /*  largest number of spectra in final hit list */                              /*  This value MUST be >= 120 */
-#else                             
+#else
 	#define MAX_FINAL_HITS 1000   /*  largest number of spectra in final hit list */
 								  /*  This value MUST be >= 120 */
 #endif
@@ -137,7 +137,7 @@ char    StringIn[80];     /* for input string  */
 char    active_libs[NISTMS_MAX_LIBS+1];  /*  length = maximum number of libraries + 1 */
 
 /* for initiation */
-char    lib_paths[256];   
+char    lib_paths[256];
 char    work_dir_path[256];
 char    lib_types[NISTMS_MAX_LIBS+1];
 int     num_libs=0;
@@ -1584,4 +1584,3 @@ PyInit__core(void)
 
 	return py_module;
 }
-
