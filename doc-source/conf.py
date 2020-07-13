@@ -15,6 +15,8 @@ sys.path.append(os.path.abspath('..'))
 
 from __pkginfo__ import __version__
 
+# User-configurable lines
+# End of user-configurable lines
 
 github_url = f"https://github.com/domdfcoding/pynist"
 
@@ -112,14 +114,14 @@ def setup(app):
 							'type',
 							label=_('Type'),
 							has_arg=False,
-							names=('type',),
-							bodyrolename='class'
+							names=('type', ),
+							bodyrolename='class',
 							),
 					Field(
 							'default',
 							label=_('Default'),
 							has_arg=False,
-							names=('default',),
+							names=('default', ),
 							),
 					]
 			)
