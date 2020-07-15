@@ -7,36 +7,17 @@ import sys
 # 3rd party
 from setuptools import Extension, setup
 
-# this package
-from __pkginfo__ import (
-	__author__,
-	__license__,
-	__version__,
-	author_email,
-	classifiers,
-	modname,
-	short_desc,
-	long_description,
-	install_requires,
-	github_url,
-)
+sys.path.append(".")
 
+# this package
+from __pkginfo__ import *  # pylint: disable=wildcard-import
 
 common_kwargs = dict(
-		author=__author__,
-		author_email=author_email,
-		classifiers=classifiers,
-		description=short_desc,
-		license=__license__,
-		name=modname,
 		version=__version__,
 		packages=["pyms_nist_search"],
 		package_dir={"pyms_nist_search": "src/pyms_nist_search"},
 		python_requires=">=3.6",
 		# package_data={modname: ["pyms_nist_search/templates/*"]},
-		include_package_data=True,
-		url=github_url,
-		long_description=long_description,
 		)
 
 docker_only_reqs = [

@@ -36,6 +36,19 @@ assert isinstance(hit, SearchResult)
 assert isinstance(ref_data, ReferenceData)
 assert isinstance(ref_data.mass_spec, MassSpectrum)
 
+intensity_list = [  # yapf: disable  # noqa: E122
+		13, 6, 8, 37, 23, 71, 15, 7, 25, 16, 47, 45, 7, 10, 9, 9, 10,
+		61, 13, 51, 14, 10, 6, 10, 9, 6, 4, 5, 10, 4, 26, 7, 5, 5, 13,
+		4, 5, 16, 12, 27, 16, 10, 12, 27, 178, 329, 999, 137, 8,
+		]
+
+mass_list = [  # yapf: disable  # noqa: E122
+		18, 28, 38, 39, 50, 51, 52, 62, 63, 64, 65, 66, 71, 72, 74, 75,
+		76, 77, 78, 84, 85, 89, 90, 91, 92, 93, 102, 103, 104, 114, 115,
+		116, 117, 127, 128, 129, 130, 139, 140, 141, 142, 143, 154, 166,
+		167, 168, 169, 170, 171,
+		]
+
 ref_data_dict = {
 		"name": "DIPHENYLAMINE",
 		"cas": "0-0-0",
@@ -47,18 +60,9 @@ ref_data_dict = {
 		"exact_mass": 169.0,
 		"synonyms": [],
 		"mass_spec": {
-	"intensity_list": [  # yapf: disable  # noqa: E122
-		13, 6, 8, 37, 23, 71, 15, 7, 25, 16, 47, 45, 7, 10, 9, 9, 10,
-		61, 13, 51, 14, 10, 6, 10, 9, 6, 4, 5, 10, 4, 26, 7, 5, 5, 13,
-		4, 5, 16, 12, 27, 16, 10, 12, 27, 178, 329, 999, 137, 8,
-		],
-	"mass_list": [  # yapf: disable  # noqa: E122
-		18, 28, 38, 39, 50, 51, 52, 62, 63, 64, 65, 66, 71, 72, 74, 75,
-		76, 77, 78, 84, 85, 89, 90, 91, 92, 93, 102, 103, 104, 114, 115,
-		116, 117, 127, 128, 129, 130, 139, 140, 141, 142, 143, 154, 166,
-		167, 168, 169, 170, 171,
-		],
-	},  # noqa: E122
+				"intensity_list": intensity_list,
+				"mass_list": mass_list,
+				},
 		}
 
 ref_data_dict_non_recursive = {
