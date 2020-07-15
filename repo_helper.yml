@@ -80,3 +80,5 @@ additional_ignore:
   - "**/MoNA-export-GC-MS_Spectra.json"
 
 source_dir: src
+
+pure_python: False
