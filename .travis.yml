@@ -17,14 +17,3 @@ jobs:
         - pip install tox tox-travis
       script:
         - tox -e mypy
-
-    - stage: deploy_releases
-      python: "3.6"
-      install:
-        - pip install PyGithub requests
-      script: skip
-      deploy:
-        on:
-          repo: domdfcoding/pynist
-        provider: script
-        script: python .ci/copy_pypi_2_github.py || return 1;
