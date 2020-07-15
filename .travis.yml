@@ -15,6 +15,9 @@ install:
   - pip install tox
 
 
+script:
+  - tox -e mypy,build
+
 stages:
   - mypy
   - build
