@@ -6,7 +6,7 @@ python:
 
 stages:
   - mypy
-  - deploy_releases
+  - build
 
 jobs:
   include:
@@ -17,3 +17,11 @@ jobs:
         - pip install tox tox-travis
       script:
         - tox -e mypy
+
+    - stage: build
+      python: "3.6"
+      install:
+        - pip install pip  --upgrade
+        - pip install tox tox-travis
+      script:
+        - tox -e build
