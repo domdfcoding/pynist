@@ -13,8 +13,8 @@ enable_conda: False
 
 exclude_files:
   - setup
-  - travis
-  - actions
+#  - travis
+#  - actions
 
 #additional_ignore:
 #  - Tokens

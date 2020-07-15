@@ -1,27 +1,32 @@
+# This file is managed by `repo_helper`. Don't edit it directly
+---
+
 language: python
 dist: xenial
 cache: pip
 python:
   - '3.6'
+  - '3.7'
+  - '3.8'
+
+install:
+
+  - pip install pip  --upgrade
+  - pip install tox
+
 
 stages:
   - mypy
   - build
 
+
 jobs:
   include:
     - stage: mypy
       python: "3.6"
-      install:
-        - pip install pip  --upgrade
-        - pip install tox tox-travis
       script:
         - tox -e mypy
 
     - stage: build
-      python: "3.6"
-      install:
-        - pip install pip  --upgrade
-        - pip install tox tox-travis
       script:
         - tox -e build

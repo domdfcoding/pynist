@@ -1,3 +1,4 @@
+# This file is managed by `repo_helper`. Don't edit it directly
 ---
 name: Linux Tests
 
@@ -45,7 +46,7 @@ jobs:
 
   finish:
     needs: tests
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-18.04"
     steps:
       - name: Checkout 🛎️
         uses: "actions/checkout@v2"
