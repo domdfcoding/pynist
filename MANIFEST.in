@@ -13,5 +13,5 @@ recursive-include src/pyms_nist_search *.h
 recursive-include src/pyms_nist_search *.H
 recursive-include src/pyms_nist_search *.dll
 recursive-include src/pyms_nist_search *.lib
-recursive-include src/pyms_nist_search/ *.pyi
+recursive-include src/pyms_nist_search *.pyi
 include src/pyms_nist_search/py.typed
