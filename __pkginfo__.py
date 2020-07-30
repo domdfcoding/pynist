@@ -45,8 +45,8 @@ pypi_name = "pyms-nist-search"
 import_name = "pyms_nist_search"
 __license__ = "GNU Lesser General Public License v3 or later (LGPLv3+)"
 short_desc = "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine"
-__author__ = author = "Dominic Davis-Foster"
-author_email = "dominic@davis-foster.co.uk"
+__author__ = author = 'Dominic Davis-Foster'
+author_email = 'dominic@davis-foster.co.uk'
 github_username = "domdfcoding"
 web = github_url = "https://github.com/domdfcoding/pynist"
 repo_root = pathlib.Path(__file__).parent

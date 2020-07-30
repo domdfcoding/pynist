@@ -75,7 +75,6 @@ crashlytics-build.properties
 fabric.properties
 .idea
 build
-*.egg-info
 **/__pycache__
 **/conda
 */mainlib
