@@ -1,7 +1,7 @@
 include __pkginfo__.py
 include LICENSE
 include requirements.txt
-recursive-exclude **/__pycache__ *
+prune **/__pycache__
 include THIRD_PARTY_COPYRIGHT
 recursive-include src/pyms_nist_search *
 recursive-exclude MoNA_GCMS_Library *
