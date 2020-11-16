@@ -3,7 +3,7 @@
 
 repos:
  - repo: https://github.com/pre-commit/pre-commit-hooks
-   rev: v2.4.0
+   rev: v3.3.0
    hooks:
     - id: check-added-large-files
     - id: check-ast
@@ -22,25 +22,25 @@ repos:
     - id: mixed-line-ending
 
  - repo: https://github.com/domdfcoding/pre-commit-hooks
-   rev: v0.0.2
+   rev: v0.1.6
    hooks:
     - id: requirements-txt-sorter
     - id: check-docstring-first
 
  - repo: https://github.com/pre-commit/pygrep-hooks
-   rev: v1.5.1
+   rev: v1.7.0
    hooks:
     - id: python-no-eval
     - id: python-use-type-annotations
 
  - repo: https://github.com/asottile/pyupgrade
-   rev: v1.5.1
+   rev: v2.7.4
    hooks:
     - id: pyupgrade
       args: [--py36-plus]
 
  - repo: https://github.com/timothycrosley/isort
-   rev: 5.1.4
+   rev: 5.6.4
    hooks:
     - id: isort
       exclude: ^(doc-source/conf|__pkginfo__|make_conda_recipe|setup)\.py$
@@ -53,7 +53,7 @@ repos:
       args: ["--in-place"]
 
  - repo: https://github.com/Lucas-C/pre-commit-hooks
-   rev: v1.1.7
+   rev: v1.1.9
    hooks:
     - id: forbid-crlf
     - id: remove-crlf
