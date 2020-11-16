@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  parse_mona_json.py
 """
@@ -33,7 +32,6 @@ https://chemdata.nist.gov/mass-spc/ms-search/Library_conversion_tool.html
 import json
 import pathlib
 import shutil
-# import urllib.request
 
 # 3rd party
 import importlib_resources
@@ -41,6 +39,8 @@ import importlib_resources
 # this package
 import MoNA_GCMS_Library
 from pyms_nist_search import ReferenceData
+
+# import urllib.request
 
 
 def load_mona_json():
