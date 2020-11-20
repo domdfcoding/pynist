@@ -65,10 +65,12 @@ repos:
       exclude: ^(doc-source/conf|__pkginfo__|make_conda_recipe|setup)\.py$
 
  - repo: https://github.com/domdfcoding/dep_checker
-   rev: v0.3.1
+   rev: v0.4.1
    hooks:
     - id: dep_checker
       args:
        - pyms_nist_search
+       - --work-dir
+       - src/
 
 # Custom hooks can be added below this comment
