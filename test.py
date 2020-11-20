@@ -1,7 +1,12 @@
+# stdlib
 import datetime
-from pyms.Spectrum import MassSpectrum  # type: ignore
-import pyms_nist_search
 import sys
+
+# 3rd party
+from pyms.Spectrum import MassSpectrum  # type: ignore
+
+# this package
+import pyms_nist_search
 
 if sys.platform == "win32":
 	FULL_PATH_TO_MAIN_LIBRARY = "C:\\Users\\dom13\\Python\\mainlib"
