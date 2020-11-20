@@ -51,7 +51,7 @@ class SearchResult(NISTBase):
 
 	def __init__(
 			self,
-			name: str = "",
+			name: str = '',
 			cas: str = "---",
 			match_factor: int = 0,
 			reverse_match_factor: int = 0,

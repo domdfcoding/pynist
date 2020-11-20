@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  parse_mona_contributors.py
 """
@@ -41,7 +40,7 @@ def main():
 	contributors = MoNA_GCMS_Library.parse_mona_contributors.ContributorList()
 
 	# Create ReferenceData and write to file
-	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", "w") as msp_fp:
+	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", 'w') as msp_fp:
 
 		for comp in MoNA_GCMS_Library.parse_mona_json.load_mona_json():
 

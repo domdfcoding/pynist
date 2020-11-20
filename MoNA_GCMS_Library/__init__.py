@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  __init__.py
 #
@@ -24,4 +23,5 @@
 #  MA 02110-1301, USA.
 #
 
+# this package
 from . import parse_mona_contributors, parse_mona_json

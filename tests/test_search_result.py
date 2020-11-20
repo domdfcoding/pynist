@@ -104,7 +104,7 @@ def test_dict():
 
 
 def test_str():
-	assert str(hit) == repr(hit) == "Search Result: DIPHENYLAMINE 	(916)"
+	assert str(hit) == repr(hit) == "Search Result: DIPHENYLAMINE \t(916)"
 
 
 def test_eq():

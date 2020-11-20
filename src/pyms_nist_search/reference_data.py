@@ -84,13 +84,13 @@ class ReferenceData(NISTBase):
 
 	def __init__(
 			self,
-			name: str = "",
+			name: str = '',
 			cas: str = "---",
 			nist_no: Union[int, str] = 0,
-			id: str = "",
+			id: str = '',
 			mw: Union[float, str] = 0.0,
-			formula: str = "",
-			contributor: str = "",
+			formula: str = '',
+			contributor: str = '',
 			mass_spec: Optional[MassSpectrum] = None,
 			synonyms: Optional[Sequence[str]] = None,
 			exact_mass: Optional[Any] = None,
@@ -262,7 +262,7 @@ class ReferenceData(NISTBase):
 
 			# Commented this line because it also gets printed when the MassSpectrum is created
 			# print(f" -> Reading JCAMP file '{file_name}'")
-			lines_list = file_name.open("r")
+			lines_list = file_name.open('r')
 			last_tag = None
 
 			header_info: Dict[str, Any] = {}  # Dictionary containing header information
@@ -272,7 +272,7 @@ class ReferenceData(NISTBase):
 				if len(line.strip()):
 					if line.startswith("##"):
 						# key word or information
-						fields = line.split("=", 1)
+						fields = line.split('=', 1)
 						current_tag = fields[0] = fields[0].lstrip("##").upper()
 						last_tag = fields[0]
 						fields[1] = fields[1].strip()
@@ -381,7 +381,7 @@ class ReferenceData(NISTBase):
 		msp_text = msp_template.render(
 				ref_data=self,
 				num_peaks=num_peaks,
-				spec_block="\n".join(spec_block),
+				spec_block='\n'.join(spec_block),
 				)
 
 		return msp_text

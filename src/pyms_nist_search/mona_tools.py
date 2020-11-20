@@ -146,18 +146,18 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
 	submitter: Dict = mona_data["submitter"]
 
 	properties_dict: Dict[str, Any] = {
-			"formula": "",
+			"formula": '',
 			"mw": 0,
 			"exact_mass": 0.0,
-			"cas": "",
-			"contributor": "",
-			"license": "",
+			"cas": '',
+			"contributor": '',
+			"license": '',
 			}
 
 	if "id" in mona_data:
 		properties_dict["id"] = mona_data["id"]
 	else:
-		properties_dict["id"] = ""
+		properties_dict["id"] = ''
 
 	prop_lookup: Dict[str, str] = {
 			"accession": "id",
@@ -256,4 +256,4 @@ def mass_spec_from_mona(mona_ms_string: str) -> MassSpectrum:
 	:return:
 	"""
 
-	return MassSpectrum.from_mz_int_pairs([val.split(":") for val in mona_ms_string.split(" ")])
+	return MassSpectrum.from_mz_int_pairs([val.split(':') for val in mona_ms_string.split(' ')])

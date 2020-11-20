@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 #
 #  parse_mona_json.py
 """
@@ -33,7 +32,6 @@ https://chemdata.nist.gov/mass-spc/ms-search/Library_conversion_tool.html
 import json
 import pathlib
 import shutil
-# import urllib.request
 
 # 3rd party
 import importlib_resources
@@ -41,6 +39,8 @@ import importlib_resources
 # this package
 import MoNA_GCMS_Library
 from pyms_nist_search import ReferenceData
+
+# import urllib.request
 
 
 def load_mona_json():
@@ -60,7 +60,7 @@ def load_mona_json():
 
 def create_mona_msp():
 	# Create ReferenceData and write to file
-	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", "w") as fp:
+	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", 'w') as fp:
 		for comp in load_mona_json():
 			ref_data = ReferenceData.from_mona_dict(comp)
 			msp = ref_data.to_msp()
@@ -72,5 +72,5 @@ def main():
 	create_mona_msp()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()
