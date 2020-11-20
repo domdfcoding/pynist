@@ -21,7 +21,7 @@ PyMassSpec NIST Search
 	* - Docs
 	  - |docs| |docs_check|
 	* - Tests
-	  - |travis| |actions_windows| |coveralls| |codefactor|
+	  - |travis| |actions_windows| |coveralls| |codefactor| |pre_commit_ci|
 	* - PyPI
 	  - |pypi-version| |supported-versions| |supported-implementations| |wheel|
 	* - Activity
@@ -31,19 +31,19 @@ PyMassSpec NIST Search
 
 .. |docs| image:: https://img.shields.io/readthedocs/pynist/latest?logo=read-the-docs
 	:target: https://pynist.readthedocs.io/en/latest/?badge=latest
-	:alt: Documentation Status
+	:alt: Documentation Build Status
 
 .. |docs_check| image:: https://github.com/domdfcoding/pynist/workflows/Docs%20Check/badge.svg
 	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Docs+Check%22
 	:alt: Docs Check Status
 
-.. |travis| image:: https://img.shields.io/travis/com/domdfcoding/pynist/master?logo=travis
-	:target: https://travis-ci.com/domdfcoding/pynist
-	:alt: Travis Build Status
+.. |travis| image:: https://github.com/domdfcoding/pynist/workflows/Linux%20Tests/badge.svg
+	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%Linux+Tests%22
+	:alt: Linux Test Status
 
 .. |actions_windows| image:: https://github.com/domdfcoding/pynist/workflows/Windows%20Tests/badge.svg
 	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Windows+Tests%22
-	:alt: Windows Tests Status
+	:alt: Windows Test Status
 
 .. |requires| image:: https://requires.io/github/domdfcoding/pynist/requirements.svg?branch=master
 	:target: https://requires.io/github/domdfcoding/pynist/requirements/?branch=master
@@ -94,6 +94,10 @@ PyMassSpec NIST Search
 .. |pre_commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
 	:target: https://github.com/pre-commit/pre-commit
 	:alt: pre-commit
+
+.. |pre_commit_ci| image:: https://results.pre-commit.ci/badge/github/domdfcoding/pynist/master.svg
+	:target: https://results.pre-commit.ci/latest/github/domdfcoding/pynist/master
+	:alt: pre-commit.ci status
 
 .. end shields
 

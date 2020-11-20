@@ -21,7 +21,7 @@ PyMassSpec NIST Search
 	* - Docs
 	  - |docs| |docs_check|
 	* - Tests
-	  - |travis| |actions_windows| |coveralls| |codefactor|
+	  - |travis| |actions_windows| |coveralls| |codefactor| |pre_commit_ci|
 	* - PyPI
 	  - |pypi-version| |supported-versions| |supported-implementations| |wheel|
 	* - Activity
@@ -29,71 +29,75 @@ PyMassSpec NIST Search
 	* - Other
 	  - |license| |language| |requires| |pre_commit|
 
-.. |docs| image:: https://img.shields.io/readthedocs/pynist/latest?logo=read-the-docs
-	:target: https://pynist.readthedocs.io/en/latest/?badge=latest
-	:alt: Documentation Status
+.. |docs| rtfd-shield::
+	:project: pynist
+	:alt: Documentation Build Status
 
-.. |docs_check| image:: https://github.com/domdfcoding/pynist/workflows/Docs%20Check/badge.svg
-	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Docs+Check%22
+.. |docs_check| actions-shield::
+	:workflow: Docs Check
 	:alt: Docs Check Status
 
-.. |travis| image:: https://img.shields.io/travis/com/domdfcoding/pynist/master?logo=travis
-	:target: https://travis-ci.com/domdfcoding/pynist
-	:alt: Travis Build Status
+.. |travis| actions-shield::
+	:workflow: Linux Tests
+	:alt: Linux Test Status
 
-.. |actions_windows| image:: https://github.com/domdfcoding/pynist/workflows/Windows%20Tests/badge.svg
-	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Windows+Tests%22
-	:alt: Windows Tests Status
+.. |actions_windows| actions-shield::
+	:workflow: Windows Tests
+	:alt: Windows Test Status
 
-.. |requires| image:: https://requires.io/github/domdfcoding/pynist/requirements.svg?branch=master
-	:target: https://requires.io/github/domdfcoding/pynist/requirements/?branch=master
+.. |requires| requires-io-shield::
 	:alt: Requirements Status
 
-.. |coveralls| image:: https://img.shields.io/coveralls/github/domdfcoding/pynist/master?logo=coveralls
-	:target: https://coveralls.io/github/domdfcoding/pynist?branch=master
+.. |coveralls| coveralls-shield::
 	:alt: Coverage
 
-.. |codefactor| image:: https://img.shields.io/codefactor/grade/github/domdfcoding/pynist?logo=codefactor
-	:target: https://www.codefactor.io/repository/github/domdfcoding/pynist
+.. |codefactor| codefactor-shield::
 	:alt: CodeFactor Grade
 
-.. |pypi-version| image:: https://img.shields.io/pypi/v/pyms-nist-search
-	:target: https://pypi.org/project/pyms-nist-search/
+.. |pypi-version| pypi-shield::
+	:project: pyms-nist-search
+	:version:
 	:alt: PyPI - Package Version
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/pyms-nist-search?logo=python&logoColor=white
-	:target: https://pypi.org/project/pyms-nist-search/
+.. |supported-versions| pypi-shield::
+	:project: pyms-nist-search
+	:py-versions:
 	:alt: PyPI - Supported Python Versions
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/pyms-nist-search
-	:target: https://pypi.org/project/pyms-nist-search/
+.. |supported-implementations| pypi-shield::
+	:project: pyms-nist-search
+	:implementations:
 	:alt: PyPI - Supported Implementations
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/pyms-nist-search
-	:target: https://pypi.org/project/pyms-nist-search/
+.. |wheel| pypi-shield::
+	:project: pyms-nist-search
+	:wheel:
 	:alt: PyPI - Wheel
 
-.. |license| image:: https://img.shields.io/github/license/domdfcoding/pynist
-	:target: https://github.com/domdfcoding/pynist/blob/master/LICENSE
+.. |license| github-shield::
+	:license:
 	:alt: License
 
-.. |language| image:: https://img.shields.io/github/languages/top/domdfcoding/pynist
+.. |language| github-shield::
+	:top-language:
 	:alt: GitHub top language
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/domdfcoding/pynist/v0.4.14
-	:target: https://github.com/domdfcoding/pynist/pulse
+.. |commits-since| github-shield::
+	:commits-since: v0.4.14
 	:alt: GitHub commits since tagged version
 
-.. |commits-latest| image:: https://img.shields.io/github/last-commit/domdfcoding/pynist
-	:target: https://github.com/domdfcoding/pynist/commit/master
+.. |commits-latest| github-shield::
+	:last-commit:
 	:alt: GitHub last commit
 
-.. |maintained| image:: https://img.shields.io/maintenance/yes/2020
+.. |maintained| maintained-shield:: 2020
 	:alt: Maintenance
 
-.. |pre_commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
-	:target: https://github.com/pre-commit/pre-commit
+.. |pre_commit| pre-commit-shield::
 	:alt: pre-commit
+
+.. |pre_commit_ci| pre-commit-ci-shield::
+	:alt: pre-commit.ci status
 
 .. end shields
 
