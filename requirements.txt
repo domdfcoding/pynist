@@ -1,6 +1,6 @@
 chemistry-tools>=0.2.5
 docker>=4.2.0
-importlib-resources>=1.0.2
+domdf-python-tools>=1.7.0
 jinja2>=2.10.1
 pymassspec>=2.2.20
 requests>=2.22.0
