@@ -42,6 +42,7 @@ from typing import Any, Dict
 import sdjson
 from chemistry_tools.cas import cas_int_to_string, check_cas_number
 from domdf_python_tools.doctools import prettify_docstrings
+from numpy import int64
 from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
 
 # this package
@@ -156,3 +157,8 @@ class NISTBase:
 			return self.__dict__ == other.__dict__
 
 		return NotImplemented
+
+
+@sdjson.register_encoder(int64)
+def serialise_numpy_int64(value):
+	return int(value)
