@@ -131,7 +131,7 @@ def test_dict():
 
 
 def test_str():
-	assert str(ref_data) == repr(ref_data) == "Reference Data: DIPHENYLAMINE 	(0-0-0)"
+	assert str(ref_data) == repr(ref_data) == "Reference Data: DIPHENYLAMINE \t(0-0-0)"
 
 
 def test_eq():

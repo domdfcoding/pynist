@@ -176,7 +176,7 @@ class ContributorList(list):
 
 	def write_authors_file(self):
 		with importlib_resources.path(MoNA_GCMS_Library, "AUTHORS") as authors_file:
-			with open(str(authors_file), "w") as fp:
+			with open(str(authors_file), 'w') as fp:
 
 				for contributor in self:
 					print(contributor.name)
@@ -191,7 +191,7 @@ class ContributorList(list):
 							print(f"\tid: {record.id} \t License: {record.license}")
 							fp.write(f"\tid: {record.id} \t License: {record.license}\n")
 					print()
-					fp.write("\n")
+					fp.write('\n')
 
 	@classmethod
 	def from_mona_dict(cls, mona_data):
@@ -213,5 +213,5 @@ def main():
 	contributor_list.write_authors_file()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()

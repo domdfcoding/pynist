@@ -1,8 +1,8 @@
-.. This file based on https://github.com/PyGithub/PyGithub/blob/master/CONTRIBUTING.md
-
 ==============
 Contributing
 ==============
+
+.. This file based on https://github.com/PyGithub/PyGithub/blob/master/CONTRIBUTING.md
 
 ``pyms-nist-search`` uses `tox <https://tox.readthedocs.io>`_ to automate testing and packaging, and `pre-commit <https://pre-commit.com>`_ to maintain code quality.
 
@@ -17,17 +17,16 @@ Install ``pre-commit`` with ``pip`` and install the git hook:
 Coding style
 --------------
 
-`Yapf <https://github.com/google/yapf>`_ is used for code formatting, and `isort <https://timothycrosley.github.io/isort/>`_ is used to sort imports.
+`yapf-isort <https://pypi.org/project/yapf-isort/>`_ is used for code formatting.
 
-``yapf`` and ``isort`` can be run manually via ``pre-commit``:
+It can be run manually via ``pre-commit``:
 
 .. code-block:: bash
 
-	$ pre-commit run yapf -a
-	$ pre-commit run isort -a
+	$ pre-commit run yapf-isort -a
 
 
-The complete autoformatting suite can be run with ``pre-commit``:
+Or, to run the complete autoformatting suite:
 
 .. code-block:: bash
 

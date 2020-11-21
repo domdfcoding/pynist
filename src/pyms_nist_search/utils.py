@@ -67,7 +67,7 @@ def pack(mass_spec: MassSpectrum, top: int = 20):
 	spectrum = [(a, 999.0 * b / norm) for (a, b) in values[:top]]
 	spectrum.sort()
 
-	return "*".join([f"{a:.2f}\t{b:.2f}" for (a, b) in spectrum]) + "*"
+	return '*'.join([f"{a:.2f}\t{b:.2f}" for (a, b) in spectrum]) + '*'
 
 
 def parse_name_chars(name_char_list: Sequence[int]) -> str:
@@ -81,7 +81,7 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 	:rtype: str
 	"""
 
-	hit_name = ""
+	hit_name = ''
 	errors = []  # Buffer the errors to display at the end
 
 	# TODO: can we do away with the -1?
@@ -90,39 +90,39 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 			break
 
 		if dec == 224:
-			char = "α"
+			char = 'α'
 		elif dec == 225:
-			char = "β"
+			char = 'β'
 		elif dec == 231:
-			char = "γ"
+			char = 'γ'
 		elif dec == 235:
-			char = "δ"
+			char = 'δ'
 		elif dec == 238:
-			char = "ε"
+			char = 'ε'
 		elif dec == 227:
-			char = "π"
+			char = 'π'
 		elif dec == 229:
-			char = "σ"
+			char = 'σ'
 		elif dec == 230:
-			char = "μ"
+			char = 'μ'
 		elif dec == 234:
-			char = "ω"
+			char = 'ω'
 		elif dec == 241:
-			char = "±"
+			char = '±'
 		elif dec == 252:
-			char = "η"
+			char = 'η'
 		else:
 			try:
 				char = chr(dec)
 			except ValueError:
 				errors.append(dec)
 				# print(f"Unable to parse character with code {dec}")
-				char = "�"
+				char = '�'
 
 				# List of problem codes encountered so far:
 				# -26, which should be a μ (03BC)
 
-		if char != "\x00":
+		if char != '\x00':
 			hit_name += char
 
 	if errors:

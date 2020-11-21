@@ -39,18 +39,18 @@ def test_parse_name_chars():
 
 	# Test remaining special characters
 
-	assert utils.parse_name_chars([238, 0]) == "ε"
-	assert utils.parse_name_chars([227, 0]) == "π"
-	assert utils.parse_name_chars([229, 0]) == "σ"
-	assert utils.parse_name_chars([230, 0]) == "μ"
-	assert utils.parse_name_chars([234, 0]) == "ω"
-	assert utils.parse_name_chars([241, 0]) == "±"
-	assert utils.parse_name_chars([252, 0]) == "η"
+	assert utils.parse_name_chars([238, 0]) == 'ε'
+	assert utils.parse_name_chars([227, 0]) == 'π'
+	assert utils.parse_name_chars([229, 0]) == 'σ'
+	assert utils.parse_name_chars([230, 0]) == 'μ'
+	assert utils.parse_name_chars([234, 0]) == 'ω'
+	assert utils.parse_name_chars([241, 0]) == '±'
+	assert utils.parse_name_chars([252, 0]) == 'η'
 
 	# Test unrecognised characters
 	for i in range(-31, 0):
 		with pytest.warns(UserWarning):
-			assert utils.parse_name_chars([i, 0]) == "�"
+			assert utils.parse_name_chars([i, 0]) == '�'
 
 	# Test secret message
 	assert utils.parse_name_chars([
@@ -90,4 +90,4 @@ def test_parse_name_chars():
 
 	# Errors
 	with pytest.raises(TypeError):
-		utils.parse_name_chars(["a", "b", "c"])
+		utils.parse_name_chars(['a', 'b', 'c'])
