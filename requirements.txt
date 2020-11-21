@@ -1,7 +1,12 @@
+# TODO: Numpy is broken in Windows 2004 except for 1.19.3
+# A fix should be out by end of Jan 2021 🙈
+# https://developercommunity.visualstudio.com/content/problem/1207405/fmod-after-an-update-to-windows-2004-is-causing-a.html
 chemistry-tools>=0.2.5
 docker>=4.2.0
 domdf-python-tools>=1.7.0
 jinja2>=2.10.1
+numpy>=1.19.1; platform_system != "Windows"
+numpy==1.19.3; platform_system == "Windows"
 pymassspec>=2.2.20
 requests>=2.22.0
 sdjson>=0.2.6
