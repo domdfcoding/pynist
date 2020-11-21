@@ -3,13 +3,12 @@ import json
 import pickle
 
 # 3rd party
-import pytest  # type: ignore
+import pytest
 import sdjson
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from pyms_nist_search import ReferenceData, SearchResult
-from pyms_nist_search.json import *  # noqa
 
 # this package
 from .constants import (
@@ -100,7 +99,7 @@ def test_dict():
 			test_sequences,
 			]:
 		with pytest.raises(TypeError):
-			SearchResult.from_dict(obj)
+			SearchResult.from_dict(obj)  # type: ignore
 
 
 def test_str():

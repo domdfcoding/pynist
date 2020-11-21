@@ -43,7 +43,7 @@ from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
-from . import _core  # type: ignore
+from . import _core
 # from ._core import *  # type: ignore
 from .reference_data import ReferenceData
 from .search_result import SearchResult

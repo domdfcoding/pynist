@@ -36,13 +36,13 @@ Base class for other PyMassSpec NIST Search classes.
 
 # stdlib
 import json
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 # 3rd party
 import sdjson
 from chemistry_tools.cas import cas_int_to_string, check_cas_number
 from domdf_python_tools.doctools import prettify_docstrings
-from numpy import int64
+from numpy import int64  # type: ignore
 from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
 
 # this package
@@ -60,7 +60,7 @@ class NISTBase:
 	:param cas: The CAS number of the compound
 	"""
 
-	def __init__(self, name: str = '', cas: str = "---") -> None:
+	def __init__(self, name: str = '', cas: Union[str, int] = "---") -> None:
 
 		self._name: str = str(name)
 
@@ -144,7 +144,7 @@ class NISTBase:
 		return self.__dict__
 
 	def __setstate__(self, state):
-		self.__init__(**state)
+		self.__init__(**state)  # type: ignore
 
 	def __iter__(self):
 		yield from self.__dict__.items()

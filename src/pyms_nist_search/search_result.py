@@ -34,7 +34,7 @@ Class to store search results from NIST MS Search
 #  All Rights Reserved.
 
 # stdlib
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 # 3rd party
 from domdf_python_tools.doctools import prettify_docstrings
@@ -63,11 +63,11 @@ class SearchResult(NISTBase):
 	def __init__(
 			self,
 			name: str = '',
-			cas: str = "---",
-			match_factor: int = 0,
-			reverse_match_factor: int = 0,
+			cas: Union[str, int] = "---",
+			match_factor: float = 0,
+			reverse_match_factor: float = 0,
 			hit_prob: float = 0.0,
-			spec_loc: int = 0,
+			spec_loc: float = 0,
 			) -> None:
 		NISTBase.__init__(self, name, cas)
 

@@ -43,6 +43,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 # 3rd party
 import sdjson
 from domdf_python_tools.doctools import prettify_docstrings
+from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
 from domdf_python_tools.utils import chunks
 from pyms.Spectrum import MassSpectrum, normalize_mass_spec  # type: ignore
@@ -84,9 +85,9 @@ class ReferenceData(NISTBase):
 	def __init__(
 			self,
 			name: str = '',
-			cas: str = "---",
+			cas: Union[str, int] = "---",
 			nist_no: Union[int, str] = 0,
-			id: str = '',
+			id: Union[str, int] = '',
 			mw: Union[float, str] = 0.0,
 			formula: str = '',
 			contributor: str = '',
@@ -240,15 +241,11 @@ class ReferenceData(NISTBase):
 			if ignore_warnings:
 				warnings.simplefilter("ignore", JcampTagWarning)
 
-			if not isinstance(file_name, (str, pathlib.Path)):
-				raise TypeError("'file_name' must be a string or a pathlib.Path object")
-
-			if not isinstance(file_name, pathlib.Path):
-				file_name = pathlib.Path(file_name)
+			file_name = PathPlus(file_name)
 
 			# Commented this line because it also gets printed when the MassSpectrum is created
 			# print(f" -> Reading JCAMP file '{file_name}'")
-			lines_list = file_name.open('r')
+			lines_list = file_name.read_lines()
 			last_tag = None
 
 			header_info: Dict[str, Any] = {}  # Dictionary containing header information

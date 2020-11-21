@@ -1,5 +1,5 @@
 # 3rd party
-import pytest  # type: ignore
+import pytest
 
 # this package
 from pyms_nist_search import utils
@@ -90,4 +90,4 @@ def test_parse_name_chars():
 
 	# Errors
 	with pytest.raises(TypeError):
-		utils.parse_name_chars(['a', 'b', 'c'])
+		utils.parse_name_chars(['a', 'b', 'c'])  # type: ignore

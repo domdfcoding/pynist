@@ -4,13 +4,12 @@ import pathlib
 import pickle
 
 # 3rd party
-import pytest  # type: ignore
+import pytest
 import sdjson
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
 from pyms_nist_search import ReferenceData, SearchResult
-from pyms_nist_search.json import *  # noqa
 
 # this package
 from .constants import (
@@ -101,7 +100,7 @@ def test_json_ref_data():
 			test_sequences,
 			]:
 		with pytest.raises(TypeError):
-			ReferenceData.from_json(obj)
+			ReferenceData.from_json(obj)  # type: ignore
 
 
 def test_sdjson_ref_data():
@@ -127,7 +126,7 @@ def test_dict():
 			test_lists,
 			]:
 		with pytest.raises(TypeError):
-			ReferenceData.from_dict(obj)
+			ReferenceData.from_dict(obj)  # type: ignore
 
 
 def test_str():
@@ -163,8 +162,13 @@ def test_pickle():
 
 
 def test_creation():
-	ReferenceData("Compound Name", 112233, 123, 456, 7.8, 999)
-	ReferenceData("Compound Name", "11-22-33", 12.3, 45.6, 78, 99.9)
+	ReferenceData(
+			name="Compound Name",
+			cas=112233,
+			nist_no=123,
+			id=456,
+			mw=7.8,
+			)
 
 
 def test_from_jcamp():
@@ -173,7 +177,7 @@ def test_from_jcamp():
 	# Errors
 	for obj in [123, 12.3, (12, 34), set(), dict(), list()]:
 		with pytest.raises(TypeError):
-			ReferenceData.from_jcamp(obj)
+			ReferenceData.from_jcamp(obj)  # type: ignore
 
 	with pytest.raises(FileNotFoundError):
 		ReferenceData.from_jcamp("non-existant_file.jdx")
