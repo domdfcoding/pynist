@@ -4,7 +4,7 @@ PyMassSpec NIST Search
 
 .. start short_desc
 
-**PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine**
+**PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine.**
 
 .. end short_desc
 
