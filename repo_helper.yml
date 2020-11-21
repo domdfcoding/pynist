@@ -7,7 +7,7 @@ email: "dominic@davis-foster.co.uk"
 version: "0.4.14"
 username: "domdfcoding"
 license: 'LGPLv3+'
-short_desc: "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine"
+short_desc: "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine."
 
 enable_conda: False
 
@@ -84,3 +84,5 @@ source_dir: src
 pure_python: False
 
 standalone_contrib_guide: true
+
+sphinx_html_theme: furo

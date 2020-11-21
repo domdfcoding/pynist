@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 #
 #  __init__.py
+"""
+PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine.
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
