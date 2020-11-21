@@ -42,7 +42,7 @@ from typing import Any, Dict, Union
 import sdjson
 from chemistry_tools.cas import cas_int_to_string, check_cas_number
 from domdf_python_tools.doctools import prettify_docstrings
-from numpy import int64, int32, signedinteger  # type: ignore
+from numpy import int32, int64, signedinteger  # type: ignore
 from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
 
 # this package
