@@ -2,7 +2,7 @@
 #
 #  docker_engine.py
 """
-Search engine for Linux and other platforms supporting Docker
+Search engine for Linux and other platforms supporting Docker.
 """
 #
 #  This file is part of PyMassSpec NIST Search
@@ -32,9 +32,11 @@ Search engine for Linux and other platforms supporting Docker
 #  "FairCom" and "c-tree Plus" are trademarks of FairCom Corporation
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
+#
 
 # stdlib
 import atexit
+import functools
 import json
 import pathlib
 import time
@@ -45,27 +47,32 @@ import docker  # type: ignore
 import docker.errors  # type: ignore
 import requests
 import sdjson
+from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum  # type: ignore
-
-# this package
-from pyms_nist_search.json import *  # noqa
 
 # this package
 from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-from .utils import PathLike
 
 client = docker.from_env()
+
+__all__ = [
+		"require_init",
+		"Engine",
+		"hit_list_from_json",
+		"hit_list_with_ref_data_from_json",
+		]
 
 
 def require_init(func: Callable) -> Callable:
 	"""
 	Decorator to ensure that functions do not run after the class has been uninitialised
 
-	:param func: The function or method to wrap
+	:param func: The function or method to wrap.
 	"""
 
+	@functools.wraps(func)
 	def wrapper(cls, *args, **kwargs) -> Callable:
 		if not cls.initialised:
 			raise RuntimeError(
@@ -86,9 +93,11 @@ class Engine:
 	version of the docker image automatically.
 
 	This can also be done manually, such as to upgrade to the latest version,
-	with the following bash command:
+	with the following command:
 
-		$ docker pull domdfcoding/pywine-pyms-nist
+	.. prompt:: bash
+
+		docker pull domdfcoding/pywine-pyms-nist
 
 	"""
 
@@ -102,10 +111,9 @@ class Engine:
 			debug: bool = False,
 			):
 		"""
-		:param lib_path: The path to the mass spectral library
-		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
-		:type lib_type: int
-		:param work_dir: The path to the working directory
+		:param lib_path: The path to the mass spectral library.
+		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.
+		:param work_dir: The path to the working directory.
 		"""
 
 		if not isinstance(lib_path, pathlib.Path):
@@ -169,7 +177,7 @@ class Engine:
 
 	def uninit(self) -> None:
 		"""
-		Uninitialize the Search Engine
+		Uninitialize the Search Engine.
 		"""
 
 		if self.initialised:
@@ -191,13 +199,12 @@ class Engine:
 	@require_init
 	def spectrum_search(self, mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
-		Perform a Quick Spectrum Search of the mass spectral library
+		Perform a Quick Spectrum Search of the mass spectral library.
 
-		:param mass_spec: The mass spectrum to search against the library
-		:param n_hits: The number of hits to return
-		:type n_hits: int
+		:param mass_spec: The mass spectrum to search against the library.
+		:param n_hits: The number of hits to return.
 
-		:return: List of possible identities for the mass spectrum
+		:return: List of possible identities for the mass spectrum.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -209,7 +216,8 @@ class Engine:
 		while retry_count < 240:
 			try:
 				res = requests.post(
-						f"http://localhost:5001/search/quick/?n_hits={n_hits}", json=sdjson.dumps(mass_spec)
+						f"http://localhost:5001/search/quick/?n_hits={n_hits}",
+						json=sdjson.dumps(mass_spec),
 						)
 				print(res.text)
 				return hit_list_from_json(res.text)
@@ -227,13 +235,12 @@ class Engine:
 			n_hits: int = 5,
 			) -> List[SearchResult]:
 		"""
-		Perform a Full Spectrum Search of the mass spectral library
+		Perform a Full Spectrum Search of the mass spectral library.
 
-		:param mass_spec: The mass spectrum to search against the library
-		:param n_hits: The number of hits to return
-		:type n_hits: int
+		:param mass_spec: The mass spectrum to search against the library.
+		:param n_hits: The number of hits to return.
 
-		:return: List of possible identities for the mass spectrum
+		:return: List of possible identities for the mass spectrum.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -262,15 +269,13 @@ class Engine:
 			n_hits: int = 5,
 			) -> List[Tuple[SearchResult, ReferenceData]]:
 		"""
-		Perform a Full Spectrum Search of the mass spectral library,
-		including reference data.
+		Perform a Full Spectrum Search of the mass spectral library, including reference data.
 
-		:param mass_spec: The mass spectrum to search against the library
-		:param n_hits: The number of hits to return
-		:type n_hits: int
+		:param mass_spec: The mass spectrum to search against the library.
+		:param n_hits: The number of hits to return.
 
 		:return: List of tuples consisting of the possible identities
-			for the mass spectrum and the reference data from the library
+			for the mass spectrum and the reference data from the library.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -297,7 +302,7 @@ class Engine:
 		"""
 		Get reference data from the library for the compound at the given location.
 
-		:type spec_loc: int
+		:param spec_loc:
 		"""
 
 		retry_count = 0
@@ -316,9 +321,9 @@ class Engine:
 
 def hit_list_from_json(json_data: str) -> List[SearchResult]:
 	"""
-	Parse json data into a list of SearchResult objects
+	Parse json data into a list of SearchResult objects.
 
-	:type json_data: str
+	:param json_data: str
 	"""
 
 	raw_output = json.loads(json_data)
@@ -333,9 +338,9 @@ def hit_list_from_json(json_data: str) -> List[SearchResult]:
 
 def hit_list_with_ref_data_from_json(json_data: str) -> List[Tuple[SearchResult, ReferenceData]]:
 	"""
-	Parse json data into a list of (SearchResult, ReferenceData) tuples
+	Parse json data into a list of (SearchResult, ReferenceData) tuples.
 
-	:type json_data: str
+	:param json_data: str
 	"""
 
 	raw_output = json.loads(json_data)

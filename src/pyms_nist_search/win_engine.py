@@ -39,6 +39,7 @@ import pathlib
 from typing import List, Optional, Tuple
 
 # 3rd party
+from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
@@ -46,12 +47,23 @@ from . import _core  # type: ignore
 # from ._core import *  # type: ignore
 from .reference_data import ReferenceData
 from .search_result import SearchResult
-from .utils import PathLike, pack
+from .utils import pack
+
+__all__ = ["Engine"]
 
 
 class Engine:
 	"""
-	Search engine for Windows systems
+	Search engine for Windows systems.
+
+	.. TODO::
+
+		Search by Name. See page 13 of the documentation.
+		Would also like to search by CAS number but DLL doesn't seem to support that.
+
+	:param lib_path: The path to the mass spectral library.
+	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
+	:param work_dir: The path to the working directory.
 	"""
 
 	def __init__(
@@ -61,16 +73,6 @@ class Engine:
 			work_dir: Optional[PathLike] = None,
 			debug: bool = False,
 			):
-		"""
-		TODO: Search by Name. See page 13 of the documentation.
-			Would also like to search by CAS number but DLL doesn't seem to support that
-
-		:param lib_path: The path to the mass spectral library
-		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB
-		:type lib_type: int
-		:param work_dir: The path to the working directory
-		"""
-
 		if not isinstance(lib_path, pathlib.Path):
 			lib_path = pathlib.Path(lib_path)
 
@@ -107,7 +109,6 @@ class Engine:
 
 		:param mass_spec: The mass spectrum to search against the library
 		:param n_hits: The number of hits to return
-		:type n_hits: int
 
 		:return: List of possible identities for the mass spectrum
 		"""
@@ -127,13 +128,12 @@ class Engine:
 	@staticmethod
 	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
-		Perform a Full Spectrum Search of the mass spectral library
+		Perform a Full Spectrum Search of the mass spectral library.
 
-		:param mass_spec: The mass spectrum to search against the library
-		:param n_hits: The number of hits to return
-		:type n_hits: int
+		:param mass_spec: The mass spectrum to search against the library.
+		:param n_hits: The number of hits to return.
 
-		:return: List of possible identities for the mass spectrum
+		:return: List of possible identities for the mass spectrum.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -154,15 +154,13 @@ class Engine:
 			n_hits: int = 5,
 			) -> List[Tuple[SearchResult, ReferenceData]]:
 		"""
-		Perform a Full Spectrum Search of the mass spectral library, including
-		reference data.
+		Perform a Full Spectrum Search of the mass spectral library, including reference data.
 
-		:param mass_spec: The mass spectrum to search against the library
-		:param n_hits: The number of hits to return
-		:type n_hits: int
+		:param mass_spec: The mass spectrum to search against the library.
+		:param n_hits: The number of hits to return.
 
 		:return: List of tuples consisting of the possible identities for the
-			mass spectrum and the reference data from the library
+			mass spectrum and the reference data from the library.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -183,7 +181,7 @@ class Engine:
 		"""
 		Get reference data from the library for the compound at the given location.
 
-		:type spec_loc: int
+		:param spec_loc:
 		"""
 
 		reference_data = _core._get_reference_data(spec_loc)

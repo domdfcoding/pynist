@@ -3,7 +3,8 @@
 #  mona_tools.py
 """
 Functions for working with MoNA JSON data.
-It could probably be its own package
+
+It could probably be its own package.
 """
 #
 #  This file is part of PyMassSpec NIST Search
@@ -32,6 +33,16 @@ from typing import Any, Dict, Iterable, List, Set
 
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
+
+__all__ = [
+		"prep_match_list",
+		"other_dbs",
+		"mona_skip_compound_props",
+		"mona_skip_categories",
+		"mona_skip_properties",
+		"parse_metadata",
+		"mass_spec_from_mona",
+		]
 
 
 def prep_match_list(match_list: Iterable[str]) -> Set[str]:
@@ -249,11 +260,9 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
 
 def mass_spec_from_mona(mona_ms_string: str) -> MassSpectrum:
 	"""
-	Create a :class:`pyms.Spectrum.MassSpectrum` object from the MoNA JSON representation of the spectrum
+	Create a :class:`pyms.Spectrum.MassSpectrum` object from the MoNA JSON representation of the spectrum.
 
 	:param mona_ms_string:
-
-	:return:
 	"""
 
 	return MassSpectrum.from_mz_int_pairs([val.split(':') for val in mona_ms_string.split(' ')])

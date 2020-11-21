@@ -37,16 +37,27 @@ Class to store search results from NIST MS Search
 from typing import Any, Dict
 
 # 3rd party
+from domdf_python_tools.doctools import prettify_docstrings
 from sdjson import register_encoder
 
 # this package
 from .base import NISTBase
 from .utils import parse_name_chars
 
+__all__ = ["SearchResult"]
 
+
+@prettify_docstrings
 class SearchResult(NISTBase):
 	"""
-	Class to store search results from NIST MS Search
+	Class to store search results from NIST MS Search.
+
+	:param name: The name of the compound
+	:param cas: The CAS number of the compound
+	:param match_factor:
+	:param reverse_match_factor:
+	:param hit_prob:
+	:param spec_loc: The location of the reference spectrum in the library.
 	"""
 
 	def __init__(
@@ -58,21 +69,6 @@ class SearchResult(NISTBase):
 			hit_prob: float = 0.0,
 			spec_loc: int = 0,
 			) -> None:
-		"""
-		:param name: The name of the compound
-		:type name: str
-		:param cas: The CAS number of the compound
-		:type cas: str, int
-		:param match_factor:
-		:type match_factor: int
-		:param reverse_match_factor:
-		:type reverse_match_factor: int
-		:param hit_prob:
-		:type hit_prob: int, float
-		:param spec_loc: The location of the reference spectrum in the library.
-		:type spec_loc: int
-		"""
-
 		NISTBase.__init__(self, name, cas)
 
 		self._match_factor: int = int(match_factor)
@@ -86,21 +82,17 @@ class SearchResult(NISTBase):
 		"""
 		Returns a score (out of 1000) representing the similarity of the searched
 		mass spectrum to the search result.
-
-		:rtype: int
-		"""
+		"""  # noqa: D400
 
 		return int(self._match_factor)
 
 	@property
 	def reverse_match_factor(self) -> int:
 		"""
-		Returns a score (out of 1000) representing the similarity of the searched
+		A score (out of 1000) representing the similarity of the searched
 		mass spectrum to the search result, but ignoring any peaks that are in
 		the searched mass spectrum but not in the library spectrum.
-
-		:rtype: int
-		"""
+		"""  # noqa: D400
 
 		return int(self._reverse_match_factor)
 
@@ -108,7 +100,6 @@ class SearchResult(NISTBase):
 	def hit_prob(self) -> float:
 		"""
 
-		:rtype: float
 		"""
 
 		return float(self._hit_prob)
@@ -116,23 +107,19 @@ class SearchResult(NISTBase):
 	@property
 	def spec_loc(self) -> int:
 		"""
-		Returns a the location of the reference spectrum in the library.
-		This can then be searched using the `get_reference_data` method of the
+		The location of the reference spectrum in the library.
+		This can then be searched using the :meth:`~pynist.win_engine.Engine.get_reference_data` method of the
 		search engine to obtain the reference data.
-
-		:rtype: int
-		"""
+		"""  # noqa: D400
 
 		return int(self._spec_loc)
 
 	@classmethod
-	def from_pynist(cls, pynist_dict: Dict[str, Any]):
+	def from_pynist(cls, pynist_dict: Dict[str, Any]) -> "SearchResult":
 		"""
-		Create a :class:`SearchResult` object from the raw data returned by the C extension.
+		Create a :class:`~.SearchResult` object from the raw data returned by the C extension.
 
-		:type pynist_dict: dict
-
-		:rtype: SearchResult
+		:param pynist_dict:
 		"""
 
 		return cls(

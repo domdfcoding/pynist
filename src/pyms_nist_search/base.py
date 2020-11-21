@@ -2,7 +2,7 @@
 #
 #  base.py
 """
-Base class for other PyMassSpec NIST Search classes
+Base class for other PyMassSpec NIST Search classes.
 """
 #
 #  This file is part of PyMassSpec NIST Search
@@ -32,26 +32,31 @@ Base class for other PyMassSpec NIST Search classes
 #  "FairCom" and "c-tree Plus" are trademarks of FairCom Corporation
 #  and are registered in the United States and other countries.
 #  All Rights Reserved.
+#
 
 # stdlib
 import json
 from typing import Any, Dict
 
 # 3rd party
+import sdjson
 from chemistry_tools.cas import cas_int_to_string, check_cas_number
+from domdf_python_tools.doctools import prettify_docstrings
+from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
 
 # this package
 from .utils import parse_name_chars
 
+__all__ = ["NISTBase"]
 
+
+@prettify_docstrings
 class NISTBase:
 	"""
 	Base class for other PyMassSpec NIST Search classes
 
 	:param name: The name of the compound
-	:type name: str
 	:param cas: The CAS number of the compound
-	:type cas: str
 	"""
 
 	def __init__(self, name: str = '', cas: str = "---") -> None:
@@ -71,9 +76,7 @@ class NISTBase:
 	@property
 	def name(self) -> str:
 		"""
-		Returns the name of the compound.
-
-		:rtype: str
+		The name of the compound.
 		"""
 
 		return self._name
@@ -81,9 +84,7 @@ class NISTBase:
 	@property
 	def cas(self) -> str:
 		"""
-		Returns the CAS number of the compound.
-
-		:rtype: str
+		The CAS number of the compound.
 		"""
 
 		return self._cas
@@ -93,7 +94,8 @@ class NISTBase:
 		"""
 		Construct an object from json data.
 
-		:type json_data: str
+		:param json_data:
+		:type json_data: :class:`str`
 		"""
 
 		peak_dict = json.loads(json_data)
@@ -105,7 +107,7 @@ class NISTBase:
 		"""
 		Construct an object from a dictionary.
 
-		:type dictionary: dict
+		:param dictionary:
 		"""
 
 		return cls(**dictionary)
@@ -113,18 +115,16 @@ class NISTBase:
 	def to_json(self) -> str:
 		"""
 		Convert the object to json
-
-		:rtype: str
 		"""
 
-		return json.dumps(dict(self))
+		return sdjson.dumps(dict(self))
 
 	@classmethod
 	def from_pynist(cls, pynist_dict: Dict[str, Any]):
 		"""
 		Create an object from the raw data returned by the C extension.
 
-		:type pynist_dict: dict
+		:param pynist_dict:
 		"""
 
 		return cls(

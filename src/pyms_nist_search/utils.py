@@ -2,7 +2,7 @@
 #
 #  utils.py
 """
-General utilities
+General utilities.
 """
 #
 #  This file is part of PyMassSpec NIST Search
@@ -43,20 +43,17 @@ from typing import Sequence, Union
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
-PathLike = Union[str, pathlib.Path, os.PathLike]
+__all__ = ["pack", "parse_name_chars"]
 
 
-def pack(mass_spec: MassSpectrum, top: int = 20):
+def pack(mass_spec: MassSpectrum, top: int = 20) -> str:
 	"""
 	Convert a pyms.Spectrum.MassSpectrum object into a string.
 
 	Adapted from https://sourceforge.net/projects/mzapi-live/
 
-	:type mass_spec: pyms.Spectrum.MassSpectrum
+	:param mass_spec: pyms.Spectrum.MassSpectrum
 	:param top: The number of largest peaks to identify
-	:type top: int
-
-	:rtype: str
 	"""
 
 	values = list(zip(mass_spec.mass_list, mass_spec.intensity_list))
@@ -75,11 +72,10 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 	Takes a list of Unicode character codes and converts them to characters,
 	taking into account the special codes used by the NIST DLL.
 
-	:type name_char_list: list of int
+	:param name_char_list:
 
-	:return: The parsed name
-	:rtype: str
-	"""
+	:return: The parsed name.
+	"""  # noqa: D400
 
 	hit_name = ''
 	errors = []  # Buffer the errors to display at the end

@@ -104,76 +104,42 @@ PyMassSpec NIST Search
 
 PyMassSpec extension for searching mass spectra using NIST's Spectrum Search Engine
 
-PyMassSpec NIST Search is Free Software licensed under the `GNU Lesser General Public License Version 3 <https://www.gnu.org/licenses/lgpl-3.0.en.html>`_
+PyMassSpec NIST Search is Free Software licensed under the
+`GNU Lesser General Public License Version 3 <https://www.gnu.org/licenses/lgpl-3.0.en.html>`_.
 
-A copy of the MassBank of North America database, in JSON, MSP and NIST Library formats, is included for the purposes of these tests.
+A copy of the MassBank of North America database, in JSON, MSP and NIST Library formats,
+is included for the purposes of these tests.
 This library was created on 22 April 2020 using the "parse_mona_json.py" script and Lib2Nist.
-Licensed under the CC BY 4.0 License.
-For a list of contributors, see the file `MoNA_GCMS_Library/AUTHORS`
+Licensed under the CC BY 4.0 License. For a list of contributors, see the file ``MoNA_GCMS_Library/AUTHORS``.
+
 .. TODO: add links.
 
 Installation
 --------------
 
-.. begin installation
+.. start installation
+
+.. installation:: pyms-nist-search
+	:pypi:
+	:github:
+
 .. end installation
 
 
-Usage
---------
+.. toctree::
+	:hidden:
 
-You will need to supply your own copy of the NIST Mass Spectral library to use this software.
+	Home<self>
 
-The main class in this library is the `Engine` class. This class performs the actual searching. Start by initialising the search engine as follows:
-
-.. code-block:: python
-
-	search = pyms_nist_search.Engine(
-			FULL_PATH_TO_MAIN_LIBRARY,
-			pyms_nist_search.NISTMS_MAIN_LIB,
-			FULL_PATH_TO_WORK_DIR,
-			)
-
-Where ``FULL_PATH_TO_MAIN_LIBRARY`` is the path to the location of your mass spectral library, and ``FULL_PATH_TO_WORK_DIR`` is the path to the working directory to be used by the search engine.
-
-A `MassSpectrum` object can then be searched as follows:
-
-.. code-block:: python
-
-	search.full_search_with_ref_data(mass_spec)
-
-This will return a list of tuples consisting of `SearchResult` and `ReferenceData` objects for the possible identities of the mass spectrum.
-
-A list of just the `SearchResult` objects can be obtained with this method:
-
-.. code-block:: python
-
-	hit_list = search.full_search(mass_spec)
-
-For each of these hits, the reference data can be obtained as follows:
-
-.. code-block:: python
-
-	for hit in hit_list:
-		ref_data = search.get_reference_data(hit.spec_loc)
-
-
-TODO
------
-
-1. Write comprehensive tests using pytest
-
-
-|browse_github|
 
 .. toctree::
-    :maxdepth: 3
-    :caption: Documentation
+	:maxdepth: 3
+	:caption: Documentation
 
-    docs
-    Source
-    Building
-
+	usage
+	api
+	contributing
+	Source
 
 .. start links
 

@@ -82,3 +82,5 @@ additional_ignore:
 source_dir: src
 
 pure_python: False
+
+standalone_contrib_guide: true
