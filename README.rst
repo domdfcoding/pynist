@@ -21,29 +21,39 @@ PyMassSpec NIST Search
 	* - Docs
 	  - |docs| |docs_check|
 	* - Tests
-	  - |travis| |actions_windows| |coveralls| |codefactor| |pre_commit_ci|
+	  - |actions_linux| |actions_windows| |coveralls|
 	* - PyPI
 	  - |pypi-version| |supported-versions| |supported-implementations| |wheel|
 	* - Activity
-	  - |commits-latest| |commits-since| |maintained|
+	  - |commits-latest| |commits-since| |maintained| |pypi-downloads|
+	* - QA
+	  - |codefactor| |actions_flake8| |actions_mypy| |pre_commit_ci|
 	* - Other
-	  - |license| |language| |requires| |pre_commit|
+	  - |license| |language| |requires|
 
 .. |docs| image:: https://img.shields.io/readthedocs/pynist/latest?logo=read-the-docs
-	:target: https://pynist.readthedocs.io/en/latest/?badge=latest
+	:target: https://pynist.readthedocs.io/en/latest
 	:alt: Documentation Build Status
 
 .. |docs_check| image:: https://github.com/domdfcoding/pynist/workflows/Docs%20Check/badge.svg
 	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Docs+Check%22
 	:alt: Docs Check Status
 
-.. |travis| image:: https://github.com/domdfcoding/pynist/workflows/Linux%20Tests/badge.svg
-	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Linux+Tests%22
+.. |actions_linux| image:: https://github.com/domdfcoding/pynist/workflows/Linux/badge.svg
+	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Linux%22
 	:alt: Linux Test Status
 
-.. |actions_windows| image:: https://github.com/domdfcoding/pynist/workflows/Windows%20Tests/badge.svg
-	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Windows+Tests%22
+.. |actions_windows| image:: https://github.com/domdfcoding/pynist/workflows/Windows/badge.svg
+	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Windows%22
 	:alt: Windows Test Status
+
+.. |actions_flake8| image:: https://github.com/domdfcoding/pynist/workflows/Flake8/badge.svg
+	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22Flake8%22
+	:alt: Flake8 Status
+
+.. |actions_mypy| image:: https://github.com/domdfcoding/pynist/workflows/mypy/badge.svg
+	:target: https://github.com/domdfcoding/pynist/actions?query=workflow%3A%22mypy%22
+	:alt: mypy status
 
 .. |requires| image:: https://requires.io/github/domdfcoding/pynist/requirements.svg?branch=master
 	:target: https://requires.io/github/domdfcoding/pynist/requirements/?branch=master
@@ -88,12 +98,12 @@ PyMassSpec NIST Search
 	:target: https://github.com/domdfcoding/pynist/commit/master
 	:alt: GitHub last commit
 
-.. |maintained| image:: https://img.shields.io/maintenance/yes/2020
+.. |maintained| image:: https://img.shields.io/maintenance/yes/2021
 	:alt: Maintenance
 
-.. |pre_commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
-	:target: https://github.com/pre-commit/pre-commit
-	:alt: pre-commit
+.. |pypi-downloads| image:: https://img.shields.io/pypi/dm/pyms-nist-search
+	:target: https://pypi.org/project/pyms-nist-search/
+	:alt: PyPI - Downloads
 
 .. |pre_commit_ci| image:: https://results.pre-commit.ci/badge/github/domdfcoding/pynist/master.svg
 	:target: https://results.pre-commit.ci/latest/github/domdfcoding/pynist/master
@@ -109,7 +119,7 @@ PyMassSpec NIST Search is Free Software licensed under the `GNU Lesser General P
 A copy of the MassBank of North America database, in JSON, MSP and NIST Library formats, is included for the purposes of these tests.
 This library was created on 22 April 2020 using the "parse_mona_json.py" script and Lib2Nist.
 Licensed under the CC BY 4.0 License.
-For a list of contributors, see the file `MoNA_GCMS_Library/AUTHORS`
+For a list of contributors, see the file ``MoNA_GCMS_Library/AUTHORS``
 
 .. TODO: add links.
 
@@ -125,7 +135,7 @@ Usage
 
 You will need to supply your own copy of the NIST Mass Spectral library to use this software.
 
-The main class in this library is the `Engine` class. This class performs the actual searching. Start by initialising the search engine as follows:
+The main class in this library is the ``Engine`` class. This class performs the actual searching. Start by initialising the search engine as follows:
 
 .. code-block:: python
 
@@ -137,15 +147,15 @@ The main class in this library is the `Engine` class. This class performs the ac
 
 Where ``FULL_PATH_TO_MAIN_LIBRARY`` is the path to the location of your mass spectral library, and ``FULL_PATH_TO_WORK_DIR`` is the path to the working directory to be used by the search engine.
 
-A `MassSpectrum` object can then be searched as follows:
+A ``MassSpectrum`` object can then be searched as follows:
 
 .. code-block:: python
 
 	search.full_search_with_ref_data(mass_spec)
 
-This will return a list of tuples consisting of `SearchResult` and `ReferenceData` objects for the possible identities of the mass spectrum.
+This will return a list of tuples consisting of ``SearchResult`` and ``ReferenceData`` objects for the possible identities of the mass spectrum.
 
-A list of just the `SearchResult` objects can be obtained with this method:
+A list of just the ``SearchResult`` objects can be obtained with this method:
 
 .. code-block:: python
 
