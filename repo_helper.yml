@@ -1,7 +1,7 @@
 modname: pyms-nist-search
 import_name: pyms_nist_search
 repo_name: pynist
-copyright_years: "2020"
+copyright_years: "2020-2021"
 author: "Dominic Davis-Foster"
 email: "dominic@davis-foster.co.uk"
 version: "0.4.14"
@@ -73,3 +73,6 @@ sphinx_html_theme: furo
 
 tox_requirements:
   - "tox-pip-version>=0.0.7"
+
+tox_unmanaged:
+  - testenv

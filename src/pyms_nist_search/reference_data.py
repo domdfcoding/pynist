@@ -8,7 +8,7 @@ Class to store reference data from NIST MS Search.
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -36,28 +36,24 @@ Class to store reference data from NIST MS Search.
 # stdlib
 import copy
 import json
-import pathlib
 import warnings
 from typing import Any, Dict, List, Optional, Sequence, Union
 
 # 3rd party
 import sdjson
 from domdf_python_tools.doctools import prettify_docstrings
+from domdf_python_tools.iterative import chunks
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
-from domdf_python_tools.utils import chunks
 from pyms.Spectrum import MassSpectrum, normalize_mass_spec  # type: ignore
 from pyms.Utils.jcamp import JcampTagWarning, header_info_fields, xydata_tags  # type: ignore
 from pyms.Utils.Math import is_float  # type: ignore
 
 # this package
-import pyms_nist_search.templates
+from pyms_nist_search.base import NISTBase
 from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
-
-# this package
-from .base import NISTBase
-from .templates import *
-from .utils import parse_name_chars
+from pyms_nist_search.templates import *
+from pyms_nist_search.utils import parse_name_chars
 
 __all__ = ["ReferenceData"]
 

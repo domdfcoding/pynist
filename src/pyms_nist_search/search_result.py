@@ -2,13 +2,13 @@
 #
 #  search_result.py
 """
-Class to store search results from NIST MS Search
+Class to store search results from NIST MS Search.
 """
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -41,8 +41,8 @@ from domdf_python_tools.doctools import prettify_docstrings
 from sdjson import register_encoder
 
 # this package
-from .base import NISTBase
-from .utils import parse_name_chars
+from pyms_nist_search.base import NISTBase
+from pyms_nist_search.utils import parse_name_chars
 
 __all__ = ["SearchResult"]
 

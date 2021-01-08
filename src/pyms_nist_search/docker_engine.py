@@ -8,7 +8,7 @@ Search engine for Linux and other platforms supporting Docker.
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -51,9 +51,11 @@ from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
+from pyms_nist_search.reference_data import ReferenceData
+from pyms_nist_search.search_result import SearchResult
+
+# this package
 from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore
-from .reference_data import ReferenceData
-from .search_result import SearchResult
 
 client = docker.from_env()
 

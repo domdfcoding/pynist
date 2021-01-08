@@ -2,13 +2,13 @@
 #
 #  pynist_search_server.py
 """
-Search engine for Windows systems
+Search engine for Windows systems.
 """
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -43,11 +43,13 @@ from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
 # this package
-from . import _core
 # from ._core import *  # type: ignore
-from .reference_data import ReferenceData
-from .search_result import SearchResult
-from .utils import pack
+from pyms_nist_search.reference_data import ReferenceData
+from pyms_nist_search.search_result import SearchResult
+from pyms_nist_search.utils import pack
+
+# this package
+from . import _core
 
 __all__ = ["Engine"]
 

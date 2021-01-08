@@ -8,7 +8,7 @@ PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Searc
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -39,8 +39,6 @@ import os
 import pathlib
 import sys
 
-# print(pathlib.Path.cwd())
-# print(pathlib.Path(__file__))
 if sys.platform == "win32":
 	python_base_dir = pathlib.Path(__file__).parent.parent.parent.parent
 	# assert (python_base_dir / "nistdl64.dll").is_file()
@@ -50,19 +48,19 @@ if sys.platform == "win32":
 	del python_base_dir
 
 # this package
+from pyms_nist_search.reference_data import ReferenceData
+from pyms_nist_search.search_result import SearchResult
+
+# this package
 from ._core import *  # type: ignore
-from .reference_data import ReferenceData
-from .search_result import SearchResult
 
 if sys.platform == "win32":
-
 	# this package
-	from .win_engine import Engine
+	from pyms_nist_search.win_engine import Engine
 
 else:
-
 	# this package
-	from .docker_engine import Engine
+	from pyms_nist_search.docker_engine import Engine
 
 name: str = "PyMassSpec NIST Search"
 __author__: str = "Dominic Davis-Foster"

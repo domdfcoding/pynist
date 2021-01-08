@@ -8,7 +8,7 @@ Base class for other PyMassSpec NIST Search classes.
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -46,7 +46,7 @@ from numpy import int32, int64, signedinteger  # type: ignore
 from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
 
 # this package
-from .utils import parse_name_chars
+from pyms_nist_search.utils import parse_name_chars
 
 __all__ = ["NISTBase"]
 
