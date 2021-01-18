@@ -99,7 +99,7 @@ class SearchResult(NISTBase):
 	@property
 	def hit_prob(self) -> float:
 		"""
-
+		Returns the probability of the hit being the compound responsible for the mass spectrum.
 		"""
 
 		return float(self._hit_prob)

@@ -101,18 +101,18 @@ class Engine:
 
 	def uninit(self) -> None:
 		"""
-		Uninitialize the Search Engine
+		Uninitialize the Search Engine.
 		"""
 
 	@staticmethod
 	def spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
-		Perform a Quick Spectrum Search of the mass spectral library
+		Perform a Quick Spectrum Search of the mass spectral library.
 
-		:param mass_spec: The mass spectrum to search against the library
-		:param n_hits: The number of hits to return
+		:param mass_spec: The mass spectrum to search against the library.
+		:param n_hits: The number of hits to return.
 
-		:return: List of possible identities for the mass spectrum
+		:return: List of possible identities for the mass spectrum.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):

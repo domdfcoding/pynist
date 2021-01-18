@@ -61,17 +61,17 @@ __all__ = ["ReferenceData"]
 @prettify_docstrings
 class ReferenceData(NISTBase):
 	"""
-	Class to store reference data from NIST MS Search
+	Class to store reference data from NIST MS Search.
 
-	:param name: The name of the compound
-	:param cas: The CAS number of the compound
+	:param name: The name of the compound.
+	:param cas: The CAS number of the compound.
 	:param nist_no:
 	:param id:
 	:param mw:
-	:param formula: The formula of the compound
-	:param contributor: The contributor to the library
-	:param mass_spec: The reference mass spectrum
-	:param synonyms: List of synonyms for the compound
+	:param formula: The formula of the compound.
+	:param contributor: The contributor to the library.
+	:param mass_spec: The reference mass spectrum.
+	:param synonyms: List of synonyms for the compound.
 	"""
 
 	_exact_mass: float
@@ -83,7 +83,7 @@ class ReferenceData(NISTBase):
 			name: str = '',
 			cas: Union[str, int] = "---",
 			nist_no: Union[int, str] = 0,
-			id: Union[str, int] = '',
+			id: Union[str, int] = '',  # noqa: A002  # pylint: disable=redefined-builtin
 			mw: Union[float, str] = 0.0,
 			formula: str = '',
 			contributor: str = '',
@@ -143,7 +143,7 @@ class ReferenceData(NISTBase):
 
 		return self._nist_no
 
-	@property
+	@property  # noqa: A003  # pylint: disable=redefined-builtin
 	def id(self) -> str:
 		"""
 		The ID of the compound.
@@ -162,7 +162,7 @@ class ReferenceData(NISTBase):
 	@property
 	def exact_mass(self) -> float:
 		"""
-		The exact mass of the compound
+		The exact mass of the compound.
 		"""
 
 		return self._exact_mass
@@ -224,10 +224,10 @@ class ReferenceData(NISTBase):
 	@classmethod
 	def from_jcamp(cls, file_name: PathLike, ignore_warnings: bool = True) -> "ReferenceData":
 		"""
-		Create a ReferenceData object from a JCAMP-DX file
+		Create a ReferenceData object from a JCAMP-DX file.
 
-		:param file_name: Path of the file to read
-		:param ignore_warnings: Whether warnings about invalid tags should be shown. Default True
+		:param file_name: Path of the file to read.
+		:param ignore_warnings: Whether warnings about invalid tags should be shown.
 
 		:authors: Qiao Wang, Andrew Isaac, Vladimir Likic, David Kainer, Dominic Davis-Foster
 		"""
@@ -288,7 +288,7 @@ class ReferenceData(NISTBase):
 
 	def to_json(self) -> str:
 		"""
-		Convert the object to JSON,
+		Convert the object to JSON.
 		"""
 
 		return sdjson.dumps(self.__dict__)
@@ -312,7 +312,7 @@ class ReferenceData(NISTBase):
 		that has been loaded into a dictionary.
 
 		:param mona_data: dict
-		"""
+		"""  # noqa: D400
 
 		compound: Dict = mona_data["compound"][0]
 		names: List = compound["names"]

@@ -69,7 +69,7 @@ __all__ = [
 
 def require_init(func: Callable) -> Callable:
 	"""
-	Decorator to ensure that functions do not run after the class has been uninitialised
+	Decorator to ensure that functions do not run after the class has been uninitialised.
 
 	:param func: The function or method to wrap.
 	"""

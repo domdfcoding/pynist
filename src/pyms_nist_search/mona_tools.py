@@ -47,11 +47,9 @@ __all__ = [
 
 def prep_match_list(match_list: Iterable[str]) -> Set[str]:
 	"""
-	Prepare a list of matches for caseless matching with .casefold()
+	Prepare a list of matches for caseless matching with :meth:`str.casefold`.
 
 	:param match_list:
-
-	:return:
 	"""
 
 	return {x.casefold() for x in match_list}
@@ -142,13 +140,11 @@ mona_skip_properties: Set[str] = prep_match_list([
 		])
 
 
-def parse_metadata(mona_data: Dict[str, Any]) -> Dict:
+def parse_metadata(mona_data: Dict[str, Any]) -> Dict[str, Any]:
 	"""
+	Parse metadata for the compound.
 
 	:param mona_data:
-
-	:return:
-	:rtype:
 	"""
 
 	compound: Dict = mona_data["compound"][0]

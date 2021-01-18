@@ -54,10 +54,10 @@ __all__ = ["NISTBase"]
 @prettify_docstrings
 class NISTBase:
 	"""
-	Base class for other PyMassSpec NIST Search classes
+	Base class for other PyMassSpec NIST Search classes.
 
-	:param name: The name of the compound
-	:param cas: The CAS number of the compound
+	:param name: The name of the compound.
+	:param cas: The CAS number of the compound.
 	"""
 
 	def __init__(self, name: str = '', cas: Union[str, int] = "---") -> None:
@@ -115,7 +115,7 @@ class NISTBase:
 
 	def to_json(self) -> str:
 		"""
-		Convert the object to json
+		Convert the object to json.
 		"""
 
 		return sdjson.dumps(dict(self))

@@ -2,7 +2,7 @@
 #
 #  __init__.py
 """
-Templates for exporting files
+Templates for exporting files.
 """
 #
 #  This file is part of PyMassSpec NIST Search
