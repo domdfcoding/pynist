@@ -18,13 +18,13 @@ Install ``pre-commit`` with ``pip`` and install the git hook:
 Coding style
 --------------
 
-`yapf-isort <https://pypi.org/project/yapf-isort/>`_ is used for code formatting.
+`formate <https://formate.readthedocs.io>`_ is used for code formatting.
 
 It can be run manually via ``pre-commit``:
 
 .. code-block:: bash
 
-	$ pre-commit run yapf-isort -a
+	$ pre-commit run formate -a
 
 
 Or, to run the complete autoformatting suite:
