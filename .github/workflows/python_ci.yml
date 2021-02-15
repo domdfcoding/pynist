@@ -13,7 +13,7 @@ jobs:
     runs-on: "windows-2019"
     continue-on-error: ${{ matrix.config.experimental }}
     env:
-      USING_COVERAGE: '3.6,3.7,3.9,3.10.0-alpha.4'
+      USING_COVERAGE: '3.6,3.7,3.9,3.10.0-alpha.5'
 
     strategy:
       fail-fast: False
@@ -22,7 +22,7 @@ jobs:
           - {python-version: "3.6", testenvs: "py36,build", experimental: False}
           - {python-version: "3.7", testenvs: "py37,build", experimental: False}
           - {python-version: "3.9", testenvs: "py39,build", experimental: False}
-          - {python-version: "3.10.0-alpha.4", testenvs: "py310-dev,build", experimental: True}
+          - {python-version: "3.10.0-alpha.5", testenvs: "py310-dev,build", experimental: True}
 
     steps:
       - name: Checkout 🛎️
@@ -42,3 +42,10 @@ jobs:
 
       - name: "Run Tests for Python ${{ matrix.config.python-version }}"
         run: python -m tox -e "${{ matrix.config.testenvs }}"
+
+      - name: "Upload Coverage 🚀"
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: "coverage-${{ matrix.config.python-version }}"
+          path: .coverage
