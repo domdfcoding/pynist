@@ -4,8 +4,10 @@ name: Linux
 
 on:
   push:
-  pull_request:
-    branches: ["master"]
+
+permissions:
+  actions: write
+  contents: read
 
 jobs:
   tests:
@@ -13,7 +15,7 @@ jobs:
     runs-on: "ubuntu-20.04"
     continue-on-error: ${{ matrix.config.experimental }}
     env:
-      USING_COVERAGE: '3.6,3.7,3.8,3.9,3.10.0-alpha.5'
+      USING_COVERAGE: '3.6,3.7,3.8,3.9,3.10.0-beta.1'
 
     strategy:
       fail-fast: False
@@ -23,18 +25,31 @@ jobs:
           - {python-version: "3.7", testenvs: "py37,build", experimental: False}
           - {python-version: "3.8", testenvs: "py38,build", experimental: False}
           - {python-version: "3.9", testenvs: "py39,build", experimental: False}
-          - {python-version: "3.10.0-alpha.5", testenvs: "py310-dev,build", experimental: True}
+          - {python-version: "3.10.0-beta.1", testenvs: "py310-dev,build", experimental: True}
 
     steps:
       - name: Checkout 🛎️
         uses: "actions/checkout@v2"
 
+      - name: Check for changed files
+        if: startsWith(github.ref, 'refs/tags/') != true
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          list-files: "json"
+          filters: |
+            code:
+              - '!(doc-source/**|CONTRIBUTING.rst|.imgbotconfig|.pre-commit-config.yaml|.pylintrc|.readthedocs.yml)'
+
       - name: Setup Python 🐍
+        id: setup-python
+        if: ${{ steps.changes.outputs.code == 'true' || steps.changes.outcome == 'skipped' }}
         uses: "actions/setup-python@v2"
         with:
           python-version: "${{ matrix.config.python-version }}"
 
       - name: Install dependencies 🔧
+        if: steps.setup-python.outcome == 'success'
         run: |
           python -VV
           python -m site
@@ -43,11 +58,12 @@ jobs:
           python -m pip install --upgrade coverage_pyver_pragma
 
       - name: "Run Tests for Python ${{ matrix.config.python-version }}"
-        run: python -m tox -e "${{ matrix.config.testenvs }}"
+        if: steps.setup-python.outcome == 'success'
+        run: python -m tox -e "${{ matrix.config.testenvs }}" -s false
 
       - name: "Upload Coverage 🚀"
         uses: actions/upload-artifact@v2
-        if: ${{ always() }}
+        if: ${{ always() && steps.setup-python.outcome == 'success' }}
         with:
           name: "coverage-${{ matrix.config.python-version }}"
           path: .coverage
@@ -125,7 +141,7 @@ jobs:
 
       - name: Upload distribution to PyPI 🚀
         if: startsWith(github.ref, 'refs/tags/')
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}

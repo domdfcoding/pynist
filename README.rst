@@ -27,7 +27,7 @@ PyMassSpec NIST Search
 	* - Activity
 	  - |commits-latest| |commits-since| |maintained| |pypi-downloads|
 	* - QA
-	  - |codefactor| |actions_flake8| |actions_mypy| |pre_commit_ci|
+	  - |codefactor| |actions_flake8| |actions_mypy|
 	* - Other
 	  - |license| |language| |requires|
 
@@ -104,10 +104,6 @@ PyMassSpec NIST Search
 .. |pypi-downloads| image:: https://img.shields.io/pypi/dm/pyms-nist-search
 	:target: https://pypi.org/project/pyms-nist-search/
 	:alt: PyPI - Downloads
-
-.. |pre_commit_ci| image:: https://results.pre-commit.ci/badge/github/domdfcoding/pynist/master.svg
-	:target: https://results.pre-commit.ci/latest/github/domdfcoding/pynist/master
-	:alt: pre-commit.ci status
 
 .. end shields
 

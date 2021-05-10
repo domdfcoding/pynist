@@ -2,8 +2,10 @@
 ---
 name: "Docs Check"
 on:
-  - pull_request
   - push
+
+permissions:
+  contents: read
 
 jobs:
   docs:
@@ -11,9 +13,20 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: "actions/checkout@v1"
-      - name: Install and Build 🔧
-        uses: ammaraskar/sphinx-action@master
+
+      - name: Check for changed files
+        uses: dorny/paths-filter@v2
+        id: changes
         with:
-          pre-build-command: apt-get update && apt-get install gcc python3-dev git pandoc -y && python -m pip install tox
+          list-files: "json"
+          filters: |
+            code:
+              - '!tests/**'
+
+      - name: Install and Build 🔧
+        uses: sphinx-toolbox/sphinx-action@sphinx-3.3.1
+        if: steps.changes.outputs.code == 'true'
+        with:
+          pre-build-command: python -m pip install tox
           docs-folder: "doc-source/"
           build-command: "tox -e docs -- "
