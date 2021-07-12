@@ -5,6 +5,7 @@ PyMassSpec NIST Search
 .. start short_desc
 
 .. documentation-summary::
+	:meta:
 
 .. end short_desc
 
@@ -151,6 +152,12 @@ Installation
 	api
 	contributing
 	Source
+
+.. sidebar-links::
+	:caption: Links
+	:github:
+	:pypi: pyms-nist-search
+
 
 .. start links
 
