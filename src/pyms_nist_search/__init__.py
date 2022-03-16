@@ -8,7 +8,7 @@ PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Searc
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020-2021 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2022 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -37,15 +37,22 @@ PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Searc
 # stdlib
 import os
 import pathlib
+import platform
 import sys
 
 if sys.platform == "win32":
-	python_base_dir = pathlib.Path(__file__).parent.parent.parent.parent
-	# assert (python_base_dir / "nistdl64.dll").is_file()
-	# assert (python_base_dir / "ctNt66_64.dll").is_file()
-	if not str(python_base_dir.absolute()) in os.environ["PATH"].split(':'):
-		os.environ["PATH"] += os.pathsep + str(python_base_dir.absolute())
-	del python_base_dir
+	if sys.version_info < (3, 8):
+
+		python_base_dir = pathlib.Path(__file__).parent.parent.parent.parent
+		# assert (python_base_dir / "nistdl64.dll").is_file()
+		# assert (python_base_dir / "ctNt66_64.dll").is_file()
+		if not str(python_base_dir.absolute()) in os.environ["PATH"].split(':'):
+			os.environ["PATH"] += os.pathsep + str(python_base_dir.absolute())
+		del python_base_dir
+
+	else:
+		_64_bit = platform.architecture()[0] == "64bit"
+		os.add_dll_directory(os.path.join(os.path.split(__file__)[0], "x64" if _64_bit else "x86"))
 
 # this package
 from pyms_nist_search.reference_data import ReferenceData
