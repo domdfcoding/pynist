@@ -9,7 +9,7 @@ licensed under.
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2022 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -176,7 +176,7 @@ class ContributorList(list):
 
 	def write_authors_file(self):
 		with importlib_resources.path(MoNA_GCMS_Library, "AUTHORS") as authors_file:
-			with open(str(authors_file), 'w') as fp:
+			with authors_file.open('w') as fp:
 
 				for contributor in self:
 					print(contributor.name)

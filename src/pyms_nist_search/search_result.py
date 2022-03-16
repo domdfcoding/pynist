@@ -108,9 +108,10 @@ class SearchResult(NISTBase):
 	def spec_loc(self) -> int:
 		"""
 		The location of the reference spectrum in the library.
+
 		This can then be searched using the :meth:`~pynist.win_engine.Engine.get_reference_data` method of the
 		search engine to obtain the reference data.
-		"""  # noqa: D400
+		"""
 
 		return int(self._spec_loc)
 
