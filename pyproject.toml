@@ -1,3 +1,168 @@
 [build-system]
-requires = ["setuptools>=40.6.0", "wheel>=0.34.2"]
+requires = [ "setuptools>=40.6.0", "wheel>=0.34.2",]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyms-nist-search"
+version = "0.4.14"
+description = "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine."
+readme = "README.rst"
+keywords = []
+dynamic = [ "requires-python", "classifiers", "dependencies",]
+
+[[project.authors]]
+name = "Dominic Davis-Foster"
+email = "dominic@davis-foster.co.uk"
+
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+Homepage = "https://github.com/domdfcoding/pynist"
+"Issue Tracker" = "https://github.com/domdfcoding/pynist/issues"
+"Source Code" = "https://github.com/domdfcoding/pynist"
+Documentation = "https://pynist.readthedocs.io/en/latest"
+
+[tool.whey]
+base-classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Microsoft :: Windows :: Windows 7",
+    "Operating System :: Microsoft :: Windows :: Windows 8.1",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Programming Language :: C",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+python-versions = [ "3.6", "3.7", "3.8", "3.9",]
+python-implementations = [ "CPython",]
+platforms = [ "Windows", "Linux",]
+license-key = "LGPL-3.0-or-later"
+package = "pyms_nist_search"
+additional-files = [
+    "include THIRD_PARTY_COPYRIGHT",
+    "recursive-include src/pyms_nist_search *",
+    "recursive-exclude MoNA_GCMS_Library *",
+    "recursive-exclude src/pyms_nist_search *.so",
+    "recursive-include src/pyms_nist_search/templates *",
+    "recursive-include src/pyms_nist_search *.c",
+    "recursive-include src/pyms_nist_search *.C",
+    "recursive-include src/pyms_nist_search *.h",
+    "recursive-include src/pyms_nist_search *.H",
+    "recursive-include src/pyms_nist_search *.dll",
+    "recursive-include src/pyms_nist_search *.lib",
+]
+
+[tool.sphinx-pyproject]
+github_username = "domdfcoding"
+github_repository = "pynist"
+author = "Dominic Davis-Foster"
+project = "pyms-nist-search"
+copyright = "2020-2021 Dominic Davis-Foster"
+language = "en"
+package_root = "pyms_nist_search"
+extensions = [
+    "sphinx_toolbox",
+    "sphinx_toolbox.more_autodoc",
+    "sphinx_toolbox.more_autosummary",
+    "sphinx_toolbox.documentation_summary",
+    "sphinx_toolbox.tweaks.param_dash",
+    "sphinx_toolbox.tweaks.latex_layout",
+    "sphinx_toolbox.tweaks.latex_toc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "sphinxcontrib.extras_require",
+    "sphinx.ext.todo",
+    "sphinxemoji.sphinxemoji",
+    "notfound.extension",
+    "sphinx_copybutton",
+    "sphinxcontrib.default_values",
+    "sphinxcontrib.toctree_plus",
+    "sphinx_debuginfo",
+    "sphinx_licenseinfo",
+    "seed_intersphinx_mapping",
+    "html_section",
+]
+sphinxemoji_style = "twemoji"
+gitstamp_fmt = "%d %b %Y"
+templates_path = [ "_templates",]
+html_static_path = [ "_static",]
+source_suffix = ".rst"
+master_doc = "index"
+suppress_warnings = [ "image.nonlocal_uri",]
+pygments_style = "default"
+html_theme = "furo"
+html_theme_path = [ "../..",]
+html_show_sourcelink = true
+toctree_plus_types = [
+    "class",
+    "confval",
+    "data",
+    "directive",
+    "enum",
+    "exception",
+    "flag",
+    "function",
+    "namedtuple",
+    "protocol",
+    "role",
+    "typeddict",
+]
+add_module_names = false
+hide_none_rtype = true
+all_typevars = true
+overloads_location = "bottom"
+html_codeblock_linenos_style = "table"
+autodoc_exclude_members = [
+    "__dict__",
+    "__class__",
+    "__dir__",
+    "__weakref__",
+    "__module__",
+    "__annotations__",
+    "__orig_bases__",
+    "__parameters__",
+    "__subclasshook__",
+    "__init_subclass__",
+    "__attrs_attrs__",
+    "__init__",
+    "__new__",
+    "__getnewargs__",
+    "__abstractmethods__",
+    "__hash__",
+]
+
+[tool.mypy]
+python_version = "3.6"
+namespace_packages = true
+check_untyped_defs = true
+warn_unused_ignores = true
+no_implicit_optional = true
+show_error_codes = true
+
+[tool.snippet-fmt]
+directives = [ "code-block",]
+
+[tool.dependency-dash."requirements.txt"]
+order = 10
+
+[tool.dependency-dash."tests/requirements.txt"]
+order = 20
+include = false
+
+[tool.dependency-dash."doc-source/requirements.txt"]
+order = 30
+include = false
+
+[tool.snippet-fmt.languages.python]
+reformat = true
+
+[tool.snippet-fmt.languages.TOML]
+reformat = true
+
+[tool.snippet-fmt.languages.ini]
+
+[tool.snippet-fmt.languages.json]

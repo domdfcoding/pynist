@@ -29,12 +29,12 @@ def test_parse_name_chars():
 		}
 	# yapf: enable
 
-	for ascii, codes in test_strings.items():  # noqa: A001
+	for ascii, codes in test_strings.items():  # noqa: A001  # pylint: disable=redefined-builtin
 		assert utils.parse_name_chars(codes) == ascii
 
 	# Extra 0s at end:
 	for i in range(5):
-		for ascii, codes in test_strings.items():  # noqa: A001
+		for ascii, codes in test_strings.items():  # noqa: A001  # pylint: disable=redefined-builtin
 			assert utils.parse_name_chars(codes + ([0] * i)) == ascii
 
 	# Test remaining special characters
