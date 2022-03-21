@@ -20,10 +20,10 @@ environment:
     - TOXENV: "py39"
       PYTHON: "C:\\Python39"
       TOX_APPVEYOR_X64: 0
-    # Python310
-    - TOXENV: "py310"
-      PYTHON: "C:\\Python310"
-      TOX_APPVEYOR_X64: 0
+#    # Python310
+#    - TOXENV: "py310"
+#      PYTHON: "C:\\Python310"
+#      TOX_APPVEYOR_X64: 0
     # Python36-x64
     - TOXENV: "py36"
       PYTHON: "C:\\Python36-x64"
