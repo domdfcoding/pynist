@@ -4,12 +4,12 @@
 """
 Script to both parse MoNA JSON data into a single MSP file and compile a contributors to
 the MoNA library, in a more efficient manner than doing them separately.
-"""
+"""  # noqa: D400
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
 #
-#  Copyright (c) 2020 Dominic Davis-Foster <dominic@davis-foster.co.uk>
+#  Copyright (c) 2020-2022 Dominic Davis-Foster <dominic@davis-foster.co.uk>
 #
 #  PyMassSpec NIST Search is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as
@@ -28,19 +28,28 @@ the MoNA library, in a more efficient manner than doing them separately.
 #
 
 # stdlib
-import pathlib
+from typing import List
+
+# 3rd party
+from domdf_python_tools.paths import PathPlus
 
 # this package
 import MoNA_GCMS_Library
 from pyms_nist_search import ReferenceData
 from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
 
+__all__: List[str] = []
+
 
 def main():
+	"""
+	Command line entry point.
+	"""
+
 	contributors = MoNA_GCMS_Library.parse_mona_contributors.ContributorList()
 
 	# Create ReferenceData and write to file
-	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", 'w') as msp_fp:
+	with (PathPlus(MoNA_GCMS_Library.__file__).parent / "MoNA.msp").open('w') as msp_fp:
 
 		for comp in MoNA_GCMS_Library.parse_mona_json.load_mona_json():
 

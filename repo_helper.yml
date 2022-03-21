@@ -77,3 +77,5 @@ tox_requirements:
 
 tox_unmanaged:
   - testenv
+  - testenv:lint
+  - testenv:mypy

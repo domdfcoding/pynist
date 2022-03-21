@@ -30,21 +30,28 @@ https://chemdata.nist.gov/mass-spc/ms-search/Library_conversion_tool.html
 
 # stdlib
 import json
-import pathlib
 import shutil
+from typing import Dict, List
 
 # 3rd party
 import importlib_resources
+from domdf_python_tools.paths import PathPlus
 
 # this package
 import MoNA_GCMS_Library
 from pyms_nist_search import ReferenceData
 
-# import urllib.request
+__all__ = ["load_mona_json", "create_mona_msp"]
 
 
-def load_mona_json():
-	mona_library_dir = pathlib.Path(__file__).parent
+def load_mona_json() -> List[Dict]:
+	"""
+	Loads the MoNA database from a compressed JSON file.
+
+	:return:
+	"""
+
+	mona_library_dir = PathPlus(__file__).parent
 	library_json_file = mona_library_dir / "MoNA-export-GC-MS_Spectra.json"
 	library_zip_file = mona_library_dir / "MoNA-export-GC-MS_Spectra-json.zip"
 
@@ -55,12 +62,17 @@ def load_mona_json():
 
 	if not library_json_file.is_file():
 		shutil.unpack_archive(str(library_zip_file), str(mona_library_dir), format="zip")
+
 	return json.loads(importlib_resources.read_text(MoNA_GCMS_Library, "MoNA-export-GC-MS_Spectra.json"))
 
 
-def create_mona_msp():
+def create_mona_msp() -> None:
+	"""
+	Generate ``.msp`` files for each file in the MoNA database.
+	"""
+
 	# Create ReferenceData and write to file
-	with open(pathlib.Path(MoNA_GCMS_Library.__file__).parent / "MoNA.msp", 'w') as fp:
+	with (PathPlus(MoNA_GCMS_Library.__file__).parent / "MoNA.msp").open('w') as fp:
 		for comp in load_mona_json():
 			ref_data = ReferenceData.from_mona_dict(comp)
 			msp = ref_data.to_msp()

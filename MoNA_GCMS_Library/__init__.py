@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 #
 #  __init__.py
+"""
+Utility for parsing datafiles from `MassBank of North America`_.
+
+.. _MassBank of North America: https://mona.fiehnlab.ucdavis.edu/
+"""
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL

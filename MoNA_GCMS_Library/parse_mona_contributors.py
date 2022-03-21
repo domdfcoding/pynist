@@ -2,9 +2,9 @@
 #
 #  parse_mona_contributors.py
 """
-Script to compile a contributors to the MoNA library, and the license the contributions are
-licensed under.
-"""
+Script to compile a contributors to the MoNA library,
+and the license the contributions are licensed under.
+"""  # noqa: D400
 #
 #  This file is part of PyMassSpec NIST Search
 #  Python interface to the NIST MS Search DLL
@@ -27,6 +27,9 @@ licensed under.
 #  MA 02110-1301, USA.
 #
 
+# stdlib
+from typing import Dict, List, Optional, Sequence, Union
+
 # 3rd party
 import importlib_resources
 
@@ -35,18 +38,18 @@ import MoNA_GCMS_Library
 from MoNA_GCMS_Library.parse_mona_json import load_mona_json
 from pyms_nist_search.mona_tools import parse_metadata
 
+__all__ = ["Contributor", "Record", "ContributorList"]
+
 
 class Contributor:
 	"""
-	Class to model contributor to MoNA library
+	Class to model contributor to MoNA library.
 
 	:param name: The name of the contributor
-	:type name: str
 	:param contributions: A list of records contributed
-	:type contributions: list of Record
 	"""
 
-	def __init__(self, name, contributions=None):
+	def __init__(self, name: str, contributions: Optional[List["Record"]] = None):
 		self.name = name
 		if contributions:
 			self.contributions = contributions
@@ -62,71 +65,61 @@ class Contributor:
 			return NotImplemented
 
 	@classmethod
-	def from_mona_dict(cls, mona_data: dict):
+	def from_mona_dict(cls, mona_data: Dict):
 		"""
-		Construct an object from Massbank of North America json data
-		that has been loaded into a dictionary.
+		Construct an object from Massbank of North America json data that has been loaded into a dictionary.
 
-		:type mona_data: dict
-		"""
-
-	def add_contribution(self, id, license=None, **kwargs):
-		"""
-		Add a contribution made by this Contributor, and return the
-		new :class:`Record` object created.
-
-		:param id: The ID of the contribution
-		:type id: str
-		:param license: The license the contribution is licensed under
-		:type license: str
-
-		:return: A :class:`Record` object representing the contribution
-		:rtype: :class:`Record`
+		:param mona_data:
 		"""
 
-		if not license:
-			record = Record(id)
+	def add_contribution(self, id_: str, license_: Optional[str] = None, **kwargs) -> "Record":
+		r"""
+		Add a contribution made by this Contributor, and return the new :class:`~.Record` object created.
+
+		:param id\_: The ID of the contribution
+		:param license\_: The license the contribution is licensed under
+
+		:return: A :class:`~.Record` object representing the contribution
+		"""
+
+		if not license_:
+			record = Record(id_)
 		else:
-			record = Record(id, license, **kwargs)
+			record = Record(id_, license_, **kwargs)
 
 		self.add_record(record)
 		return record
 
-	def add_record(self, record):
+	def add_record(self, record: "Record"):
 		"""
-		Add a :class:`Record` object representing a contribution made
-		by this Contributor.
+		Add a :class:`~.Record` object representing a contribution made by this Contributor.
 
 		:param record: A :class:`Record` object representing the contribution
-		:type record: :class:`Record`
 		"""
 
 		self.contributions.append(record)
 
 
 class Record:
-	"""
-	Class to model a Mass Spectrum record in the MoNA library
+	r"""
+	Class to model a Mass Spectrum record in the MoNA library.
 
-	:param id: The ID of the record
-	:type id: str
-	:param license: The license of the record. Default CC BY 4.0
-	:type license: str, optional
+	:param id\_: The ID of the record
+	:param license\_: The license of the record.
 
-	Any additional arguments are ignored
+	Any additional arguments are ignored.
 	"""
 
-	def __init__(self, id, license="CC BY 4.0", **kwargs):
-		self.id = id
-		self.license = license
+	def __init__(self, id_: str, license_: str = "CC BY 4.0", **kwargs):
+		self.id = id_
+		self.license = license_
 
 	@classmethod
-	def from_mona_dict(cls, mona_data: dict):
+	def from_mona_dict(cls, mona_data: Dict):
 		"""
-		Construct an object from Massbank of North America json data
-		that has been loaded into a dictionary.
+		Construct an object from Massbank of North America JSON data that has been loaded into a dictionary.
 
-		:type mona_data: dict
+		:param mona_data:
 		"""
 
 		properties_dict = parse_metadata(mona_data)
@@ -137,17 +130,16 @@ class Record:
 			return cls(**properties_dict)
 
 
-class ContributorList(list):
+class ContributorList(list, Sequence[Union[str, Contributor]]):
+	"""
+	A list of :class:`~.Contributor` objects.
+	"""
 
-	def add_contributor(self, contributor_name):
+	def add_contributor(self, contributor_name: str) -> Contributor:
 		"""
-		Add a new contributor to the list and return
-		the :class:`Contributor` object representing them.
+		Add a new contributor to the list and return the :class:`~.Contributor` object representing them.
 
-		:param contributor_name: The name of the contributor
-		:type contributor_name: str
-
-		:rtype: :class:`Contributor`
+		:param contributor_name: The name of the contributor.
 		"""
 
 		if contributor_name in self:
@@ -157,30 +149,31 @@ class ContributorList(list):
 			self.append(new_contributor)
 			return new_contributor
 
-	def get_contributor(self, contributor_name):
+	def get_contributor(self, contributor_name: str) -> Optional[Contributor]:
 		"""
-		Returns the :class:`Contributor` object representing the
-		contributor with the given name, or ``None`` if no such
-		contributor exists.
+		Returns the :class:`~Contributor` object representing the contributor with the given name,
+		or :py:obj:`None` if no such contributor exists.
 
 		:param contributor_name: The name of the contributor
-		:type contributor_name: str
-
-		:rtype: :class:`Contributor`
-		"""
+		"""  # noqa: D400
 
 		if contributor_name in self:
 			return self[self.index(contributor_name)]
 		else:
 			return None
 
-	def write_authors_file(self):
+	def write_authors_file(self) -> None:
+		"""
+		Generate the ``AUTHORS`` file, listing the contributors to the MoNA database.
+		"""
+
 		with importlib_resources.path(MoNA_GCMS_Library, "AUTHORS") as authors_file:
 			with authors_file.open('w') as fp:
 
 				for contributor in self:
 					print(contributor.name)
 					fp.write(f"{contributor.name}\n")
+
 					for license_ in {"CC BY", "CC BY 4.0", "CC BY-SA", "CC BY-NC-SA"}:
 						if all([record.license == license_ for record in contributor.contributions]):
 							print(f"\tAll contributions licensed under {license_}")
@@ -190,11 +183,18 @@ class ContributorList(list):
 						for record in contributor.contributions:
 							print(f"\tid: {record.id} \t License: {record.license}")
 							fp.write(f"\tid: {record.id} \t License: {record.license}\n")
+
 					print()
 					fp.write('\n')
 
 	@classmethod
-	def from_mona_dict(cls, mona_data):
+	def from_mona_dict(cls, mona_data: List[Dict]):
+		"""
+		Construct a :class:`~.ContributorList` from the MoNA database.
+
+		:param mona_data: The database, parsed from the JSON file.
+		"""
+
 		contributors = cls()
 
 		for comp in mona_data:
