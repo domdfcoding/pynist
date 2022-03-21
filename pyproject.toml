@@ -146,6 +146,12 @@ show_error_codes = true
 [tool.snippet-fmt]
 directives = [ "code-block",]
 
+[tool.dep_checker]
+allowed_unused = [ "cftime",]
+
+[tool.dep_checker.name_mapping]
+pymassspec = "pyms"
+
 [tool.dependency-dash."requirements.txt"]
 order = 10
 
