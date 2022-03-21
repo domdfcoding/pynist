@@ -129,7 +129,7 @@ def test_eq():
 
 
 def test_pickle():
-	reloaded_hit = pickle.loads(pickle.dumps(hit))
+	reloaded_hit = pickle.loads(pickle.dumps(hit))  # nosec: B301
 	assert isinstance(reloaded_hit, SearchResult)
 	assert reloaded_hit == hit
 

@@ -156,7 +156,7 @@ def test_eq():
 
 
 def test_pickle():
-	reloaded_ref_data = pickle.loads(pickle.dumps(ref_data))
+	reloaded_ref_data = pickle.loads(pickle.dumps(ref_data))  # nosec: B301
 	assert isinstance(reloaded_ref_data, ReferenceData)
 	assert reloaded_ref_data == ref_data
 
