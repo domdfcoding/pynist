@@ -27,7 +27,7 @@ jobs:
       - name: Build manylinux1 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.2.2-manylinux1_x86_64
         with:
-          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310'
 #          build-requirements: 'cython numpy'
 #          system-packages: 'lrzip-devel zlib-devel'
           package-path: ''
@@ -35,13 +35,13 @@ jobs:
       - name: Build manylinux2010 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.2.2-manylinux2010_x86_64
         with:
-          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310'
           package-path: ''
           pip-wheel-args: '--no-deps'
       - name: Build manylinux2014 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.2.2-manylinux2014_x86_64
         with:
-          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39'
+          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310'
           package-path: ''
           pip-wheel-args: '--no-deps'
       - name: Upload Artifacts 🚀
@@ -51,7 +51,7 @@ jobs:
           path: wheelhouse/
       - name: "Run Tests"
         run: |
-          PYVERSIONS=("36" "37" "38" "39")
+          PYVERSIONS=("36" "37" "38" "39" "310")
           for PYVERSION in "${PYVERSIONS[@]}"; do
             for whl in wheelhouse/pyms_nist_search-*-cp${PYVERSION}-cp${PYVERSION}*-manylinux*.whl; do
               # Test tox with wheels
