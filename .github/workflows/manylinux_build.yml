@@ -19,18 +19,18 @@ permissions:
 
 jobs:
   build:
-    name: "manylinux${{ matrix.manylinux }}"
+    name: "manylinux-${{ matrix.tag }}"
     runs-on: "ubuntu-20.04"
 
     strategy:
       fail-fast: False
       matrix:
         config:
-          - {python-version: "3.6", tag: "cp36-cp36m"}
-          - {python-version: "3.7", tag: "cp37-cp37m"}
-          - {python-version: "3.8", tag: "cp38-cp38"}
-          - {python-version: "3.9", tag: "cp39-cp39"}
-          - {python-version: "3.10", tag: "cp310-cp310"}
+          - {python-version: "36", tag: "cp36-cp36m"}
+          - {python-version: "37", tag: "cp37-cp37m"}
+          - {python-version: "38", tag: "cp38-cp38"}
+          - {python-version: "39", tag: "cp39-cp39"}
+          - {python-version: "310", tag: "cp310-cp310"}
 
     steps:
       - name: Checkout 🛎️
@@ -55,21 +55,21 @@ jobs:
 #          build-requirements: 'cython numpy'
 #          system-packages: 'lrzip-devel zlib-devel'
           package-path: ''
-          pip-wheel-args: '--no-deps'
+          pip-wheel-args: '--no-deps -w ./wheelhouse'
 
       - name: Build manylinux2010 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2010_x86_64
         with:
           python-versions: '${{ matrix.config.tag }}'
           package-path: ''
-          pip-wheel-args: '--no-deps'
+          pip-wheel-args: '--no-deps -w ./wheelhouse'
 
       - name: Build manylinux2014 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2014_x86_64
         with:
           python-versions: '${{ matrix.config.tag }}'
           package-path: ''
-          pip-wheel-args: '--no-deps'
+          pip-wheel-args: '--no-deps -w ./wheelhouse'
 
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
