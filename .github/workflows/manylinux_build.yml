@@ -19,18 +19,18 @@ permissions:
 
 jobs:
   build:
-    name: "manylinux-${{ matrix.tag }}"
+    name: "manylinux-${{ matrix.config.tag }}"
     runs-on: "ubuntu-20.04"
 
     strategy:
       fail-fast: False
       matrix:
         config:
-          - {python-version: "36", tag: "cp36-cp36m"}
-          - {python-version: "37", tag: "cp37-cp37m"}
-          - {python-version: "38", tag: "cp38-cp38"}
-          - {python-version: "39", tag: "cp39-cp39"}
-          - {python-version: "310", tag: "cp310-cp310"}
+          - {python-version: "3.6", testenv: "py36", tag: "cp36-cp36m"}
+          - {python-version: "3.7", testenv: "py37", tag: "cp37-cp37m"}
+          - {python-version: "3.8", testenv: "py38", tag: "cp38-cp38"}
+          - {python-version: "3.9", testenv: "py39", tag: "cp39-cp39"}
+          - {python-version: "3.10", testenv: "py310", tag: "cp310-cp310"}
 
     steps:
       - name: Checkout 🛎️
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Python 🐍
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8
+          python-version: "${{ matrix.config.python-version }}"
 
       - name: Install dependencies 🔧
         run: |
@@ -81,13 +81,13 @@ jobs:
         run: |
           for whl in wheelhouse/pyms_nist_search-*-${{ matrix.config.tag }}*-manylinux*.whl; do
             # Test tox with wheels
-            python -m tox -r -e py${{ matrix.config.python-version }} --installpkg "$whl"
+            python -m tox -r -e ${{ matrix.config.testenv }} --installpkg "$whl"
             # TODO: Upload coverage to coveralls
           done
 
       - uses: actions/upload-artifact@v3
         with:
-          name: wheels
+          name: wheels-${{ matrix.config.tag }}
           path: wheelhouse/
 
       - name: Upload distribution 📦 to PyPI
