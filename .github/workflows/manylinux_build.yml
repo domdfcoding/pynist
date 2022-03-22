@@ -4,65 +4,92 @@ name: Build manylinux Wheels
 
 on:
   push:
-    branches: ["master"]
+    branches-ignore:
+      - 'repo-helper-update'
+      - 'pre-commit-ci-update-config'
+      - 'imgbot'
+    tags:
+      - '*'
   pull_request:
-    branches: ["master"]
+
+permissions:
+  actions: write
+  issues: write
+  contents: read
 
 jobs:
   build:
     name: "manylinux${{ matrix.manylinux }}"
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-20.04"
+
+    strategy:
+      fail-fast: False
+      matrix:
+        config:
+          - {python-version: "3.6", tag: "cp36-cp36m"}
+          - {python-version: "3.7", tag: "cp37-cp37m"}
+          - {python-version: "3.8", tag: "cp38-cp38"}
+          - {python-version: "3.9", tag: "cp39-cp39"}
+          - {python-version: "3.10", tag: "cp310-cp310"}
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
+        uses: "actions/checkout@v2"
+
       - name: Set up Python 🐍
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
+
       - name: Install dependencies 🔧
         run: |
+          python -VV
+          python -m site
           python -m pip install --upgrade pip setuptools wheel
-          pip install twine tox
+          python -m pip install --upgrade twine tox
+
       - name: Build manylinux1 Python wheels 🎡
-        uses: RalfG/python-wheels-manylinux-build@v0.2.2-manylinux1_x86_64
+        uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux1_x86_64
         with:
-          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310'
+          python-versions: '${{ matrix.config.tag }}'
 #          build-requirements: 'cython numpy'
 #          system-packages: 'lrzip-devel zlib-devel'
           package-path: ''
           pip-wheel-args: '--no-deps'
+
       - name: Build manylinux2010 Python wheels 🎡
-        uses: RalfG/python-wheels-manylinux-build@v0.2.2-manylinux2010_x86_64
+        uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2010_x86_64
         with:
-          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310'
+          python-versions: '${{ matrix.config.tag }}'
           package-path: ''
           pip-wheel-args: '--no-deps'
+
       - name: Build manylinux2014 Python wheels 🎡
-        uses: RalfG/python-wheels-manylinux-build@v0.2.2-manylinux2014_x86_64
+        uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2014_x86_64
         with:
-          python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39 cp310-cp310'
+          python-versions: '${{ matrix.config.tag }}'
           package-path: ''
           pip-wheel-args: '--no-deps'
+
       - name: Upload Artifacts 🚀
         uses: actions/upload-artifact@v2
         with:
-          name: wheels
+          name: "wheels-${{ matrix.config.tag }}"
           path: wheelhouse/
+
       - name: "Run Tests"
         run: |
-          PYVERSIONS=("36" "37" "38" "39" "310")
-          for PYVERSION in "${PYVERSIONS[@]}"; do
-            for whl in wheelhouse/pyms_nist_search-*-cp${PYVERSION}-cp${PYVERSION}*-manylinux*.whl; do
-              # Test tox with wheels
-              python -m tox -r -e py${PYVERSION} --installpkg "$whl"
-              # TODO: Upload coverage to coveralls
-            done
+          for whl in wheelhouse/pyms_nist_search-*-${{ matrix.config.tag }}*-manylinux*.whl; do
+            # Test tox with wheels
+            python -m tox -r -e py${{ matrix.config.python-version }} --installpkg "$whl"
+            # TODO: Upload coverage to coveralls
           done
+
       - uses: actions/upload-artifact@v3
         with:
           name: wheels
           path: wheelhouse/
+
       - name: Upload distribution 📦 to PyPI
         if: startsWith(github.ref, 'refs/tags/')
         uses: pypa/gh-action-pypi-publish@master
