@@ -48,15 +48,6 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install --upgrade twine tox
 
-      - name: Build manylinux1 Python wheels 🎡
-        uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux1_x86_64
-        with:
-          python-versions: '${{ matrix.config.tag }}'
-#          build-requirements: 'cython numpy'
-#          system-packages: 'lrzip-devel zlib-devel'
-          package-path: ''
-          pip-wheel-args: '--no-deps -w ./wheelhouse'
-
       - name: Build manylinux2010 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2010_x86_64
         with:
@@ -66,6 +57,13 @@ jobs:
 
       - name: Build manylinux2014 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2014_x86_64
+        with:
+          python-versions: '${{ matrix.config.tag }}'
+          package-path: ''
+          pip-wheel-args: '--no-deps -w ./wheelhouse'
+
+      - name: Build manylinux_2_24 Python wheels 🎡
+        uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux_2_24_x86_64
         with:
           python-versions: '${{ matrix.config.tag }}'
           package-path: ''
