@@ -75,7 +75,11 @@ sphinx_html_theme: furo
 tox_requirements:
   - "tox-pip-version>=0.0.7"
 
+extra_lint_paths:
+  - MoNA_GCMS_Library
+
+extra_testenv_commands:
+  - python coverage-fixup.py
+
 tox_unmanaged:
   - testenv
-  - testenv:lint
-  - testenv:mypy
