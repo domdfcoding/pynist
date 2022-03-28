@@ -97,7 +97,7 @@ PyMassSpec NIST Search
 		:alt: GitHub top language
 
 	.. |commits-since| github-shield::
-		:commits-since: v0.4.14
+		:commits-since: v0.5.0b1
 		:alt: GitHub commits since tagged version
 
 	.. |commits-latest| github-shield::

@@ -90,7 +90,7 @@ PyMassSpec NIST Search
 .. |language| image:: https://img.shields.io/github/languages/top/domdfcoding/pynist
 	:alt: GitHub top language
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/domdfcoding/pynist/v0.4.14
+.. |commits-since| image:: https://img.shields.io/github/commits-since/domdfcoding/pynist/v0.5.0b1
 	:target: https://github.com/domdfcoding/pynist/pulse
 	:alt: GitHub commits since tagged version
 
