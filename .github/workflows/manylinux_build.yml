@@ -77,7 +77,7 @@ jobs:
 
       - name: "Run Tests"
         run: |
-          rm wheelhouse/pyms_nist_search-*-${{ matrix.config.tag }}*-linux*.whl
+          sudo rm wheelhouse/pyms_nist_search-*-${{ matrix.config.tag }}*-linux*.whl
           for whl in wheelhouse/pyms_nist_search-*-${{ matrix.config.tag }}*-manylinux*.whl; do
             # Test tox with wheels
             python -m tox -r -e ${{ matrix.config.testenv }} --installpkg "$whl"
