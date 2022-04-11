@@ -8,7 +8,31 @@ version = "0.5.0b1"
 description = "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine."
 readme = "README.rst"
 keywords = []
-dynamic = [ "requires-python", "classifiers", "dependencies",]
+dynamic = []
+requires-python = ">=3.6.1"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Microsoft :: Windows :: Windows 7",
+    "Operating System :: Microsoft :: Windows :: Windows 8.1",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
 
 [[project.authors]]
 name = "Dominic Davis-Foster"
@@ -148,6 +172,11 @@ directives = [ "code-block",]
 
 [tool.dep_checker]
 allowed_unused = [ "cftime",]
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+platforms = [ "Windows", "macOS", "Linux",]
 
 [tool.dep_checker.name_mapping]
 pymassspec = "pyms"
