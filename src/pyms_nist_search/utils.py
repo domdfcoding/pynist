@@ -35,10 +35,8 @@ General utilities.
 #
 
 # stdlib
-import os
-import pathlib
 import warnings
-from typing import Sequence, Union
+from typing import Sequence
 
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
@@ -52,7 +50,7 @@ def pack(mass_spec: MassSpectrum, top: int = 20) -> str:
 
 	Adapted from https://sourceforge.net/projects/mzapi-live/
 
-	:param mass_spec: pyms.Spectrum.MassSpectrum
+	:param mass_spec:
 	:param top: The number of largest peaks to identify
 	"""
 

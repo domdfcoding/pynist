@@ -41,7 +41,7 @@ from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
 __all__: List[str] = []
 
 
-def main():
+def main() -> None:
 	"""
 	Command line entry point.
 	"""

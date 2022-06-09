@@ -32,7 +32,7 @@ import pathlib
 # 3rd party
 from jinja2 import Template
 
-__all__ = ["msp_template"]
+__all__ = ("msp_template", )
 
 msp_template_file = pathlib.Path(__file__).parent / "msp_template"
 msp_template = Template(msp_template_file.read_text())

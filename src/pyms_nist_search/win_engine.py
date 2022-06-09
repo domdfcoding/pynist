@@ -51,7 +51,7 @@ from pyms_nist_search.utils import pack
 # this package
 from . import _core
 
-__all__ = ["Engine"]
+__all__ = ("Engine", )
 
 
 class Engine:
@@ -120,12 +120,7 @@ class Engine:
 
 		hit_list = _core._spectrum_search(pack(mass_spec, len(mass_spec)))[:n_hits]
 
-		parsed_hit_list = []
-
-		for hit in hit_list:
-			parsed_hit_list.append(SearchResult.from_pynist(hit))
-
-		return parsed_hit_list
+		return [SearchResult.from_pynist(hit) for hit in hit_list]
 
 	@staticmethod
 	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
@@ -143,12 +138,7 @@ class Engine:
 
 		hit_list = _core._full_spectrum_search(pack(mass_spec, len(mass_spec)))[:n_hits]
 
-		parsed_hit_list = []
-
-		for hit in hit_list:
-			parsed_hit_list.append(SearchResult.from_pynist(hit))
-
-		return parsed_hit_list
+		return [SearchResult.from_pynist(hit) for hit in hit_list]
 
 	def full_search_with_ref_data(
 			self,

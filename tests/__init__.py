@@ -6,5 +6,5 @@ import sys
 sys.path.remove(os.getcwd())
 
 # this package
-from .engines import search  # noqa: E402
-from .spectra import spectra  # noqa: E402
+from .engines import search  # noqa: E402,F401
+from .spectra import spectra  # noqa: E402,F401

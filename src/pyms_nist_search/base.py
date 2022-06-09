@@ -48,7 +48,7 @@ from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
 # this package
 from pyms_nist_search.utils import parse_name_chars
 
-__all__ = ["NISTBase"]
+__all__ = ("NISTBase", )
 
 
 @prettify_docstrings
@@ -162,5 +162,5 @@ class NISTBase:
 @sdjson.register_encoder(int64)
 @sdjson.register_encoder(int32)
 @sdjson.register_encoder(signedinteger)
-def serialise_numpy_int64(value):
+def serialise_numpy_int64(value) -> int:
 	return int(value)

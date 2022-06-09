@@ -55,11 +55,11 @@ if sys.platform == "win32":
 		os.add_dll_directory(os.path.join(os.path.split(__file__)[0], "x64" if _64_bit else "x86"))
 
 # this package
-from pyms_nist_search.reference_data import ReferenceData
-from pyms_nist_search.search_result import SearchResult
+from pyms_nist_search.reference_data import ReferenceData  # noqa: F401
+from pyms_nist_search.search_result import SearchResult  # noqa: F401
 
 # this package
-from ._core import *  # type: ignore
+from ._core import *  # type: ignore  # noqa: F401
 
 if sys.platform == "win32":
 	# this package
@@ -67,7 +67,7 @@ if sys.platform == "win32":
 
 else:
 	# this package
-	from pyms_nist_search.docker_engine import Engine
+	from pyms_nist_search.docker_engine import Engine  # noqa: F401
 
 name: str = "PyMassSpec NIST Search"
 __author__: str = "Dominic Davis-Foster"

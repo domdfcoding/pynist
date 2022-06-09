@@ -34,7 +34,7 @@ from typing import Any, Dict, Iterable, List, Set
 # 3rd party
 from pyms.Spectrum import MassSpectrum  # type: ignore
 
-__all__ = [
+__all__ = (
 		"prep_match_list",
 		"other_dbs",
 		"mona_skip_compound_props",
@@ -42,7 +42,7 @@ __all__ = [
 		"mona_skip_properties",
 		"parse_metadata",
 		"mass_spec_from_mona",
-		]
+		)
 
 
 def prep_match_list(match_list: Iterable[str]) -> Set[str]:
@@ -178,11 +178,11 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict[str, Any]:
 			"license": "license",
 			}
 
-	def set_prop_value(property_name, prop_):
+	def set_prop_value(property_name, prop_) -> None:
 		if not properties_dict[property_name]:
 			properties_dict[property_name] = prop_["value"]
 
-	def parse_compound_prop(prop_):
+	def parse_compound_prop(prop_) -> None:
 		# Put props in order of priority
 		for prop_name in ["molecular formula", "total exact mass", "cas number", "cas"]:
 			if prop_["name"].casefold() == prop_name:
@@ -217,13 +217,13 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict[str, Any]:
 		if "category" in prop and prop["category"].casefold() in mona_skip_categories:
 			continue
 
-		elif prop["name"].casefold() in prep_match_list([
+		elif prop["name"].casefold() in prep_match_list((
 				*mona_skip_properties,
 				"data format",
 				"institution",
 				"formula",
 				"ion type",
-				]):
+				)):
 			# todo: "data format"
 			continue
 

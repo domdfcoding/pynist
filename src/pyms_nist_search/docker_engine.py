@@ -163,7 +163,7 @@ class Engine:
 
 		raise TimeoutError("Unable to communicate with the search server.")
 
-	def __launch_container(self, lib_path, lib_type):
+	def __launch_container(self, lib_path, lib_type) -> None:
 		self.docker = client.containers.run(
 				"domdfcoding/pywine-pyms-nist",
 				ports={5001: 5001},

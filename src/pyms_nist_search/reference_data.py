@@ -55,7 +55,7 @@ from pyms_nist_search.mona_tools import mass_spec_from_mona, parse_metadata
 from pyms_nist_search.templates import *
 from pyms_nist_search.utils import parse_name_chars
 
-__all__ = ["ReferenceData"]
+__all__ = ("ReferenceData", )
 
 
 @prettify_docstrings

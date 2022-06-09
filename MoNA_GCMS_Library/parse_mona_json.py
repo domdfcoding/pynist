@@ -41,7 +41,7 @@ from domdf_python_tools.paths import PathPlus
 import MoNA_GCMS_Library
 from pyms_nist_search import ReferenceData
 
-__all__ = ["load_mona_json", "create_mona_msp"]
+__all__ = ("load_mona_json", "create_mona_msp")
 
 
 def load_mona_json() -> List[Dict]:
@@ -80,7 +80,7 @@ def create_mona_msp() -> None:
 			fp.write(msp)
 
 
-def main():
+def main() -> None:
 	create_mona_msp()
 
 

@@ -29,4 +29,4 @@ Utility for parsing datafiles from `MassBank of North America`_.
 #
 
 # this package
-from . import parse_mona_contributors, parse_mona_json
+from . import parse_mona_contributors, parse_mona_json  # noqa: F401

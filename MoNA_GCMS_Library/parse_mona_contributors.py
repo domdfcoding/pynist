@@ -38,7 +38,7 @@ import MoNA_GCMS_Library
 from MoNA_GCMS_Library.parse_mona_json import load_mona_json
 from pyms_nist_search.mona_tools import parse_metadata
 
-__all__ = ["Contributor", "Record", "ContributorList"]
+__all__ = ("Contributor", "Record", "ContributorList")
 
 
 class Contributor:
@@ -90,7 +90,7 @@ class Contributor:
 		self.add_record(record)
 		return record
 
-	def add_record(self, record: "Record"):
+	def add_record(self, record: "Record") -> None:
 		"""
 		Add a :class:`~.Record` object representing a contribution made by this Contributor.
 
@@ -115,7 +115,7 @@ class Record:
 		self.license = license_
 
 	@classmethod
-	def from_mona_dict(cls, mona_data: Dict):
+	def from_mona_dict(cls, mona_data: Dict) -> "Record":
 		"""
 		Construct an object from Massbank of North America JSON data that has been loaded into a dictionary.
 
@@ -188,7 +188,7 @@ class ContributorList(list, Sequence[Union[str, Contributor]]):
 					fp.write('\n')
 
 	@classmethod
-	def from_mona_dict(cls, mona_data: List[Dict]):
+	def from_mona_dict(cls, mona_data: List[Dict]) -> "ContributorList":
 		"""
 		Construct a :class:`~.ContributorList` from the MoNA database.
 
@@ -207,7 +207,7 @@ class ContributorList(list, Sequence[Union[str, Contributor]]):
 		return contributors
 
 
-def main():
+def main() -> None:
 	mona_data = load_mona_json()
 	contributor_list = ContributorList.from_mona_dict(mona_data)
 	contributor_list.write_authors_file()
