@@ -42,12 +42,25 @@ jobs:
         with:
           python-version: "3.6"
 
-      - name: Install dependencies 🔧
+      - name: Install dependencies (Linux) 🔧
+        if: ${{ matrix.os == 'ubuntu-20.04' && steps.changes.outputs.code == 'true' }}
         run: |
           python -VV
           python -m site
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --upgrade tox virtualenv
+          python -m pip install --upgrade tox virtualenv!=20.16.0
+          sudo add-apt-repository universe
+          sudo apt update
+          sudo apt install libhdf5-dev netcdf-bin libnetcdf-dev
+
+      - name: Install dependencies (Windows) 🔧
+        if: ${{ matrix.os != 'ubuntu-20.04' && steps.changes.outputs.code == 'true' }}
+        run: |
+          python -VV
+          python -m site
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade tox virtualenv!=20.16.0
+          pip config set global.prefer-binary true
 
       - name: "Run mypy"
         if: steps.changes.outputs.code == 'true'

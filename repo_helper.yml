@@ -83,3 +83,14 @@ extra_testenv_commands:
 
 tox_unmanaged:
   - testenv
+
+github_ci_requirements:
+ Linux:
+  post:
+   - sudo add-apt-repository universe
+   - sudo apt update
+   - sudo apt install libhdf5-dev netcdf-bin libnetcdf-dev
+ Windows:
+  post:
+   # Prefery binary wheels for older versions over sdists for newer ones
+   - pip config set global.prefer-binary true
