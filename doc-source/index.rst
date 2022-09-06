@@ -58,8 +58,8 @@ PyMassSpec NIST Search
 		:workflow: mypy
 		:alt: mypy status
 
-	.. |requires| image:: https://dependency-dash.herokuapp.com/github/domdfcoding/pynist/badge.svg
-		:target: https://dependency-dash.herokuapp.com/github/domdfcoding/pynist/
+	.. |requires| image:: https://dependency-dash.repo-helper.uk/github/domdfcoding/pynist/badge.svg
+		:target: https://dependency-dash.repo-helper.uk/github/domdfcoding/pynist/
 		:alt: Requirements Status
 
 	.. |coveralls| coveralls-shield::
@@ -147,11 +147,11 @@ Installation
 
 .. toctree::
 	:maxdepth: 3
-	:caption: Documentation
 
 	usage
 	api
 	contributing
+	license
 	Source
 
 .. sidebar-links::
