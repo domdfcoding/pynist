@@ -4,7 +4,7 @@ Usage
 
 You will need to supply your own copy of the NIST Mass Spectral library to use this software.
 
-The main class in this library is the :class:`.Engine` class. This class performs the actual searching.
+The main class in this library is the :class:`~pyms_nist_search.win_engine.Engine` class. This class performs the actual searching.
 Start by initialising the search engine as follows:
 
 .. code-block:: python
