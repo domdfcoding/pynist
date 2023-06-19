@@ -34,10 +34,10 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: "actions/checkout@v2"
+        uses: "actions/checkout@v3"
 
       - name: Set up Python 🐍
-        uses: actions/setup-python@v1
+        uses: "actions/setup-python@v4"
         with:
           python-version: "${{ matrix.config.python-version }}"
 
@@ -46,7 +46,7 @@ jobs:
           python -VV
           python -m site
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install --upgrade twine tox
+          python -m pip install --upgrade twine tox~=3.0
 
       - name: Build manylinux2010 Python wheels 🎡
         uses: RalfG/python-wheels-manylinux-build@v0.4.2-manylinux2010_x86_64
@@ -70,7 +70,7 @@ jobs:
           pip-wheel-args: '--no-deps -w ./wheelhouse'
 
       - name: Upload Artifacts 🚀
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: "wheels-${{ matrix.config.tag }}"
           path: wheelhouse/
