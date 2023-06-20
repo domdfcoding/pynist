@@ -50,7 +50,7 @@ environment:
 
 install:
   # We need wheel installed to build wheels
-  - "%PYTHON%\\python.exe -m pip install wheel Cython tox tox-appveyor"
+  - "%PYTHON%\\python.exe -m pip install wheel Cython tox~=3.0 tox-appveyor"
 
 build: off
 
