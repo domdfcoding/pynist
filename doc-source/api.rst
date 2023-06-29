@@ -39,7 +39,10 @@ API Reference
 	:no-members:
 
 .. autoclass:: pyms_nist_search.search_result.SearchResult
+	:exclude-members: __repr__
 
+
+.. latex:vspace:: 40px
 
 :mod:`~pyms_nist_search.utils`
 -----------------------------------

@@ -100,6 +100,21 @@ class Engine:
 
 		docker pull domdfcoding/pywine-pyms-nist
 
+	The engine must be uninitialized when no longer required to shut down the underlying docker container.
+	This is achieved with the :meth:`uninit() <pyms_nist_search.docker_engine.Engine.uninit>` method.
+	Alternatively, this class can be used as a contextmanager to automatically uninitialize the engine
+	upon leaving the :keyword:`with` block:
+
+	.. code-block:: python3
+
+		with pyms_nist_search.Engine(
+				FULL_PATH_TO_MAIN_LIBRARY,
+				pyms_nist_search.NISTMS_MAIN_LIB,
+				FULL_PATH_TO_WORK_DIR,
+				) as search:
+			search.full_spectrum_search(ms, n_hits=5)
+
+	.. versionchanged:: 0.6.0  Added context manager support.
 	"""
 
 	initialised: bool
@@ -175,6 +190,12 @@ class Engine:
 				volumes={lib_path: {"bind": "/mainlib", "mode": "ro"}},
 				environment=[f"LIBTYPE={lib_type}"],
 				)
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		self.uninit()
 
 	def uninit(self) -> None:
 		"""

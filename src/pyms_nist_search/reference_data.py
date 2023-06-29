@@ -208,8 +208,13 @@ class ReferenceData(NISTBase):
 	def __repr__(self) -> str:
 		return f"Reference Data: {self.name} \t({self.cas})"
 
-	@property
-	def __dict__(self):
+	def to_dict(self) -> Dict[str, Any]:
+		"""
+		Convert the object to a dictionary.
+
+		.. versionadded:: 0.6.0
+		"""
+
 		return dict(
 				name=self.name,
 				cas=self.cas,
@@ -222,6 +227,10 @@ class ReferenceData(NISTBase):
 				synonyms=self.synonyms[:],
 				mass_spec=self.mass_spec,
 				)
+
+	@property
+	def __dict__(self):
+		return self.to_dict()
 
 	@classmethod
 	def from_jcamp(cls, file_name: PathLike, ignore_warnings: bool = True) -> "ReferenceData":
@@ -293,7 +302,7 @@ class ReferenceData(NISTBase):
 		Convert the object to JSON.
 		"""
 
-		return sdjson.dumps(self.__dict__)
+		return sdjson.dumps(self.to_dict())
 
 	@classmethod
 	def from_json(cls, json_data: str):

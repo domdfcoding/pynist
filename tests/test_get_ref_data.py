@@ -5,11 +5,11 @@ from pyms.Spectrum import MassSpectrum  # type: ignore
 from pyms_nist_search import ReferenceData, SearchResult
 
 # this package
-from .engines import search
+# from .engines import search
 from .spectra import spectra
 
 
-def test_get_ref_data():
+def test_get_ref_data(search):
 	print()
 
 	# To avoid duplicates for speed

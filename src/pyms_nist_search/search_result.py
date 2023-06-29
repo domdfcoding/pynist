@@ -58,6 +58,8 @@ class SearchResult(NISTBase):
 	:param reverse_match_factor:
 	:param hit_prob:
 	:param spec_loc: The location of the reference spectrum in the library.
+
+	.. latex:vspace:: 20px
 	"""
 
 	def __init__(
@@ -135,8 +137,13 @@ class SearchResult(NISTBase):
 	def __repr__(self) -> str:
 		return f"Search Result: {self.name} \t({self.match_factor})"
 
-	@property
-	def __dict__(self):
+	def to_dict(self) -> Dict[str, Any]:
+		"""
+		Convert the object to a dictionary.
+
+		.. versionadded:: 0.6.0
+		"""
+
 		return dict(
 				name=self._name,
 				cas=self.cas,
@@ -145,6 +152,10 @@ class SearchResult(NISTBase):
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
 				)
+
+	@property
+	def __dict__(self):
+		return self.to_dict()
 
 
 @register_encoder(SearchResult)

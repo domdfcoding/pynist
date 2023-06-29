@@ -67,7 +67,7 @@ class Engine:
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
 
-	.. latex:vspace:: 60px
+	.. latex:vspace:: 50px
 	"""
 
 	def __init__(
@@ -181,3 +181,9 @@ class Engine:
 		reference_data = _core._get_reference_data(spec_loc)
 
 		return ReferenceData.from_pynist(reference_data)
+
+	def __enter__(self):
+		return self
+
+	def __exit__(self, exc_type, exc_val, exc_tb):
+		self.uninit()

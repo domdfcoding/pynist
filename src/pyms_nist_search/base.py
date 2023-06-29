@@ -113,12 +113,24 @@ class NISTBase:
 
 		return cls(**dictionary)
 
+	def to_dict(self) -> Dict[str, Any]:
+		"""
+		Convert the object to a dictionary.
+
+		.. versionadded:: 0.6.0
+		"""
+
+		return dict(
+				name=self._name,
+				cas=self.cas,
+				)
+
 	def to_json(self) -> str:
 		"""
 		Convert the object to json.
 		"""
 
-		return sdjson.dumps(dict(self))
+		return sdjson.dumps(self.to_dict())
 
 	@classmethod
 	def from_pynist(cls, pynist_dict: Dict[str, Any]):
@@ -135,26 +147,23 @@ class NISTBase:
 
 	@property
 	def __dict__(self):
-		return dict(
-				name=self._name,
-				cas=self.cas,
-				)
+		return self.to_dict()
 
 	def __getstate__(self) -> Dict[str, Any]:
-		return self.__dict__
+		return self.to_dict()
 
 	def __setstate__(self, state):
 		self.__init__(**state)  # type: ignore
 
 	def __iter__(self):
-		yield from self.__dict__.items()
+		yield from self.to_dict().items()
 
 	def __str__(self) -> str:
 		return self.__repr__()
 
 	def __eq__(self, other) -> bool:
 		if isinstance(other, self.__class__):
-			return self.__dict__ == other.__dict__
+			return self.to_dict() == other.to_dict()
 
 		return NotImplemented
 

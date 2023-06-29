@@ -23,38 +23,49 @@ from .constants import (
 		test_string,
 		test_tuple
 		)
-from .engines import search
+# from .engines import search
 from .spectra import spectra
 
-# Get SearchResult and ReferenceData for Diphenylamine
-spectrum = spectra["Diphenylamine"]
-hit, ref_data = search.full_search_with_ref_data(spectrum, n_hits=1)[0]
 
-assert isinstance(hit, SearchResult)
-assert isinstance(ref_data, ReferenceData)
-assert isinstance(ref_data.mass_spec, MassSpectrum)
+@pytest.fixture()
+def reference_data(search):
 
-#
-# search_res_json = (
-# 			'{"name": "DIPHENYLAMINE", "cas": "---", "match_factor": 917, "reverse_match_factor": 927, "spec_loc": '
-# 			'4305039, "hit_prob": 35.08}')
+	# Get SearchResult and ReferenceData for Diphenylamine
+	spectrum = spectra["Diphenylamine"]
+	hit, ref_data = search.full_search_with_ref_data(spectrum, n_hits=1)[0]
 
-search_res_dict = {
-		"name": "DIPHENYLAMINE",
-		"cas": "---",
-		"match_factor": 916,
-		"reverse_match_factor": 926,
-		"spec_loc": 1046408,
-		"hit_prob": 35.43,
-		}
+	assert isinstance(hit, SearchResult)
+	assert isinstance(ref_data, ReferenceData)
+	assert isinstance(ref_data.mass_spec, MassSpectrum)
 
-search_res_json = json.dumps(search_res_dict)
+	#
+	# search_res_json = (
+	# 			'{"name": "DIPHENYLAMINE", "cas": "---", "match_factor": 917, "reverse_match_factor": 927, "spec_loc": '
+	# 			'4305039, "hit_prob": 35.08}')
+
+	search_res_dict = {
+			"name": "DIPHENYLAMINE",
+			"cas": "---",
+			"match_factor": 916,
+			"reverse_match_factor": 926,
+			"spec_loc": 1046408,
+			"hit_prob": 35.43,
+			}
+
+	search_res_json = json.dumps(search_res_dict)
+
+	return {
+			"search_res_json": search_res_json,
+			"search_res_dict": search_res_dict,
+			"hit": hit,
+			"ref_data": ref_data,
+			}
 
 
-def test_json_search_result():
-	assert sdjson.dumps(hit) == search_res_json
-	assert hit.to_json() == search_res_json
-	assert SearchResult.from_json(hit.to_json()) == hit
+def test_json_search_result(reference_data):
+	assert sdjson.dumps(reference_data["hit"]) == reference_data["search_res_json"]
+	assert reference_data["hit"].to_json() == reference_data["search_res_json"]
+	assert SearchResult.from_json(reference_data["hit"].to_json()) == reference_data["hit"]
 
 	with pytest.raises(json.decoder.JSONDecodeError):
 		ReferenceData.from_json(test_string)
@@ -75,13 +86,13 @@ def test_json_search_result():
 			SearchResult.from_json(obj)
 
 
-def test_sdjson_search_result():
-	assert sdjson.dumps(hit) == search_res_json
+def test_sdjson_search_result(reference_data):
+	assert sdjson.dumps(reference_data["hit"]) == reference_data["search_res_json"]
 
 
-def test_dict():
-	assert dict(hit) == hit.__dict__ == search_res_dict
-	assert SearchResult.from_dict(dict(hit)) == hit
+def test_dict(reference_data):
+	assert dict(reference_data["hit"]) == reference_data["hit"].to_dict() == reference_data["search_res_dict"]
+	assert SearchResult.from_dict(dict(reference_data["hit"])) == reference_data["hit"]
 	#
 	# with pytest.raises(json.decoder.JSONDecodeError):
 	# 	ReferenceData.from_json(test_string)
@@ -102,13 +113,13 @@ def test_dict():
 			SearchResult.from_dict(obj)  # type: ignore
 
 
-def test_str():
-	assert str(hit) == repr(hit) == "Search Result: DIPHENYLAMINE \t(916)"
+def test_str(reference_data):
+	assert str(reference_data["hit"]) == repr(reference_data["hit"]) == "Search Result: DIPHENYLAMINE \t(916)"
 
 
-def test_eq():
+def test_eq(reference_data):
 	# TODO: make another search result to test equality to
-	assert hit == hit
+	assert reference_data["hit"] == reference_data["hit"]
 
 	for obj in [
 			test_string,
@@ -122,16 +133,16 @@ def test_eq():
 			test_lists,
 			test_sequences,
 			]:
-		assert hit != obj
+		assert reference_data["hit"] != obj
 
-	assert hit != ref_data
-	assert hit != ref_data.mass_spec
+	assert reference_data["hit"] != reference_data["ref_data"]
+	assert reference_data["hit"] != reference_data["ref_data"].mass_spec
 
 
-def test_pickle():
-	reloaded_hit = pickle.loads(pickle.dumps(hit))  # nosec: B301
+def test_pickle(reference_data):
+	reloaded_hit = pickle.loads(pickle.dumps(reference_data["hit"]))  # nosec: B301
 	assert isinstance(reloaded_hit, SearchResult)
-	assert reloaded_hit == hit
+	assert reloaded_hit == reference_data["hit"]
 
 
 def test_creation():

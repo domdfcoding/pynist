@@ -2,11 +2,11 @@
 from pyms_nist_search import SearchResult
 
 # this package
-from .engines import search
+# from .engines import search
 from .spectra import spectra
 
 
-def test_full_search():
+def test_full_search(search):
 	print()
 
 	for name, spectrum in spectra.items():
@@ -23,7 +23,7 @@ def test_full_search():
 		# assert hit_list[0].cas == cas
 
 
-def test_different_n_hits():
+def test_different_n_hits(search):
 	print()
 
 	spectrum = spectra["Diphenylamine"]
