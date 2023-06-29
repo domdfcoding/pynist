@@ -9,9 +9,11 @@ PyMassSpec NIST Search
 
 .. end short_desc
 
-.. image:: https://img.shields.io/appveyor/build/domdfcoding/pyms-nist-search/master?logo=appveyor
-	:target: https://ci.appveyor.com/project/domdfcoding/pyms-nist-search/branch/master
-	:alt: AppVeyor Windows Build Status
+.. only:: html
+		
+	.. image:: https://img.shields.io/appveyor/build/domdfcoding/pyms-nist-search/master?logo=appveyor
+		:target: https://ci.appveyor.com/project/domdfcoding/pyms-nist-search/branch/master
+		:alt: AppVeyor Windows Build Status
 
 .. start shields
 
@@ -138,6 +140,10 @@ Installation
 
 .. end installation
 
+Contents
+------------
+
+.. html-section::
 
 .. toctree::
 	:hidden:

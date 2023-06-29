@@ -93,8 +93,7 @@ class Engine:
 
 	The first time the engine is initialized it will download the latest
 	version of the docker image automatically.
-
-	This can also be done manually, such as to upgrade to the latest version,
+	This can also be performed manually, such as to upgrade to the latest version,
 	with the following command:
 
 	.. prompt:: bash
@@ -276,8 +275,8 @@ class Engine:
 		:param mass_spec: The mass spectrum to search against the library.
 		:param n_hits: The number of hits to return.
 
-		:return: List of tuples consisting of the possible identities
-			for the mass spectrum and the reference data from the library.
+		:return: List of tuples containing possible identities
+			for the mass spectrum, and the reference data.
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):

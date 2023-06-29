@@ -72,6 +72,8 @@ class ReferenceData(NISTBase):
 	:param contributor: The contributor to the library.
 	:param mass_spec: The reference mass spectrum.
 	:param synonyms: List of synonyms for the compound.
+
+	.. latex:vspace:: 60px
 	"""
 
 	_exact_mass: float

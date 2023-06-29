@@ -66,6 +66,8 @@ class Engine:
 	:param lib_path: The path to the mass spectral library.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
+
+	.. latex:vspace:: 60px
 	"""
 
 	def __init__(
@@ -151,8 +153,8 @@ class Engine:
 		:param mass_spec: The mass spectrum to search against the library.
 		:param n_hits: The number of hits to return.
 
-		:return: List of tuples consisting of the possible identities for the
-			mass spectrum and the reference data from the library.
+		:return: List of tuples containing possible identities
+			for the mass spectrum, and the reference data
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):

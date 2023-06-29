@@ -11,7 +11,11 @@ API Reference
 ----------------------------------
 
 .. automodule:: pyms_nist_search.base
+	:no-members:
 
+.. autoclass:: pyms_nist_search.base.NISTBase
+
+.. latex:clearpage::
 
 :mod:`~pyms_nist_search.docker_engine`
 ---------------------------------------
@@ -23,12 +27,18 @@ API Reference
 ---------------------------------------
 
 .. automodule:: pyms_nist_search.reference_data
+	:no-members:
+
+.. autoclass:: pyms_nist_search.reference_data.ReferenceData
 
 
 :mod:`~pyms_nist_search.search_result`
 ---------------------------------------
 
 .. automodule:: pyms_nist_search.search_result
+	:no-members:
+
+.. autoclass:: pyms_nist_search.search_result.SearchResult
 
 
 :mod:`~pyms_nist_search.utils`
@@ -41,3 +51,6 @@ API Reference
 -----------------------------------
 
 .. automodule:: pyms_nist_search.win_engine
+	:no-members:
+
+.. autoclass:: pyms_nist_search.win_engine.Engine
