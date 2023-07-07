@@ -12,7 +12,7 @@ from .engines import FULL_PATH_TO_USER_LIBRARY, FULL_PATH_TO_WORK_DIR
 def search():
 	with pyms_nist_search.Engine(
 			FULL_PATH_TO_USER_LIBRARY,
-			pyms_nist_search.NISTMS_USER_LIB,  # type: ignore  # TODO
+			pyms_nist_search.NISTMS_USER_LIB,
 			FULL_PATH_TO_WORK_DIR,  # debug=True,
 			) as engine:
 		yield engine
