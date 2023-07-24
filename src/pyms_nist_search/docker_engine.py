@@ -57,8 +57,6 @@ from pyms_nist_search.search_result import SearchResult
 # this package
 from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore
 
-client = docker.from_env()
-
 __all__ = [
 		"require_init",
 		"Engine",
@@ -153,11 +151,13 @@ class Engine:
 
 		print("Launching Docker...")
 
+		self._client = docker.from_env()
+
 		try:
 			self.__launch_container(lib_path, lib_type)
 		except docker.errors.ImageNotFound:
 			print("Docker Image not found. Downloading now.")
-			client.images.pull("domdfcoding/pywine-pyms-nist")
+			self._client.images.pull("domdfcoding/pywine-pyms-nist")
 			self.__launch_container(lib_path, lib_type)
 
 		atexit.register(self.uninit)
@@ -178,7 +178,7 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	def __launch_container(self, lib_path, lib_type) -> None:
-		self.docker = client.containers.run(
+		self.docker = self._client.containers.run(
 				"domdfcoding/pywine-pyms-nist",
 				ports={5001: 5001},
 				detach=True,
