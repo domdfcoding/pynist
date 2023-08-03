@@ -45,8 +45,8 @@ environment:
       PYTHON: "C:\\Python310-x64"
       TOX_APPVEYOR_X64: 1
 
-  pypi_password:
-    secure: gjVIRU4iiSL61pXP6FoKsQ==
+  pypi_token:
+    secure: T7c6dwug8be6NlOGpL44ftGSw9RgNw/HsHNb7xdbhzX1iZ+DbKznSIzxHdIVxSgxx0BqEkLR56CtXOU0AgOmpylc9/yysdd9R8ZOjwobJuCK7Tb+Q+/T+Cvby2fZmuvqAIxwBBS/j2337iFdbTIOR9JN6emUuv3Cmc2Ufzl6bzi7kuUjXo9OmRp87gHq/XCDh1zHGnp0VVMmPOzMORa/+byOY21qh0PW0m3giBdhY4xFm32wGB7GRX1fIx98ttGrC5lMU3k1PXs+RK+bJ/OcamAhRnRG9h6VfIkbNwniV5Y=
 
 install:
   # We need wheel installed to build wheels
@@ -75,7 +75,7 @@ deploy_script:
       if($env:APPVEYOR_REPO_TAG -eq 'true') {
         Write-Output ("Deploying to PyPI...")
         &"${Env:PYTHON}/python.exe" -m pip install twine
-        &"${Env:PYTHON}/python.exe" -m twine upload -u DomDF -p ${Env:pypi_password} --skip-existing dist/*.whl
+        &"${Env:PYTHON}/python.exe" -m twine upload -u __token__ -p ${Env:pypi_token} --skip-existing dist/*.whl
       } else {
         Write-Output "No tag for deployment"
       }
