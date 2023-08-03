@@ -48,6 +48,8 @@ environment:
   pypi_token:
     secure: T7c6dwug8be6NlOGpL44ftGSw9RgNw/HsHNb7xdbhzX1iZ+DbKznSIzxHdIVxSgxx0BqEkLR56CtXOU0AgOmpylc9/yysdd9R8ZOjwobJuCK7Tb+Q+/T+Cvby2fZmuvqAIxwBBS/j2337iFdbTIOR9JN6emUuv3Cmc2Ufzl6bzi7kuUjXo9OmRp87gHq/XCDh1zHGnp0VVMmPOzMORa/+byOY21qh0PW0m3giBdhY4xFm32wGB7GRX1fIx98ttGrC5lMU3k1PXs+RK+bJ/OcamAhRnRG9h6VfIkbNwniV5Y=
 
+  PIP_PREFER_BINARY: 1
+
 install:
   # We need wheel installed to build wheels
   - "%PYTHON%\\python.exe -m pip install wheel Cython tox~=3.0 tox-appveyor"
@@ -55,7 +57,7 @@ install:
 build: off
 
 test_script:
-  - PIP_PREFER_BINARY=1 "%PYTHON%\\python.exe -m tox"
+  - "%PYTHON%\\python.exe -m tox"
 
 after_test:
   - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
