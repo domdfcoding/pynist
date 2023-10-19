@@ -32,6 +32,7 @@ jobs:
           - {python-version: "3.9", testenv: "py39", tag: "cp39-cp39"}
           - {python-version: "3.10", testenv: "py310", tag: "cp310-cp310"}
           - {python-version: "3.11", testenv: "py311", tag: "cp311-cp311"}
+          - {python-version: "3.12", testenv: "py312", tag: "cp312-cp312"}
 
     steps:
       - name: Checkout 🛎️
