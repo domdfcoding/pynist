@@ -73,9 +73,6 @@ pure_python: False
 standalone_contrib_guide: true
 sphinx_html_theme: furo
 
-tox_requirements:
-  - "tox-pip-version>=0.0.7"
-
 extra_lint_paths:
   - MoNA_GCMS_Library
 
