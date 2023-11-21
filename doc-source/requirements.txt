@@ -3,7 +3,7 @@ extras-require>=0.5.0
 furo==2021.06.18b36
 html-section>=0.3.0
 seed-intersphinx-mapping>=1.2.2
-sphinx<3.4.0,>=3.0.3
+sphinx>=3.0.3
 sphinx-copybutton>=0.2.12
 sphinx-debuginfo>=0.2.2
 sphinx-licenseinfo>=0.3.1
