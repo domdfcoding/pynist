@@ -4,7 +4,6 @@ API Reference
 
 .. automodule:: pyms_nist_search
 	:no-members:
-	:noindex:
 
 
 :mod:`~pyms_nist_search.base`
