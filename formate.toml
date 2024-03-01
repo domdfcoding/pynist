@@ -52,4 +52,4 @@ known_third_party = [
     "requests",
     "sdjson",
 ]
-known_first_party = "pyms_nist_search"
+known_first_party = [ "pyms_nist_search",]
