@@ -261,4 +261,5 @@ def mass_spec_from_mona(mona_ms_string: str) -> MassSpectrum:
 	:param mona_ms_string:
 	"""
 
-	return MassSpectrum.from_mz_int_pairs([val.split(':') for val in mona_ms_string.split(' ')])
+	pairs = [val.split(':') for val in mona_ms_string.split(' ')]
+	return MassSpectrum.from_mz_int_pairs([(float(mz), float(int_)) for mz, int_ in pairs])
