@@ -1,7 +1,8 @@
 # 3rd party
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 # this package
+import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
 # this package
@@ -9,7 +10,7 @@ from pyms_nist_search import ReferenceData, SearchResult
 from .spectra import spectra
 
 
-def test_get_ref_data(search):
+def test_get_ref_data(search: pyms_nist_search.Engine):
 	print()
 
 	# To avoid duplicates for speed

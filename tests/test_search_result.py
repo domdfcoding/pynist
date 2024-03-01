@@ -1,13 +1,15 @@
 # stdlib
 import json
 import pickle
+from typing import Any, Dict
 
 # 3rd party
 import pytest
 import sdjson
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 # this package
+import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
 # this package
@@ -28,7 +30,7 @@ from .spectra import spectra
 
 
 @pytest.fixture()
-def reference_data(search):
+def reference_data(search: pyms_nist_search.Engine) -> Dict[str, Any]:
 
 	# Get SearchResult and ReferenceData for Diphenylamine
 	spectrum = spectra["Diphenylamine"]
@@ -62,7 +64,7 @@ def reference_data(search):
 			}
 
 
-def test_json_search_result(reference_data):
+def test_json_search_result(reference_data: Dict[str, Any]):
 	assert sdjson.dumps(reference_data["hit"]) == reference_data["search_res_json"]
 	assert reference_data["hit"].to_json() == reference_data["search_res_json"]
 	assert SearchResult.from_json(reference_data["hit"].to_json()) == reference_data["hit"]
@@ -86,11 +88,11 @@ def test_json_search_result(reference_data):
 			SearchResult.from_json(obj)
 
 
-def test_sdjson_search_result(reference_data):
+def test_sdjson_search_result(reference_data: Dict[str, Any]):
 	assert sdjson.dumps(reference_data["hit"]) == reference_data["search_res_json"]
 
 
-def test_dict(reference_data):
+def test_dict(reference_data: Dict[str, Any]):
 	assert dict(reference_data["hit"]) == reference_data["hit"].to_dict() == reference_data["search_res_dict"]
 	assert SearchResult.from_dict(dict(reference_data["hit"])) == reference_data["hit"]
 	#
@@ -110,14 +112,14 @@ def test_dict(reference_data):
 			test_sequences,
 			]:
 		with pytest.raises(TypeError):
-			SearchResult.from_dict(obj)  # type: ignore
+			SearchResult.from_dict(obj)  # type: ignore[arg-type]
 
 
-def test_str(reference_data):
+def test_str(reference_data: Dict[str, Any]):
 	assert str(reference_data["hit"]) == repr(reference_data["hit"]) == "Search Result: DIPHENYLAMINE \t(916)"
 
 
-def test_eq(reference_data):
+def test_eq(reference_data: Dict[str, Any]):
 	# TODO: make another search result to test equality to
 	assert reference_data["hit"] == reference_data["hit"]
 
@@ -139,7 +141,7 @@ def test_eq(reference_data):
 	assert reference_data["hit"] != reference_data["ref_data"].mass_spec
 
 
-def test_pickle(reference_data):
+def test_pickle(reference_data: Dict[str, Any]):
 	reloaded_hit = pickle.loads(pickle.dumps(reference_data["hit"]))  # nosec: B301
 	assert isinstance(reloaded_hit, SearchResult)
 	assert reloaded_hit == reference_data["hit"]

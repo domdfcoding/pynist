@@ -42,8 +42,8 @@ from typing import Any, Dict, Union
 import sdjson
 from chemistry_tools.cas import cas_int_to_string, check_cas_number
 from domdf_python_tools.doctools import prettify_docstrings
-from numpy import int32, int64, signedinteger  # type: ignore
-from pyms.json import encode_mass_spec, encode_scan  # type: ignore  # noqa
+from numpy import int32, int64, signedinteger
+from pyms.json import encode_mass_spec, encode_scan  # noqa
 
 # this package
 from pyms_nist_search.utils import parse_name_chars
@@ -153,7 +153,7 @@ class NISTBase:
 		return self.to_dict()
 
 	def __setstate__(self, state):
-		self.__init__(**state)  # type: ignore
+		self.__init__(**state)  # type: ignore[misc]
 
 	def __iter__(self):
 		yield from self.to_dict().items()

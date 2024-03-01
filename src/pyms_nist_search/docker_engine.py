@@ -43,19 +43,19 @@ import time
 from typing import Callable, List, Optional, Tuple
 
 # 3rd party
-import docker  # type: ignore
-import docker.errors  # type: ignore
+import docker  # type: ignore[import-untyped]
+import docker.errors  # type: ignore[import-untyped]
 import requests
 import sdjson
 from domdf_python_tools.typing import PathLike
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 # this package
 from pyms_nist_search.reference_data import ReferenceData
 from pyms_nist_search.search_result import SearchResult
 
 # this package
-from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore
+from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore[import-not-found]
 
 __all__ = [
 		"require_init",

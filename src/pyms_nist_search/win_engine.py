@@ -40,7 +40,7 @@ from typing import List, Optional, Tuple
 
 # 3rd party
 from domdf_python_tools.typing import PathLike
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 # this package
 # from ._core import *  # type: ignore

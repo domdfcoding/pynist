@@ -1,4 +1,5 @@
 # this package
+import pyms_nist_search
 from pyms_nist_search import SearchResult
 
 # this package
@@ -6,7 +7,7 @@ from pyms_nist_search import SearchResult
 from .spectra import spectra
 
 
-def test_quick_search(search):
+def test_quick_search(search: pyms_nist_search.Engine):
 	print()
 
 	for name, spectrum in spectra.items():
@@ -32,7 +33,7 @@ def test_quick_search(search):
 		# assert hit_list[0].cas == cas
 
 
-def test_different_n_hits(search):
+def test_different_n_hits(search: pyms_nist_search.Engine):
 	print()
 
 	spectrum = spectra["Diphenylamine"]

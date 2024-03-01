@@ -37,7 +37,7 @@ Class to store reference data from NIST MS Search.
 import copy
 import json
 import warnings
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Type, Union
 
 # 3rd party
 import sdjson
@@ -45,9 +45,9 @@ from domdf_python_tools.doctools import prettify_docstrings
 from domdf_python_tools.iterative import chunks
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
-from pyms.Spectrum import MassSpectrum, normalize_mass_spec  # type: ignore
-from pyms.Utils.jcamp import JcampTagWarning, header_info_fields, xydata_tags  # type: ignore
-from pyms.Utils.Math import is_float  # type: ignore
+from pyms.Spectrum import MassSpectrum, normalize_mass_spec
+from pyms.Utils.jcamp import JcampTagWarning, header_info_fields, xydata_tags
+from pyms.Utils.Math import is_float
 
 # this package
 from pyms_nist_search.base import NISTBase
@@ -229,7 +229,7 @@ class ReferenceData(NISTBase):
 				)
 
 	@property
-	def __dict__(self):
+	def __dict__(self):  # noqa: MAN002
 		return self.to_dict()
 
 	@classmethod
@@ -305,7 +305,7 @@ class ReferenceData(NISTBase):
 		return sdjson.dumps(self.to_dict())
 
 	@classmethod
-	def from_json(cls, json_data: str):
+	def from_json(cls: Type["ReferenceData"], json_data: str) -> "ReferenceData":
 		"""
 		Construct an object from JSON data.
 

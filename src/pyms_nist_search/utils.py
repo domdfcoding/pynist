@@ -39,7 +39,7 @@ import warnings
 from typing import Sequence
 
 # 3rd party
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 __all__ = ["pack", "parse_name_chars"]
 

@@ -32,7 +32,7 @@ It could probably be its own package.
 from typing import Any, Dict, Iterable, List, Set
 
 # 3rd party
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 __all__ = (
 		"prep_match_list",

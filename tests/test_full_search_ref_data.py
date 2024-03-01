@@ -1,7 +1,8 @@
 # 3rd party
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 # this package
+import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
 # this package
@@ -9,7 +10,7 @@ from pyms_nist_search import ReferenceData, SearchResult
 from .spectra import spectra
 
 
-def test_full_search(search):
+def test_full_search(search: pyms_nist_search.Engine):
 	print()
 
 	for name, spectrum in spectra.items():
@@ -32,7 +33,7 @@ def test_full_search(search):
 		assert hit_list[0][1].name.lower() == name.lower()
 
 
-def test_different_n_hits(search):
+def test_different_n_hits(search: pyms_nist_search.Engine):
 	print()
 
 	spectrum = spectra["Diphenylamine"]

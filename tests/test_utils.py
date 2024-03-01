@@ -90,4 +90,4 @@ def test_parse_name_chars():
 
 	# Errors
 	with pytest.raises(TypeError):
-		utils.parse_name_chars(['a', 'b', 'c'])  # type: ignore
+		utils.parse_name_chars(['a', 'b', 'c'])  # type: ignore[list-item]

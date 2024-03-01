@@ -2,13 +2,15 @@
 import json
 import pathlib
 import pickle
+from typing import Any, Dict
 
 # 3rd party
 import pytest
 import sdjson
-from pyms.Spectrum import MassSpectrum  # type: ignore
+from pyms.Spectrum import MassSpectrum
 
 # this package
+import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
 # this package
@@ -29,7 +31,7 @@ from .spectra import spectra
 
 
 @pytest.fixture()
-def reference_data(search):
+def reference_data(search: pyms_nist_search.Engine) -> Dict[str, Any]:
 
 	# Get SearchResult and ReferenceData for Diphenylamine
 	spectrum = spectra["Diphenylamine"]
@@ -92,7 +94,7 @@ def reference_data(search):
 			}
 
 
-def test_json_ref_data(reference_data):
+def test_json_ref_data(reference_data: Dict[str, Any]):
 	assert sdjson.dumps(reference_data["ref_data"]) == reference_data["ref_data_json"]
 	assert reference_data["ref_data"].to_json() == reference_data["ref_data_json"]
 	assert ReferenceData.from_json(reference_data["ref_data"].to_json()) == reference_data["ref_data"]
@@ -112,14 +114,14 @@ def test_json_ref_data(reference_data):
 			test_sequences,
 			]:
 		with pytest.raises(TypeError):
-			ReferenceData.from_json(obj)  # type: ignore
+			ReferenceData.from_json(obj)  # type: ignore[arg-type]
 
 
-def test_sdjson_ref_data(reference_data):
+def test_sdjson_ref_data(reference_data: Dict[str, Any]):
 	assert sdjson.dumps(reference_data["ref_data"]) == reference_data["ref_data_json"]
 
 
-def test_dict(reference_data):
+def test_dict(reference_data: Dict[str, Any]):
 	assert dict(reference_data["ref_data"]
 				) == reference_data["ref_data"].to_dict() == reference_data["ref_data_dict_non_recursive"]
 	assert sdjson.loads(sdjson.dumps(reference_data["ref_data"])) == reference_data["ref_data_dict"]
@@ -139,15 +141,15 @@ def test_dict(reference_data):
 			test_lists,
 			]:
 		with pytest.raises(TypeError):
-			ReferenceData.from_dict(obj)  # type: ignore
+			ReferenceData.from_dict(obj)  # type: ignore[arg-type]
 
 
-def test_str(reference_data):
-	assert str(reference_data["ref_data"]
-				) == repr(reference_data["ref_data"]) == "Reference Data: DIPHENYLAMINE \t(0-0-0)"
+def test_str(reference_data: Dict[str, Any]):
+	expected_string = "Reference Data: DIPHENYLAMINE \t(0-0-0)"
+	assert str(reference_data["ref_data"]) == repr(reference_data["ref_data"]) == expected_string
 
 
-def test_eq(reference_data):
+def test_eq(reference_data: Dict[str, Any]):
 	# TODO: make another search result to test equality to
 	assert reference_data["ref_data"] == reference_data["ref_data"]
 
@@ -169,7 +171,7 @@ def test_eq(reference_data):
 	assert reference_data["ref_data"] != reference_data["ref_data"].mass_spec
 
 
-def test_pickle(reference_data):
+def test_pickle(reference_data: Dict[str, Any]):
 	reloaded_ref_data = pickle.loads(pickle.dumps(reference_data["ref_data"]))  # nosec: B301
 	assert isinstance(reloaded_ref_data, ReferenceData)
 	assert reloaded_ref_data == reference_data["ref_data"]
@@ -191,7 +193,7 @@ def test_from_jcamp():
 	# Errors
 	for obj in [123, 12.3, (12, 34), set(), dict(), list()]:
 		with pytest.raises(TypeError):
-			ReferenceData.from_jcamp(obj)  # type: ignore
+			ReferenceData.from_jcamp(obj)  # type: ignore[arg-type]
 
 	with pytest.raises(FileNotFoundError):
 		ReferenceData.from_jcamp("non-existant_file.jdx")
