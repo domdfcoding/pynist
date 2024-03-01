@@ -29,7 +29,7 @@ It could probably be its own package.
 #
 
 # stdlib
-from typing import Any, Dict, Iterable, List, Set
+from typing import Any, Dict, Iterable, List, Mapping, Set
 
 # 3rd party
 from pyms.Spectrum import MassSpectrum
@@ -178,11 +178,11 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict[str, Any]:
 			"license": "license",
 			}
 
-	def set_prop_value(property_name, prop_) -> None:
+	def set_prop_value(property_name: str, prop_: Mapping[str, Any]) -> None:
 		if not properties_dict[property_name]:
 			properties_dict[property_name] = prop_["value"]
 
-	def parse_compound_prop(prop_) -> None:
+	def parse_compound_prop(prop_: Mapping[str, Any]) -> None:
 		# Put props in order of priority
 		for prop_name in ["molecular formula", "total exact mass", "cas number", "cas"]:
 			if prop_["name"].casefold() == prop_name:
@@ -191,7 +191,7 @@ def parse_metadata(mona_data: Dict[str, Any]) -> Dict[str, Any]:
 		else:
 			print(prop_)
 
-	def parse_property(prop_):
+	def parse_property(prop_: Mapping[str, Any]) -> None:
 		# Put props in order of priority
 		for prop_name in ["accession", "exact mass", "author", "institution", "accurate mass", "license"]:
 			if prop_["name"].casefold() == prop_name:

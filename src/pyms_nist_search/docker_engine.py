@@ -191,7 +191,7 @@ class Engine:
 				environment=[f"LIBTYPE={lib_type}"],
 				)
 
-	def __enter__(self):
+	def __enter__(self) -> "Engine":
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):

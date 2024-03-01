@@ -182,7 +182,7 @@ class Engine:
 
 		return ReferenceData.from_pynist(reference_data)
 
-	def __enter__(self):
+	def __enter__(self) -> "Engine":
 		return self
 
 	def __exit__(self, exc_type, exc_val, exc_tb):

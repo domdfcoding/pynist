@@ -36,7 +36,7 @@ Base class for other PyMassSpec NIST Search classes.
 
 # stdlib
 import json
-from typing import Any, Dict, Union
+from typing import Any, Dict, Iterator, Tuple, Union
 
 # 3rd party
 import sdjson
@@ -91,7 +91,7 @@ class NISTBase:
 		return self._cas
 
 	@classmethod
-	def from_json(cls, json_data: Any):
+	def from_json(cls, json_data):  # noqa: MAN001,MAN002
 		"""
 		Construct an object from json data.
 
@@ -104,7 +104,7 @@ class NISTBase:
 		return cls.from_dict(peak_dict)
 
 	@classmethod
-	def from_dict(cls, dictionary: Dict[str, Any]):
+	def from_dict(cls, dictionary: Dict[str, Any]):  # noqa: MAN002
 		"""
 		Construct an object from a dictionary.
 
@@ -133,7 +133,7 @@ class NISTBase:
 		return sdjson.dumps(self.to_dict())
 
 	@classmethod
-	def from_pynist(cls, pynist_dict: Dict[str, Any]):
+	def from_pynist(cls, pynist_dict: Dict[str, Any]):  # noqa: MAN002
 		"""
 		Create an object from the raw data returned by the C extension.
 
@@ -146,22 +146,22 @@ class NISTBase:
 				)
 
 	@property
-	def __dict__(self):
+	def __dict__(self):  # noqa: MAN002
 		return self.to_dict()
 
 	def __getstate__(self) -> Dict[str, Any]:
 		return self.to_dict()
 
-	def __setstate__(self, state):
+	def __setstate__(self, state) -> None:  # noqa: MAN001
 		self.__init__(**state)  # type: ignore[misc]
 
-	def __iter__(self):
+	def __iter__(self) -> Iterator[Tuple[str, Any]]:
 		yield from self.to_dict().items()
 
 	def __str__(self) -> str:
 		return self.__repr__()
 
-	def __eq__(self, other) -> bool:
+	def __eq__(self, other) -> bool:  # noqa: MAN001
 		if isinstance(other, self.__class__):
 			return self.to_dict() == other.to_dict()
 
@@ -171,5 +171,5 @@ class NISTBase:
 @sdjson.register_encoder(int64)
 @sdjson.register_encoder(int32)
 @sdjson.register_encoder(signedinteger)
-def serialise_numpy_int64(value) -> int:
+def serialise_numpy_int64(value: int) -> int:
 	return int(value)

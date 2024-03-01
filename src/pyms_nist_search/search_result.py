@@ -154,7 +154,7 @@ class SearchResult(NISTBase):
 				)
 
 	@property
-	def __dict__(self):
+	def __dict__(self):  # noqa: MAN002
 		return self.to_dict()
 
 

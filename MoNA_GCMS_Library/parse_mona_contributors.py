@@ -56,7 +56,7 @@ class Contributor:
 		else:
 			self.contributions = []
 
-	def __eq__(self, other):
+	def __eq__(self, other) -> bool:  # noqa: MAN001
 		if isinstance(other, str):
 			return self.name == other
 		elif isinstance(other, self.__class__):

@@ -77,7 +77,7 @@ class ReferenceData(NISTBase):
 	"""
 
 	_exact_mass: float
-	_mass_spec: MassSpectrum
+	_mass_spec: Optional[MassSpectrum]
 	_synonyms: List[str]
 
 	def __init__(
@@ -145,7 +145,7 @@ class ReferenceData(NISTBase):
 
 		return self._nist_no
 
-	@property  # noqa: A003  # pylint: disable=redefined-builtin
+	@property
 	def id(self) -> str:
 		"""
 		The ID of the compound.

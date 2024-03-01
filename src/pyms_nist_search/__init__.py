@@ -59,7 +59,7 @@ from pyms_nist_search.reference_data import ReferenceData  # noqa: F401
 from pyms_nist_search.search_result import SearchResult  # noqa: F401
 
 # this package
-from ._core import *  # type: ignore  # noqa: F401
+from ._core import *  # noqa: F401
 
 if sys.platform == "win32":
 	# this package
