@@ -31,7 +31,7 @@ and the license the contributions are licensed under.
 from typing import Dict, List, Optional, Sequence, Union
 
 # 3rd party
-import importlib_resources
+from domdf_python_tools.compat import importlib_resources
 
 # this package
 import MoNA_GCMS_Library

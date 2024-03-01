@@ -41,7 +41,6 @@ known_third_party = [
     "domdf_python_tools",
     "github",
     "importlib_metadata",
-    "importlib_resources",
     "jinja2",
     "numpy",
     "pymassspec",
