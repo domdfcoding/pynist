@@ -18,7 +18,8 @@ platforms:
   - Windows
   - Linux
 
-python_deploy_version: 3.6
+python_deploy_version: 3.8
+mypy_version: "1.8.0"
 
 # Versions to run tests for
 python_versions:
