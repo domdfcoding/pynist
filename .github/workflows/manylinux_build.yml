@@ -77,7 +77,7 @@ jobs:
           pip-wheel-args: '--no-deps -w ./wheelhouse'
 
       - name: Upload Artifacts 🚀
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: "wheels-${{ matrix.config.tag }}"
           path: wheelhouse/
@@ -90,11 +90,6 @@ jobs:
             python -m tox -r -e ${{ matrix.config.testenv }} --installpkg "$whl"
             # TODO: Upload coverage to coveralls
           done
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheels-${{ matrix.config.tag }}
-          path: wheelhouse/
 
       - name: Upload distribution to PyPI 🚀
         if: startsWith(github.ref, 'refs/tags/')
