@@ -4,10 +4,10 @@ image: Visual Studio 2019
 
 environment:
   matrix:
-    # Python36
-    - TOXENV: "py36"
-      PYTHON: "C:\\Python36"
-      TOX_APPVEYOR_X64: 0
+#    # Python36
+#    - TOXENV: "py36"
+#      PYTHON: "C:\\Python36"
+#      TOX_APPVEYOR_X64: 0
     # Python37
     - TOXENV: "py37"
       PYTHON: "C:\\Python37"
@@ -24,10 +24,10 @@ environment:
 #    - TOXENV: "py310"
 #      PYTHON: "C:\\Python310"
 #      TOX_APPVEYOR_X64: 0
-    # Python36-x64
-    - TOXENV: "py36"
-      PYTHON: "C:\\Python36-x64"
-      TOX_APPVEYOR_X64: 1
+#    # Python36-x64
+#    - TOXENV: "py36"
+#      PYTHON: "C:\\Python36-x64"
+#      TOX_APPVEYOR_X64: 1
     # Python37-x64
     - TOXENV: "py37"
       PYTHON: "C:\\Python37-x64"
@@ -43,6 +43,14 @@ environment:
     # Python310-x64
     - TOXENV: "py310"
       PYTHON: "C:\\Python310-x64"
+      TOX_APPVEYOR_X64: 1
+    # Python311-x64
+    - TOXENV: "py311"
+      PYTHON: "C:\\Python311-x64"
+      TOX_APPVEYOR_X64: 1
+    # Python312-x64
+    - TOXENV: "py312"
+      PYTHON: "C:\\Python312-x64"
       TOX_APPVEYOR_X64: 1
 
   pypi_token:
