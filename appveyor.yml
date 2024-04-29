@@ -60,7 +60,7 @@ environment:
 
 install:
   # We need wheel installed to build wheels
-  - "%PYTHON%\\python.exe -m pip install wheel Cython tox~=3.0 tox-appveyor"
+  - "%PYTHON%\\python.exe -m pip install wheel Cython tox~=3.0 tox-appveyor build"
 
 build: off
 
@@ -68,7 +68,7 @@ test_script:
   - "%PYTHON%\\python.exe -m tox"
 
 after_test:
-  - ".ci\\build.cmd %PYTHON%\\python.exe setup.py bdist_wheel"
+  - ".ci\\build.cmd %PYTHON%\\python.exe -m build"
 
 artifacts:
   # bdist_wheel puts your built wheel in the dist directory
