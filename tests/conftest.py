@@ -53,7 +53,7 @@ def spectra(request):
 	if not jcamp_file.exists():
 		url = f"https://webbook.nist.gov/cgi/cbook.cgi?JCAMP=C{cas.replace('-', '')}&Index=0&Type=Mass"
 		r = requests.get(url)
-		if r.status != 200:
+		if r.status_code != 200:
 			# Try once more
 			r = requests.get(url)
 			r.raise_for_status()
