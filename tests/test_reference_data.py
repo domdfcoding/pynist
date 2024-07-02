@@ -26,15 +26,15 @@ from .constants import (
 		test_string,
 		test_tuple
 		)
-# from .engines import search
-from .spectra import spectra
 
 
 @pytest.fixture()
-def reference_data(search: pyms_nist_search.Engine) -> Dict[str, Any]:
+def reference_data(search: pyms_nist_search.Engine, spectra) -> Dict[str, Any]:
 
 	# Get SearchResult and ReferenceData for Diphenylamine
-	spectrum = spectra["Diphenylamine"]
+	name, spectrum = spectra
+	if name != "Diphenylamine":
+		pytest.skip()
 	hit, ref_data = search.full_search_with_ref_data(spectrum, n_hits=1)[0]
 
 	assert isinstance(hit, SearchResult)

@@ -1,12 +1,3 @@
-# stdlib
-import pathlib
-
-# 3rd party
-import requests
-
-# this package
-from pyms_nist_search import ReferenceData
-
 # from pyms.Spectrum import MassSpectrum
 
 #
@@ -44,43 +35,3 @@ from pyms_nist_search import ReferenceData
 spectra = {
 		# "Diphenylamine": make_ms_from_pairs(mz_int_pairs)
 }
-
-# Download required files from NIST Webbook
-nist_data_dir = pathlib.Path("nist_jdx_files")
-
-if not nist_data_dir.exists():
-	nist_data_dir.mkdir(parents=True)
-
-# Compounds from nist
-for cas in [
-		"122-39-4",
-		"71-43-2",
-		"107-10-8",  # "50-37-3",  # LSD, shows up under synonym  # yapf: ignore
-		"57-13-6",
-		# "77-92-9", citric acid, shows up as diisopropyl malonate
-		# "118-96-7", tnt, being detected as n-sec-butyl-2,4-dinitrobenzenamine
-		# "67-66-3",  # Chloroform, detected as trichloromethane (synonym)
-		# "‎106-24-1",  # Geraniol, being detected as 3,7-dimethyl-2,6-octadien-1-ol(trans)
-		# "121-14-2",  # 2,4-DNT	need to fix synonyms
-		"507-70-0",  # Borneol
-		"78-93-3",  # MEK
-		]:
-
-	jcamp_file = nist_data_dir / f"{cas}.jdx"
-
-	if not jcamp_file.exists():
-		r = requests.get(f"https://webbook.nist.gov/cgi/cbook.cgi?JCAMP=C{cas.replace('-', '')}&Index=0&Type=Mass")
-		jcamp_file.write_bytes(r.content)
-
-	# Read ReferenceData from Jcamp File
-	ref_data = ReferenceData.from_jcamp(jcamp_file)
-
-	# Fix for borneol
-	if ref_data.cas == "507-70-0":
-		spectra["Borneol"] = ref_data.mass_spec
-	else:
-		spectra[ref_data.name] = ref_data.mass_spec
-	# spectra[ref_data.cas] = ref_data.mass_spec
-
-	# TODO: test jdx files from other sources
-	pass

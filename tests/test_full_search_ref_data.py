@@ -5,38 +5,34 @@ from pyms.Spectrum import MassSpectrum
 import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
-# this package
-# from .engines import search
-from .spectra import spectra
 
-
-def test_full_search(search: pyms_nist_search.Engine):
+def test_full_search(search: pyms_nist_search.Engine, spectra):
 	print()
 
-	for name, spectrum in spectra.items():
-		print(f"Testing {name}")
-		hit_list = search.full_search_with_ref_data(spectrum, n_hits=5)
+	name, spectrum = spectra
+	print(f"Testing {name}")
+	hit_list = search.full_search_with_ref_data(spectrum, n_hits=5)
 
-		assert len(hit_list) == 5
+	assert len(hit_list) == 5
 
-		for hit, ref_data in hit_list:
-			# TODO: test CAS numbers
-			assert isinstance(hit, SearchResult)
-			assert isinstance(ref_data, ReferenceData)
-			assert isinstance(ref_data.mass_spec, MassSpectrum)
+	for hit, ref_data in hit_list:
+		# TODO: test CAS numbers
+		assert isinstance(hit, SearchResult)
+		assert isinstance(ref_data, ReferenceData)
+		assert isinstance(ref_data.mass_spec, MassSpectrum)
 
-		# if hit_list[0][0].name.lower() == name.lower():
-		# 	assert hit_list[0][1].name.lower() == name.lower()
-		# else:
-		# 	assert name.lower() in hit_list[0][1].synonyms
-		assert hit_list[0][0].name.lower() == name.lower()
-		assert hit_list[0][1].name.lower() == name.lower()
+	# if hit_list[0][0].name.lower() == name.lower():
+	# 	assert hit_list[0][1].name.lower() == name.lower()
+	# else:
+	# 	assert name.lower() in hit_list[0][1].synonyms
+	assert hit_list[0][0].name.lower() == name.lower()
+	assert hit_list[0][1].name.lower() == name.lower()
 
 
-def test_different_n_hits(search: pyms_nist_search.Engine):
+def test_different_n_hits(search: pyms_nist_search.Engine, spectra):
 	print()
 
-	spectrum = spectra["Diphenylamine"]
+	spectrum = spectra[1]
 
 	for n_hits in range(1, 21):
 		print(f"Testing with {n_hits} hits")
