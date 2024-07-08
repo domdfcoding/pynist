@@ -51,7 +51,7 @@ def spectra(request):
 	jcamp_file = nist_data_dir / f"{cas}.jdx"
 
 	if not jcamp_file.exists():
-		url = f"https://webbook.nist.gov/cgi/cbook.cgi?JCAMP=C{cas.replace('-', '')}&Index=0&Type=Mass"
+		url = f"https://web.archive.org/web/20201215130403/https://webbook.nist.gov/cgi/cbook.cgi?JCAMP=C{cas.replace('-', '')}&Index=0&Type=Mass"
 		r = requests.get(url)
 		if r.status_code != 200:
 			# Try once more
