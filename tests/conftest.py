@@ -1,10 +1,11 @@
 # stdlib
 import pathlib
-from typing import Iterator
+from typing import Iterator, Optional, Tuple
 
 # 3rd party
 import pytest
 import requests
+from pyms.Spectrum import MassSpectrum
 
 # this package
 import pyms_nist_search
@@ -40,7 +41,7 @@ def search() -> Iterator[pyms_nist_search.Engine]:
 				"78-93-3",  # MEK
 				]
 		)
-def spectra(request):
+def spectra(request) -> Tuple[str, Optional[MassSpectrum]]:
 	# Download required files from NIST Webbook
 	nist_data_dir = pathlib.Path("nist_jdx_files")
 

@@ -1,12 +1,16 @@
+# stdlib
+from typing import Optional, Tuple
+
 # 3rd party
 import pytest
+from pyms.Spectrum import MassSpectrum
 
 # this package
 import pyms_nist_search
 from pyms_nist_search import SearchResult
 
 
-def test_quick_search(search: pyms_nist_search.Engine, spectra):
+def test_quick_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 	print()
 
 	name, spectrum = spectra
@@ -32,7 +36,7 @@ def test_quick_search(search: pyms_nist_search.Engine, spectra):
 	# assert hit_list[0].cas == cas
 
 
-def test_different_n_hits(search: pyms_nist_search.Engine, spectra):
+def test_different_n_hits(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 	print()
 
 	name, spectrum = spectra

@@ -2,7 +2,7 @@
 import json
 import pathlib
 import pickle
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 # 3rd party
 import pytest
@@ -29,7 +29,7 @@ from .constants import (
 
 
 @pytest.fixture()
-def reference_data(search: pyms_nist_search.Engine, spectra) -> Dict[str, Any]:
+def reference_data(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]) -> Dict[str, Any]:
 
 	# Get SearchResult and ReferenceData for Diphenylamine
 	name, spectrum = spectra

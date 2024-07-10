@@ -1,3 +1,6 @@
+# stdlib
+from typing import Optional, Tuple
+
 # 3rd party
 from pyms.Spectrum import MassSpectrum
 
@@ -6,7 +9,7 @@ import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
 
-def test_full_search(search: pyms_nist_search.Engine, spectra):
+def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 	print()
 
 	name, spectrum = spectra
@@ -29,7 +32,7 @@ def test_full_search(search: pyms_nist_search.Engine, spectra):
 	assert hit_list[0][1].name.lower() == name.lower()
 
 
-def test_different_n_hits(search: pyms_nist_search.Engine, spectra):
+def test_different_n_hits(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 	print()
 
 	spectrum = spectra[1]

@@ -1,3 +1,6 @@
+# stdlib
+from typing import Optional, Tuple
+
 # 3rd party
 from pyms.Spectrum import MassSpectrum
 
@@ -6,7 +9,7 @@ import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 
 
-def test_get_ref_data(search: pyms_nist_search.Engine, spectra):
+def test_get_ref_data(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 	print()
 
 	# To avoid duplicates for speed

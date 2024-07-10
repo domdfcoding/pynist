@@ -32,6 +32,6 @@
 #
 # 	return MassSpectrum(mass_list, intensity_list)
 
-#spectra = {
-#		# "Diphenylamine": make_ms_from_pairs(mz_int_pairs)
-#}
+# spectra = {
+# 		# "Diphenylamine": make_ms_from_pairs(mz_int_pairs)
+# }
