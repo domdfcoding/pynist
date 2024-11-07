@@ -125,6 +125,18 @@ class Engine:
 		return [SearchResult.from_pynist(hit) for hit in hit_list]
 
 	@staticmethod
+	def cas_search(cas: str) -> List[SearchResult]:
+		"""
+		Search for a compound by CAS number.
+
+		:param cas: 
+
+		:return: List of results for CAS number (usually just one result).
+		"""
+
+		return [SearchResult.from_pynist(hit) for hit in _core._cas_search(cas)]
+
+	@staticmethod
 	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library.

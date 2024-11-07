@@ -439,11 +439,11 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 
-
-//			printf("%ld, ", pio->hit_list->casnos[i]);
-//			PyObject *py_cas_no = PyLong_FromLong(pio->hit_list->casnos[i]);
-//			PyDict_SetItemString(d, "cas_no", py_cas_no);
-			PyDict_SetItemString(d, "cas_no", PyLong_FromLong(0));
+			if (pio->hit_list->casnos) {
+				PyDict_SetItemString(d, "cas_no", PyLong_FromLong(pio->hit_list->casnos[i]));
+			} else {
+				PyDict_SetItemString(d, "cas_no", PyLong_FromLong(0));
+			}
 
 //			printf("\n");
 
@@ -454,6 +454,134 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 	return(py_hit_list);
 }
+
+
+
+/****************************************************************************
+Retieve identification information for spectra whose
+spectra locations were previously retrieved in a NISTMS_HIT_LIST structure.
+*****************************************************************************/
+static void build_hitlist(NISTMS_IO *pio)
+{
+/*  Buffers for rapidly showing names and structures a hit list */
+    char *lib_names = LibNamesBuffer;  /*  static Global buffer for compilation convenience */
+    static NISTMS_RECLOC stru_pos[MAX_FINAL_HITS];
+    static long int casnos[MAX_FINAL_HITS];
+
+    pio->constraints = NULL;
+    pio->hit_list->lib_names            = lib_names;
+    pio->hit_list->lib_names_len        = sizeof(LibNamesBuffer);
+    pio->hit_list->max_one_lib_name_len = MAX_NAME_LEN;
+
+    /* ensure returned data can fit in allocated space*/
+    pio->hit_list->max_hits_desired = min(pio->hit_list->max_hits_desired, 
+                                      MAX_FINAL_HITS);
+    if ( pio->hit_list->max_hits_desired > 0 ) {
+        /* set buffers for rapidly showing structures and CAS reg. nos. in a hit list */
+        pio->hit_list->stru_pos             = stru_pos;
+        pio->hit_list->casnos               = casnos;
+    } else {
+        /* no buffers for struct. pos.: save time */
+        pio->hit_list->stru_pos             = NULL;
+        pio->hit_list->casnos               = NULL;
+    }
+
+    /* this returns identification information for spectra in the hit list field */
+    /* spec_locs[] that satisfy any specified constraints */
+    nistms_search(NISTMS_BUILD_HITLIST_SRCH, pio);
+}
+
+static PyObject *nist_cas_search(NISTMS_IO *pio, char query[]) {
+
+
+    static NISTMS_HIT_LIST hit_list;   
+    #define MAX_NUM_OF_OFFSETS MAX_FINAL_HITS  /*  must be no more than current system limit of NISTMS_MAX_FPOS=6000 */
+
+    static NISTMS_RECLOC fpos_array[MAX_NUM_OF_OFFSETS];
+    int num_hits_found = 0;
+
+    pio->string_in = query; 
+
+    memset((void*)&hit_list, '\0', sizeof(hit_list) );
+    hit_list.spec_locs = fpos_array;
+    hit_list.max_spec_locs = MAX_NUM_OF_OFFSETS;
+    pio->hit_list = &hit_list;      
+
+    nistms_search(NISTMS_CASNO_SRCH, pio);
+
+	if ( pio->error_code ) {
+		PyErr_Format(PyExc_RuntimeError, "Spectrum search returned error code %d\n", pio->error_code);
+			return NULL;
+	}
+
+    if (pio->hit_list->num_hits_found) {
+        /*  get compound identification information for compounds retrieved above */
+        pio->hit_list->max_hits_desired = pio->hit_list->num_hits_found;
+        build_hitlist(pio);
+
+        num_hits_found = pio->hit_list->num_hits_found;
+    } else {
+        num_hits_found = -1; // no more spectra in sequential search
+    }
+
+	PyObject *py_hit_list = PyList_New(0);
+
+	if(pio->hit_list->num_hits_found){
+
+		int name_len = pio->hit_list->max_one_lib_name_len;
+		unsigned char * raw_hit_names = pio->hit_list->lib_names;
+
+		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
+			PyObject *d = PyDict_New();
+
+
+			PyDict_SetItemString(d, "sim_num", PyLong_FromLong(0));
+			PyDict_SetItemString(d, "rev_sim_num", PyLong_FromLong(0));
+			PyDict_SetItemString(d, "hit_prob", PyLong_FromLong(0));
+
+			int start_byte = i*name_len;
+			int end_byte = start_byte + name_len;
+			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
+
+			PyObject *py_hit_name_char_list = PyList_New(0);
+
+			// Fix for Wine crash
+			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
+			}
+
+			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
+
+			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
+			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
+
+			if (pio->hit_list->casnos) {
+				PyDict_SetItemString(d, "cas_no", PyLong_FromLong(pio->hit_list->casnos[i]));
+			} else {
+				PyDict_SetItemString(d, "cas_no", PyLong_FromLong(0));
+			}
+
+			PyList_Append(py_hit_list, d);
+
+		}
+	}
+
+	return(py_hit_list);
+}
+
+
+/*
+Takes Python objects as input and prepares them for passing to nist_cas_search
+*/
+static PyObject *cas_search(PyObject *self, PyObject *args) {
+	char *query ;
+
+	if (!PyArg_ParseTuple(args, "s", &query))
+		return NULL;
+
+	return nist_cas_search( &io, query);
+}
+
 
 
 /*
@@ -1278,6 +1406,7 @@ static PyMethodDef Methods[] = {
 	{"_full_spectrum_search", full_spec_search, METH_VARARGS, ""},
 	{"_get_reference_data", get_reference_data, METH_VARARGS, ""},
 	{"_init_api", init_api, METH_VARARGS, ""},
+	{"_cas_search", cas_search, METH_VARARGS, ""},
 	{NULL, NULL}
 };
 
