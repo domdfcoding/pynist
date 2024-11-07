@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+ColumnLimit: 120
+IndentPPDirectives: BeforeHash
+Cpp11BracedListStyle: false
+IncludeBlocks: Preserve
+SortIncludes: Never
+IndentCaseLabels: true

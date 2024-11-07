@@ -60,7 +60,6 @@ This file is a modified version of the CALLDLL.C files from
 /*  link to nistdl32.lib */
 #endif
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -69,24 +68,22 @@ This file is a modified version of the CALLDLL.C files from
 #include <memory.h>
 #include <io.h>
 
-
 #include "NISTMS.H"
 #include "NISTERR.H"
 
-
-#define MAX_NAME_LEN 120       /*  longest string returned for a name in hit list */
+#define MAX_NAME_LEN 120 /*  longest string returned for a name in hit list */
 
 #ifdef WIN32
-	#define MAX_FINAL_HITS 6000   /*  largest number of spectra in final hit list */                              /*  This value MUST be >= 120 */
+	#define MAX_FINAL_HITS 6000 /*  largest number of spectra in final hit list */ /*  This value MUST be >= 120 */
 #else
-	#define MAX_FINAL_HITS 1000   /*  largest number of spectra in final hit list */
-								  /*  This value MUST be >= 120 */
+	#define MAX_FINAL_HITS 1000 /*  largest number of spectra in final hit list */
+/*  This value MUST be >= 120 */
 #endif
 
 /* Take a slice from an array of chars (`str`) between `start` and `end` and put it in `buffer` */
-void slice_str(const unsigned char * str, unsigned char * buffer, size_t start, size_t end) {
+void slice_str(const unsigned char *str, unsigned char *buffer, size_t start, size_t end) {
 	size_t j = 0;
-	for ( size_t i = start; i <= end; ++i ) {
+	for (size_t i = start; i <= end; ++i) {
 		buffer[j++] = str[i];
 	}
 	buffer[j] = 0;
@@ -95,7 +92,7 @@ void slice_str(const unsigned char * str, unsigned char * buffer, size_t start, 
 /************************************/
 /*  Define signatures for functions */
 /************************************/
-void NISTMS_C_EXPORT nistms_search( NISTMS_SEARCH_TYPE srch_type, NISTMS_IO *io);
+void NISTMS_C_EXPORT nistms_search(NISTMS_SEARCH_TYPE srch_type, NISTMS_IO *io);
 
 static PyObject *spec_search(PyObject *self, PyObject *args);
 static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum);
@@ -106,10 +103,10 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum);
 static PyObject *get_reference_data(PyObject *self, PyObject *args);
 
 /* loads a single spectrum from a string */
-static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *spectrum);
+static int parse_spectrum(NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *spectrum);
 
 /* initialization */
-//static int  initialize_libs(NISTMS_IO *io);
+// static int  initialize_libs(NISTMS_IO *io);
 
 static void get_spectrum(NISTMS_IO *io, NISTMS_RECLOC *fpos);
 static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz);
@@ -126,27 +123,26 @@ char LibNamesBuffer[(unsigned)MAX_FINAL_HITS * MAX_NAME_LEN];
 
 NISTMS_CONSTRAINTS constraints;
 
-int     g_bDisplayMsgLine;  /* flag for the callback function */
+int g_bDisplayMsgLine; /* flag for the callback function */
 
 static unsigned char g_synonyms[NISTMS_MAXSYNONYMLEN]; /*  optional */
 
 static char g_contributor[NISTMS_MAXCONTRIBLEN];
 
-char    StringIn[80];     /* for input string  */
+char StringIn[80]; /* for input string  */
 
-char    active_libs[NISTMS_MAX_LIBS+1];  /*  length = maximum number of libraries + 1 */
+char active_libs[NISTMS_MAX_LIBS + 1]; /*  length = maximum number of libraries + 1 */
 
 /* for initiation */
-char    lib_paths[256];
-char    work_dir_path[256];
-char    lib_types[NISTMS_MAX_LIBS+1];
-int     num_libs=0;
+char lib_paths[256];
+char work_dir_path[256];
+char lib_types[NISTMS_MAX_LIBS + 1];
+int num_libs = 0;
 
 NISTMS_IO io;
 
-//#define FULL_PATH_TO_MAIN_LIBRARY 'Path Goes Here'	// main
-//#define FULL_PATH_TO_WORK_DIR 'Path Goes Here'
-
+// #define FULL_PATH_TO_MAIN_LIBRARY 'Path Goes Here'	// main
+// #define FULL_PATH_TO_WORK_DIR 'Path Goes Here'
 
 /******************************************************************
 This function is the shell of a callback routine that the DLL
@@ -155,45 +151,44 @@ progress information or can tell the program to abort (if, for
 instance, the user has pressed a CANCEL button.  If an appropriate
 Windows call is introduced here, it will allow task switching.
 ******************************************************************/
-void NISTMS_CALLBACK CallBack( IQ *p ) {
+void NISTMS_CALLBACK CallBack(IQ *p) {
 
 	extern int g_bDisplayMsgLine;
-	switch ( p->WhatToDo ) {
-	case WRITE_MSGLINE_:
-		/* show progess using string in p->String; */
-		if ( g_bDisplayMsgLine )
-			printf( "%s\r", p->String );
-		break;
-	case TEST_CANCEL_:
-		/* set p->ReturnValue=1 to abort processing */
-		break;
+	switch (p->WhatToDo) {
+		case WRITE_MSGLINE_:
+			/* show progess using string in p->String; */
+			if (g_bDisplayMsgLine)
+				printf("%s\r", p->String);
+			break;
+		case TEST_CANCEL_:
+			/* set p->ReturnValue=1 to abort processing */
+			break;
 	}
 	return;
 }
-
 
 /*
 Takes Python objects as input and prepares them for passing to spectrum_search
 */
 static PyObject *spec_search(PyObject *self, PyObject *args) {
-	int counter ;
-	char *test ;
-	char *my_test ;
-	int test_len ;
-	PyObject *py_hit_list ;
+	int counter;
+	char *test;
+	char *my_test;
+	int test_len;
+	PyObject *py_hit_list;
 
 	int ok = PyArg_ParseTuple(args, "s", &test);
-	my_test = (char *) malloc(strlen(test)*sizeof('a'));
-	strcpy(my_test,test);
+	my_test = (char *)malloc(strlen(test) * sizeof('a'));
+	strcpy(my_test, test);
 	test_len = strlen(my_test);
 
-	for(counter = 0; counter < test_len; counter += 1){
-		if(my_test[counter] == '*'){
+	for (counter = 0; counter < test_len; counter += 1) {
+		if (my_test[counter] == '*') {
 			my_test[counter] = '\000';
 		}
 	}
 
-	py_hit_list = spectrum_search( &io, NISTMS_NO_PRE_SRCH, my_test);
+	py_hit_list = spectrum_search(&io, NISTMS_NO_PRE_SRCH, my_test);
 	free(my_test);
 	return py_hit_list;
 }
@@ -201,17 +196,17 @@ static PyObject *spec_search(PyObject *self, PyObject *args) {
 static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum) {
 
 	static NISTMS_CONSTRAINTS constraints;
-	static NISTMS_MASS_SPECTRUM userms;  /*  contains unknown spectrum */
-	static NISTMS_AUX_DATA      aux;
-	static NISTMS_HIT_LIST hit_list;     /*  returns hits */
-	static NISTMS_SRCH_CONTROLS cntls;   /*  specifies search type */
+	static NISTMS_MASS_SPECTRUM userms; /*  contains unknown spectrum */
+	static NISTMS_AUX_DATA aux;
+	static NISTMS_HIT_LIST hit_list;   /*  returns hits */
+	static NISTMS_SRCH_CONTROLS cntls; /*  specifies search type */
 
-//	int search_type = NISTMS_SCREEN_SRCH;
-//
-//	#define MAX_SCREEN_LOCS NISTMS_MAX_FPOS /* 6000 = largest number of tentative hits from the
-//											   screen search (pre-search) */
-//
-//	#define MAX_HITS_RETURNED MAX_LIB_SRCH_HITS
+	//	int search_type = NISTMS_SCREEN_SRCH;
+	//
+	//	#define MAX_SCREEN_LOCS NISTMS_MAX_FPOS /* 6000 = largest number of tentative hits from the
+	//											   screen search (pre-search) */
+	//
+	//	#define MAX_HITS_RETURNED MAX_LIB_SRCH_HITS
 
 	/*
 	The following seven buffers are attached to the NISTMS_HIT_LIST structure
@@ -236,35 +231,34 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 	/*     Not meaningful for reverse (impure), 'S', 'H' or 'L' searches  */
 	static int hit_prob[MAX_NOPRESRCH_HITS];
 
-//	/*     Meaningful only for Peptide search */
+	//	/*     Meaningful only for Peptide search */
 	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
 
 	/*     OPTIONAL; for (possibly truncated) name retrieval for hit list presentation */
 	static unsigned char *lib_names = LibNamesBuffer;
-//	static NISTMS_RECLOC *stru_pos[MAX_HITS_RETURNED];
+	//	static NISTMS_RECLOC *stru_pos[MAX_HITS_RETURNED];
 
-//	/*     OPTIONAL; for CAS reg. nos. retrieval for hit list presentation */
-//	static long *casnos[MAX_HITS_RETURNED];
+	//	/*     OPTIONAL; for CAS reg. nos. retrieval for hit list presentation */
+	//	static long *casnos[MAX_HITS_RETURNED];
 
 	int i;
-//	int best_score = 0 ;
+	//	int best_score = 0 ;
 
 	/* OPTIONAL; for finding hits satisfying constraints */
-	memset((void*)&cntls, '\0', sizeof(cntls) );
+	memset((void *)&cntls, '\0', sizeof(cntls));
 
-	memset((void*)&hit_list, '\0', sizeof(hit_list) );
+	memset((void *)&hit_list, '\0', sizeof(hit_list));
 	memset(pep_scores, 0, sizeof(pep_scores));
 
-	if ( 0 >= parse_spectrum(&userms, &aux, spectrum)) {
-		if ( userms.num_exact_mz < -1 ) {
+	if (0 >= parse_spectrum(&userms, &aux, spectrum)) {
+		if (userms.num_exact_mz < -1) {
 			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
 			return NULL;
-		}
-		else {
+		} else {
 			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
 			return NULL;
 		}
-        Py_RETURN_NONE; // cannot read the spectrum
+		Py_RETURN_NONE; // cannot read the spectrum
 	}
 
 	/* new feature: ignore precursor ion(s)
@@ -291,25 +285,24 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 	 */
 
-	cntls.search_mode = 'Q';    // Quick Search
-	cntls.user_mw   =  0; // Used by 'L', 'H', 'M' only
-	cntls.impure    =  0;
+	cntls.search_mode = 'Q'; // Quick Search
+	cntls.user_mw = 0;		 // Used by 'L', 'H', 'M' only
+	cntls.impure = 0;
 
-	cntls.min_mass  =  1;
-	cntls.max_mass  =  2000;
+	cntls.min_mass = 1;
+	cntls.max_mass = 2000;
 
-	cntls.min_abund = 1;  // ignored by ms/ms search
-
+	cntls.min_abund = 1; // ignored by ms/ms search
 
 	cntls.search_mode |= SEARCH_MODE_FLAG_IGNORE_PRECURSOR; // comment out to de-activate
 
 	// for selecting spectra to be compared according to their Precursor m/z
 	// and half-width of the ignoring precursor m/z interval (SEARCH_MODE_FLAG_IGNORE_PRECURSOR)
 	// (for integer m/z the rounding of the half-width is to the nearest 100)
-	cntls.precursor_ion_tolerance = 160;  // 1.6 m/z units
+	cntls.precursor_ion_tolerance = 160; // 1.6 m/z units
 	// cntls.precursor_ion_tolerance = 10;  // 1.6 m/z units
 	// for spectra comparison
-	cntls.product_ions_tolerance =  80;   // 0.8 m/z units
+	cntls.product_ions_tolerance = 80; // 0.8 m/z units
 
 	// Peptide Presearch Option
 	// The value assigned in the next statement has the followin meaning:
@@ -322,31 +315,31 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 															/* 0 => Presearch = OFF */
 
 	//--- Display indicators ----
-	cntls.pep_bTF_qry        = 0;
-	cntls.pep_bE_Omssa       = 1;
-	cntls.pep_bTF_lib        = 0;
-	cntls.pep_nCysteineModification = 0;  /* unused */
-	cntls.pep_cThreshold     = 0; /* 0=>the highest threshold, 1=>Mediium, 2=>the lowest */
+	cntls.pep_bTF_qry = 0;
+	cntls.pep_bE_Omssa = 1;
+	cntls.pep_bTF_lib = 0;
+	cntls.pep_nCysteineModification = 0; /* unused */
+	cntls.pep_cThreshold = 0;			 /* 0=>the highest threshold, 1=>Mediium, 2=>the lowest */
 	//--- Weight indicators ----
-	cntls.pep_bOmssa         = 1; /* Use OMSSA score for weighting = No */
+	cntls.pep_bOmssa = 1;		  /* Use OMSSA score for weighting = No */
 	cntls.pep_bNumReplicates = 0; /* Use number of Replicates = No */
-	cntls.pep_bQ_TOF         = 0;
+	cntls.pep_bQ_TOF = 0;
 
 	/*  attach allocated buffers to input/output structure */
-	pio->userms = &userms;     /*  input mass spectrum */
-	pio->cntls  = &cntls;      /*  type of search */
+	pio->userms = &userms; /*  input mass spectrum */
+	pio->cntls = &cntls;   /*  type of search */
 
 	/* prepare hit list to receive spectrum pointers */
-	pio->hit_list                   = &hit_list;  /* hit list */
-	pio->hit_list->spec_locs        = fpos_array; /* spectrum pointers */
-	pio->hit_list->max_spec_locs    = MAX_NOPRESRCH_HITS;
+	pio->hit_list = &hit_list;			   /* hit list */
+	pio->hit_list->spec_locs = fpos_array; /* spectrum pointers */
+	pio->hit_list->max_spec_locs = MAX_NOPRESRCH_HITS;
 	pio->hit_list->max_hits_desired = MAX_NOPRESRCH_HITS;
 
 	/* prepare hit list to receive spectrum compare results */
 	pio->hit_list->sim_num = sim_num;
 	pio->hit_list->rev_sim_num = rev_sim_num;
 	pio->hit_list->hit_prob = hit_prob;
-	for ( i = 0; i < NUM_ADD_SPEC_MATCHFACT; i ++ ) {
+	for (i = 0; i < NUM_ADD_SPEC_MATCHFACT; i++) {
 		hit_list.pep_Mf[i] = pep_scores[i];
 		// actually, only
 		// !!cntls.pep_bTF_qry+!!cntls.pep_bE_Omssa+!!cntls.pep_bTF_lib+!!cntls.bRevImpure
@@ -356,22 +349,20 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 	hit_list.lib_names = lib_names;
 	hit_list.lib_names_len = sizeof(LibNamesBuffer);
 	hit_list.max_one_lib_name_len = MAX_NAME_LEN;
-	hit_list.stru_pos = NULL;  /* no structures available in Peptide libraries */
-	hit_list.casnos   = NULL;  /* no CAS r.n. available in Peptide libraries */
+	hit_list.stru_pos = NULL; /* no structures available in Peptide libraries */
+	hit_list.casnos = NULL;	  /* no CAS r.n. available in Peptide libraries */
 
-	pio->constraints = NULL;        /*  no constraints */
+	pio->constraints = NULL; /*  no constraints */
 
 	/* if these were uncommented, hits would be subject to various peptide-specific constraints*/
-/*
-	io.constraints = &constraints;
-	clear_constraints(io.constraints);              // disable all constraints
-	set_pep_constraints(io.constraints); // add peptide-specific constraints
-*/
-//	printf("%d is the search_type\n",search_type) ;
+	// io.constraints = &constraints;
+	// clear_constraints(io.constraints);              // disable all constraints
+	// set_pep_constraints(io.constraints); // add peptide-specific constraints
+	// printf("%d is the search_type\n",search_type) ;
 
 	nistms_search(search_type, pio);
 
-	switch ( pio->error_code ) {
+	switch (pio->error_code) {
 		case 0:
 			break;
 		default:
@@ -381,60 +372,60 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 	PyObject *py_hit_list = PyList_New(0);
 
-	if(pio->hit_list->num_hits_found){
+	if (pio->hit_list->num_hits_found) {
 		int best_score = pio->hit_list->sim_num[0];
 
-//		printf("%d\n", best_score);
-//		printf("%d\n", pio->hit_list->num_hits_found);
+		// printf("%d\n", best_score);
+		// printf("%d\n", pio->hit_list->num_hits_found);
 
 		int name_len = pio->hit_list->max_one_lib_name_len;
-		unsigned char * raw_hit_names = pio->hit_list->lib_names;
+		unsigned char *raw_hit_names = pio->hit_list->lib_names;
 
-		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
+		for (int i = 0; i < pio->hit_list->num_hits_found; i++) {
 			PyObject *d = PyDict_New();
 
-//			printf("%d, ", i);
+			// printf("%d, ", i);
 
 			PyObject *py_sim_num = PyLong_FromLong(pio->hit_list->sim_num[i]);
 			PyDict_SetItemString(d, "sim_num", py_sim_num);
-//			printf("%d, ", pio->hit_list->sim_num[i]);
+			// printf("%d, ", pio->hit_list->sim_num[i]);
 
 			PyObject *py_rev_sim_num = PyLong_FromLong(pio->hit_list->rev_sim_num[i]);
 			PyDict_SetItemString(d, "rev_sim_num", py_rev_sim_num);
-//			printf("%d, ", pio->hit_list->rev_sim_num[i]);
+			// printf("%d, ", pio->hit_list->rev_sim_num[i]);
 
 			PyObject *py_hit_prob = PyLong_FromLong(pio->hit_list->hit_prob[i]);
 			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
-//			printf("%d, ", pio->hit_list->hit_prob[i]);
+			// printf("%d, ", pio->hit_list->hit_prob[i]);
 
-//			PyObject *py_in_library_prob = PyLong_FromLong(pio->hit_list->in_library_prob[i]);
-//		    PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
-//			printf("%d, ", pio->hit_list->in_library_prob[i]);
+			// PyObject *py_in_library_prob = PyLong_FromLong(pio->hit_list->in_library_prob[i]);
+			// PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
+			// printf("%d, ", pio->hit_list->in_library_prob[i]);
 
-			int start_byte = i*name_len;
+			int start_byte = i * name_len;
 			int end_byte = start_byte + name_len;
-			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
-//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
+			unsigned char buffer[MAX_NAME_LEN]; // Should be much larger than needed
+												//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
 			// Fix for Wine crash
-			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+			for (size_t i = start_byte; i <= end_byte; ++i) {
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
 			}
 
-//			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
-//			}
+			// for (int i = 0; i <= MAX_NAME_LEN; i++) {
+			// 	PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+			// }
 
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
 
-//			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
-//			PyDict_SetItemString(d, "hit_name", py_hit_name);
+			// PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
+			// PyDict_SetItemString(d, "hit_name", py_hit_name);
 
-//			printf("%ld, ", pio->hit_list->stru_pos[i]);
+			// printf("%ld, ", pio->hit_list->stru_pos[i]);
 
-//			printf("%ld, ", pio->hit_list->spec_locs[i]);
+			// printf("%ld, ", pio->hit_list->spec_locs[i]);
 
 			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
@@ -445,50 +436,45 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 				PyDict_SetItemString(d, "cas_no", PyLong_FromLong(0));
 			}
 
-//			printf("\n");
+			// printf("\n");
 
 			PyList_Append(py_hit_list, d);
-
 		}
 	}
 
-	return(py_hit_list);
+	return (py_hit_list);
 }
-
-
 
 /****************************************************************************
 Retieve identification information for spectra whose
 spectra locations were previously retrieved in a NISTMS_HIT_LIST structure.
 *****************************************************************************/
-static void build_hitlist(NISTMS_IO *pio)
-{
-/*  Buffers for rapidly showing names and structures a hit list */
-    char *lib_names = LibNamesBuffer;  /*  static Global buffer for compilation convenience */
-    static NISTMS_RECLOC stru_pos[MAX_FINAL_HITS];
-    static long int casnos[MAX_FINAL_HITS];
+static void build_hitlist(NISTMS_IO *pio) {
+	/*  Buffers for rapidly showing names and structures a hit list */
+	char *lib_names = LibNamesBuffer; /*  static Global buffer for compilation convenience */
+	static NISTMS_RECLOC stru_pos[MAX_FINAL_HITS];
+	static long int casnos[MAX_FINAL_HITS];
 
-    pio->constraints = NULL;
-    pio->hit_list->lib_names            = lib_names;
-    pio->hit_list->lib_names_len        = sizeof(LibNamesBuffer);
-    pio->hit_list->max_one_lib_name_len = MAX_NAME_LEN;
+	pio->constraints = NULL;
+	pio->hit_list->lib_names = lib_names;
+	pio->hit_list->lib_names_len = sizeof(LibNamesBuffer);
+	pio->hit_list->max_one_lib_name_len = MAX_NAME_LEN;
 
-    /* ensure returned data can fit in allocated space*/
-    pio->hit_list->max_hits_desired = min(pio->hit_list->max_hits_desired, 
-                                      MAX_FINAL_HITS);
-    if ( pio->hit_list->max_hits_desired > 0 ) {
-        /* set buffers for rapidly showing structures and CAS reg. nos. in a hit list */
-        pio->hit_list->stru_pos             = stru_pos;
-        pio->hit_list->casnos               = casnos;
-    } else {
-        /* no buffers for struct. pos.: save time */
-        pio->hit_list->stru_pos             = NULL;
-        pio->hit_list->casnos               = NULL;
-    }
+	/* ensure returned data can fit in allocated space*/
+	pio->hit_list->max_hits_desired = min(pio->hit_list->max_hits_desired, MAX_FINAL_HITS);
+	if (pio->hit_list->max_hits_desired > 0) {
+		/* set buffers for rapidly showing structures and CAS reg. nos. in a hit list */
+		pio->hit_list->stru_pos = stru_pos;
+		pio->hit_list->casnos = casnos;
+	} else {
+		/* no buffers for struct. pos.: save time */
+		pio->hit_list->stru_pos = NULL;
+		pio->hit_list->casnos = NULL;
+	}
 
-    /* this returns identification information for spectra in the hit list field */
-    /* spec_locs[] that satisfy any specified constraints */
-    nistms_search(NISTMS_BUILD_HITLIST_SRCH, pio);
+	/* this returns identification information for spectra in the hit list field */
+	/* spec_locs[] that satisfy any specified constraints */
+	nistms_search(NISTMS_BUILD_HITLIST_SRCH, pio);
 }
 
 static PyObject *nist_cas_search(NISTMS_IO *pio, char query[]) {
@@ -497,56 +483,55 @@ static PyObject *nist_cas_search(NISTMS_IO *pio, char query[]) {
     static NISTMS_HIT_LIST hit_list;   
     #define MAX_NUM_OF_OFFSETS MAX_FINAL_HITS  /*  must be no more than current system limit of NISTMS_MAX_FPOS=6000 */
 
-    static NISTMS_RECLOC fpos_array[MAX_NUM_OF_OFFSETS];
-    int num_hits_found = 0;
+	static NISTMS_RECLOC fpos_array[MAX_NUM_OF_OFFSETS];
+	int num_hits_found = 0;
 
-    pio->string_in = query; 
+	pio->string_in = query;
 
-    memset((void*)&hit_list, '\0', sizeof(hit_list) );
-    hit_list.spec_locs = fpos_array;
-    hit_list.max_spec_locs = MAX_NUM_OF_OFFSETS;
-    pio->hit_list = &hit_list;      
+	memset((void *)&hit_list, '\0', sizeof(hit_list));
+	hit_list.spec_locs = fpos_array;
+	hit_list.max_spec_locs = MAX_NUM_OF_OFFSETS;
+	pio->hit_list = &hit_list;
 
-    nistms_search(NISTMS_CASNO_SRCH, pio);
+	nistms_search(NISTMS_CASNO_SRCH, pio);
 
-	if ( pio->error_code ) {
+	if (pio->error_code) {
 		PyErr_Format(PyExc_RuntimeError, "Spectrum search returned error code %d\n", pio->error_code);
-			return NULL;
+		return NULL;
 	}
 
-    if (pio->hit_list->num_hits_found) {
-        /*  get compound identification information for compounds retrieved above */
-        pio->hit_list->max_hits_desired = pio->hit_list->num_hits_found;
-        build_hitlist(pio);
+	if (pio->hit_list->num_hits_found) {
+		/*  get compound identification information for compounds retrieved above */
+		pio->hit_list->max_hits_desired = pio->hit_list->num_hits_found;
+		build_hitlist(pio);
 
-        num_hits_found = pio->hit_list->num_hits_found;
-    } else {
-        num_hits_found = -1; // no more spectra in sequential search
-    }
+		num_hits_found = pio->hit_list->num_hits_found;
+	} else {
+		num_hits_found = -1; // no more spectra in sequential search
+	}
 
 	PyObject *py_hit_list = PyList_New(0);
 
-	if(pio->hit_list->num_hits_found){
+	if (pio->hit_list->num_hits_found) {
 
 		int name_len = pio->hit_list->max_one_lib_name_len;
-		unsigned char * raw_hit_names = pio->hit_list->lib_names;
+		unsigned char *raw_hit_names = pio->hit_list->lib_names;
 
-		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
+		for (int i = 0; i < pio->hit_list->num_hits_found; i++) {
 			PyObject *d = PyDict_New();
-
 
 			PyDict_SetItemString(d, "sim_num", PyLong_FromLong(0));
 			PyDict_SetItemString(d, "rev_sim_num", PyLong_FromLong(0));
 			PyDict_SetItemString(d, "hit_prob", PyLong_FromLong(0));
 
-			int start_byte = i*name_len;
+			int start_byte = i * name_len;
 			int end_byte = start_byte + name_len;
-			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
+			unsigned char buffer[MAX_NAME_LEN]; // Should be much larger than needed
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
 			// Fix for Wine crash
-			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+			for (size_t i = start_byte; i <= end_byte; ++i) {
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
 			}
 
@@ -562,27 +547,23 @@ static PyObject *nist_cas_search(NISTMS_IO *pio, char query[]) {
 			}
 
 			PyList_Append(py_hit_list, d);
-
 		}
 	}
 
-	return(py_hit_list);
+	return (py_hit_list);
 }
-
 
 /*
 Takes Python objects as input and prepares them for passing to nist_cas_search
 */
 static PyObject *cas_search(PyObject *self, PyObject *args) {
-	char *query ;
+	char *query;
 
 	if (!PyArg_ParseTuple(args, "s", &query))
 		return NULL;
 
-	return nist_cas_search( &io, query);
+	return nist_cas_search(&io, query);
 }
-
-
 
 /*
 Takes Python objects as input and prepares them for passing to full_spectrum_search
@@ -591,32 +572,33 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 	int counter;
 	char *test;
 	char *my_test;
-	int test_len ;
-	PyObject *py_hit_list ;
+	int test_len;
+	PyObject *py_hit_list;
 
 	int ok = PyArg_ParseTuple(args, "s", &test);
-	my_test = (char *) malloc(strlen(test)*sizeof('a'));
-	strcpy(my_test,test);
+	my_test = (char *)malloc(strlen(test) * sizeof('a'));
+	strcpy(my_test, test);
 	test_len = strlen(my_test);
 
-	for(counter = 0; counter < test_len; counter += 1){
-		if(my_test[counter] == '*'){
+	for (counter = 0; counter < test_len; counter += 1) {
+		if (my_test[counter] == '*') {
 			my_test[counter] = '\000';
 		}
 	}
 
-	py_hit_list = full_spectrum_search( &io, my_test);
+	py_hit_list = full_spectrum_search(&io, my_test);
 	free(my_test);
 	return py_hit_list;
 }
-
 
 /****************************************************************************
 
    This function illustrates a full-featured library search.
 
-* New (since July 2008): "fast presearch" is initiated if cntls.search_mode |=  SRCH_CONTROLS.SEARCH_MODE_FLAG_FAST_PRESEARCH
-* New (since July 2008): MS/MS search (type='E') with presearch may be executed the same way as the Identity (type='I') search
+* New (since July 2008): "fast presearch" is initiated if cntls.search_mode |=
+SRCH_CONTROLS.SEARCH_MODE_FLAG_FAST_PRESEARCH
+* New (since July 2008): MS/MS search (type='E') with presearch may be executed the same way as the Identity (type='I')
+search
 
    These searches are always conducted in two stages:
 	 1) screen search (pre-search) to find a set of possible hits
@@ -669,10 +651,10 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 
 	static NISTMS_CONSTRAINTS constraints;
-	static NISTMS_MASS_SPECTRUM userms;  /*  contains unknown spectrum */
-	static NISTMS_AUX_DATA      aux;
-	static NISTMS_HIT_LIST hit_list;     /*  returns hits */
-	static NISTMS_SRCH_CONTROLS cntls;   /*  specifies search type */
+	static NISTMS_MASS_SPECTRUM userms; /*  contains unknown spectrum */
+	static NISTMS_AUX_DATA aux;
+	static NISTMS_HIT_LIST hit_list;   /*  returns hits */
+	static NISTMS_SRCH_CONTROLS cntls; /*  specifies search type */
 
 	int search_type = NISTMS_SCREEN_SRCH;
 
@@ -709,8 +691,8 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	/*     Not meaningful for reverse (impure), 'S', 'H' or 'L' search modes  */
 	static int hit_prob[MAX_HITS_RETURNED];
 
-//	/*     Meaningful only for Peptide search */
-//	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
+	//	/*     Meaningful only for Peptide search */
+	//	static float pep_scores[NUM_ADD_SPEC_MATCHFACT][MAX_NOPRESRCH_HITS];
 
 	/*     OPTIONAL; for (possibly truncated) name retrieval for hit list presentation */
 	static unsigned char *lib_names = LibNamesBuffer;
@@ -720,20 +702,21 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	static long *casnos[MAX_HITS_RETURNED];
 
 	int i;
-	int best_score = 0 ;
+	int best_score = 0;
 
 	/*     OPTIONAL; for finding hits satisfying constraints  */
-	memset((void*)&cntls, '\0', sizeof(cntls) );
+	memset((void *)&cntls, '\0', sizeof(cntls));
 
-	memset((void*)&hit_list, '\0', sizeof(hit_list) );
-//	memset(pep_scores, 0, sizeof(pep_scores));
+	memset((void *)&hit_list, '\0', sizeof(hit_list));
+	// memset(pep_scores, 0, sizeof(pep_scores));
 
-	if ( 0 >= parse_spectrum(&userms, &aux, spectrum)) {
-		if ( userms.num_exact_mz < -1 ) {
-			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
+	if (0 >= parse_spectrum(&userms, &aux, spectrum)) {
+		if (userms.num_exact_mz < -1) {
+			PyErr_Format(PyExc_RuntimeError,
+						 "Only %d peaks were read: not enough room to read all peaks. Terminating.\n",
+						 -(1 + userms.num_exact_mz));
 			return NULL;
-		}
-		else {
+		} else {
 			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
 			return NULL;
 		}
@@ -764,46 +747,46 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	 *   -- masks --
 	 *   SEARCH_MODE_FLAG_MASK
 	 *   SEARCH_MODE_CHAR_MASK
-	******************************************************************************/
+	 ******************************************************************************/
 
 	cntls.search_mode = 'I';
-	cntls.user_mw   = 1; // Used by 'L', 'H' or 'M' only  // This got replaced by 0 later on
-	cntls.impure    = 0;
+	cntls.user_mw = 1; // Used by 'L', 'H' or 'M' only  // This got replaced by 0 later on
+	cntls.impure = 0;
 
 	// cntls.min_mass =-1 =>lower mass limit=max(min_mass(libms),min_mass(userms)), default in MS Search
 	// in MS Search built before 03/04/2013, in 'E' mode, cntls.min_mass is treated as
 	// cntls.min_mass = fabs(cntls.min_mass) >= 0
 	// cntls.max_mass  = -1 is treated as 1; 0 is treated as max. allowed m/z~4000
 
-	// Min Mass:  -1 => auto: max out of min m/z in library and search spectrum, implemented in MS Search build Mar 04, 2013 or later
-	// Max Mass:  -1=> auto: max out of max m/z in library and search spectrum; up to 4000, implemented in MS Search build Mar 04, 2013 or later
+	// Min Mass:  -1 => auto: max out of min m/z in library and search spectrum, implemented in MS Search build Mar 04,
+	// 2013 or later Max Mass:  -1=> auto: max out of max m/z in library and search spectrum; up to 4000, implemented in
+	// MS Search build Mar 04, 2013 or later
 
 	if ((cntls.search_mode & SEARCH_MODE_CHAR_MASK) == 'E') {
-		cntls.min_mass  = 0; //same as 1;
-		cntls.max_mass  = 0; //max. mass; same as -1=>no upper mass limit
-	}
-	else {
-		cntls.min_mass  = -1; //0 is the same as 1;
-		cntls.max_mass  = -1; //-1=>no upper mass limit
+		cntls.min_mass = 0; // same as 1;
+		cntls.max_mass = 0; // max. mass; same as -1=>no upper mass limit
+	} else {
+		cntls.min_mass = -1; // 0 is the same as 1;
+		cntls.max_mass = -1; //-1=>no upper mass limit
 	}
 
-//	cntls.min_mass  =  1;
-//	cntls.max_mass  =  -1;
+	//	cntls.min_mass  =  1;
+	//	cntls.max_mass  =  -1;
 
-	cntls.min_abund = 1;  // ignored by ms/ms search  // This got replaced by 0 (auto: min possible) later on
+	cntls.min_abund = 1; // ignored by ms/ms search  // This got replaced by 0 (auto: min possible) later on
 
 	/*  attach allocated buffers to input/output structure */
-	pio->userms = &userms;     /*  input mass spectrum */
-	pio->cntls  = &cntls;      /*  type of search */
+	pio->userms = &userms; /*  input mass spectrum */
+	pio->cntls = &cntls;   /*  type of search */
 
 	/* prepare hit list to receive spectrum pointers */
-	pio->hit_list                   = &hit_list;  /* hit list */
-	pio->hit_list->spec_locs        = fpos_array; /* spectrum pointers */
-	pio->hit_list->max_spec_locs = search_type == NISTMS_SCREEN_SRCH? MAX_SCREEN_LOCS : MAX_NOPRESRCH_HITS;
+	pio->hit_list = &hit_list;			   /* hit list */
+	pio->hit_list->spec_locs = fpos_array; /* spectrum pointers */
+	pio->hit_list->max_spec_locs = search_type == NISTMS_SCREEN_SRCH ? MAX_SCREEN_LOCS : MAX_NOPRESRCH_HITS;
 
 	/*  Screen ("pre-search") retrieves set of tentative hits */
 	nistms_search(search_type, pio);
-	switch ( pio->error_code ) {
+	switch (pio->error_code) {
 		case 0:
 			break;
 
@@ -821,7 +804,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 			printf("Screen search returned error code %d\n", pio->error_code);
 	};
 
-	if ( search_type == NISTMS_SCREEN_SRCH ) {
+	if (search_type == NISTMS_SCREEN_SRCH) {
 		/*
 		Now prepare for comparing spectra referred to in
 		io->hit_list->spec_locs with your spectrum
@@ -846,17 +829,17 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 		hit_list.stru_pos = stru_pos;
 		hit_list.casnos = casnos;
 
-		pio->constraints = NULL;        /*  no constraints */
+		pio->constraints = NULL; /*  no constraints */
 
 		/* if these were uncommented, hits would be subjected to various constraints*/
 
-//		pio.constraints = &constraints;
-//		clear_constraints(pio.constraints);
-//		#ifdef PEPTIDE_VERSION
-//			set_pep_constraints( pio.constraints );
-//		#endif
-//			set_constraints( pio.constraints );
-//		   pio.constraints.other_dbs=65;
+		// pio.constraints = &constraints;
+		// clear_constraints(pio.constraints);
+		// #ifdef PEPTIDE_VERSION
+		// 	set_pep_constraints( pio.constraints );
+		// #endif
+		// 	set_constraints( pio.constraints );
+		//    pio.constraints.other_dbs=65;
 
 		/*  compare complete user and library spectra found by pre-search */
 		nistms_search(NISTMS_COMPARE_SPECTRA_SRCH, pio);
@@ -864,78 +847,75 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 
 	PyObject *py_hit_list = PyList_New(0);
 
-	if(pio->hit_list->num_hits_found){
+	if (pio->hit_list->num_hits_found) {
 		int best_score = pio->hit_list->sim_num[0];
 
-//		printf("%d\n", best_score);
-//		printf("%d\n", pio->hit_list->num_hits_found);
+		// printf("%d\n", best_score);
+		// printf("%d\n", pio->hit_list->num_hits_found);
 
 		int name_len = pio->hit_list->max_one_lib_name_len;
-		unsigned char * raw_hit_names = pio->hit_list->lib_names;
+		unsigned char *raw_hit_names = pio->hit_list->lib_names;
 
-		for(int i = 0; i < pio->hit_list->num_hits_found; i++) {
+		for (int i = 0; i < pio->hit_list->num_hits_found; i++) {
 			PyObject *d = PyDict_New();
 
-//			printf("%d, ", i);
+			printf("%d, ", i);
 
 			PyObject *py_sim_num = PyLong_FromLong(hit_list.sim_num[i]);
 			PyDict_SetItemString(d, "sim_num", py_sim_num);
-//			printf("%d, ", pio->hit_list->sim_num[i]);
+			printf("%d, ", pio->hit_list->sim_num[i]);
 
 			PyObject *py_rev_sim_num = PyLong_FromLong(hit_list.rev_sim_num[i]);
 			PyDict_SetItemString(d, "rev_sim_num", py_rev_sim_num);
-//			printf("%d, ", pio->hit_list->rev_sim_num[i]);
+			printf("%d, ", pio->hit_list->rev_sim_num[i]);
 
 			PyObject *py_hit_prob = PyLong_FromLong(hit_list.hit_prob[i]);
 			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
-//			printf("%d, ", pio->hit_list->hit_prob[i]);
+			printf("%d, ", pio->hit_list->hit_prob[i]);
 
-//			PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
-//		    PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
-//			printf("%d, ", pio->hit_list->in_library_prob[i]);
+			// PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
+			// PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
+			// printf("%d, ", pio->hit_list->in_library_prob[i]);
 
-			int start_byte = i*name_len;
+			int start_byte = i * name_len;
 			int end_byte = start_byte + name_len;
-			unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
-//			slice_str(raw_hit_names, buffer, start_byte, end_byte);
+			unsigned char buffer[MAX_NAME_LEN]; // Should be much larger than needed
+			// slice_str(raw_hit_names, buffer, start_byte, end_byte);
 
 			PyObject *py_hit_name_char_list = PyList_New(0);
 
 			// Fix for Wine crash
-			for ( size_t i = start_byte; i <= end_byte; ++i ) {
+			for (size_t i = start_byte; i <= end_byte; ++i) {
 				PyList_Append(py_hit_name_char_list, PyLong_FromLong(raw_hit_names[i]));
 			}
 
-//			for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//				PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
-//			}
+			// for (int i = 0; i <= MAX_NAME_LEN; i++) {
+			// 	PyList_Append(py_hit_name_char_list, PyLong_FromLong(buffer[i]));
+			// }
 
 			PyDict_SetItemString(d, "hit_name_chars", py_hit_name_char_list);
 
-//			PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
-//			PyDict_SetItemString(d, "hit_name", py_hit_name);
+			// PyObject *py_hit_name = PyUnicode_FromFormat("%s", buffer);
+			// PyDict_SetItemString(d, "hit_name", py_hit_name);
 
-//			printf("%ld, ", pio->hit_list->stru_pos[i]);
+			// printf("%ld, ", pio->hit_list->stru_pos[i]);
 
 			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
-//			printf("%ld, ", pio->hit_list->spec_locs[i]);
+			// printf("%ld, ", pio->hit_list->spec_locs[i]);
 
 			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
 			PyDict_SetItemString(d, "cas_no", py_cas_no);
-//			printf("%ld, ", pio->hit_list->casnos[i]);
+			// printf("%ld, ", pio->hit_list->casnos[i]);
 
-//			printf("\n");
+			// printf("\n");
 
 			PyList_Append(py_hit_list, d);
-
 		}
 	}
 
-	return(py_hit_list);
-
+	return (py_hit_list);
 }
-
 
 /*
 Finds and returns the information about the spectrum at the given location in the library
@@ -945,63 +925,63 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 	PyObject *record = PyDict_New();
 	PyObject *py_mass_list = PyList_New(0);
 	PyObject *py_intensity_list = PyList_New(0);
-//	PyObject *py_synonym_list = PyList_New(0);
+	// PyObject *py_synonym_list = PyList_New(0);
 	PyObject *py_synonyms_char_list = PyList_New(0);
 
 	int ok = PyArg_ParseTuple(args, "l", &input_spec_loc);
-//	printf("Parsed Args\n");
-//	printf("input_spec_locs = %ld", input_spec_loc);
+	// printf("Parsed Args\n");
+	// printf("input_spec_locs = %ld", input_spec_loc);
 
-	get_spectrum( &io, input_spec_loc);
+	get_spectrum(&io, input_spec_loc);
 
-//	printf("Search Complete\n");
+	// printf("Search Complete\n");
 
-//	printf("Name: %s\n", io.aux_data->name);
+	// printf("Name: %s\n", io.aux_data->name);
 	PyObject *py_name = PyUnicode_FromFormat("%s", io.aux_data->name);
 	PyDict_SetItemString(record, "name", py_name);
 
 	PyObject *py_name_char_list = PyList_New(0);
 
 	for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//		printf("%d ", io.aux_data->name[i]);
+		// printf("%d ", io.aux_data->name[i]);
 		PyList_Append(py_name_char_list, PyLong_FromLong(io.aux_data->name[i]));
 	}
 
 	PyDict_SetItemString(record, "name_chars", py_name_char_list);
 
-//	printf("CAS: %ld\n", io.aux_data->casno);
+	// printf("CAS: %ld\n", io.aux_data->casno);
 	PyObject *py_cas = PyLong_FromLong(io.aux_data->casno);
 	PyDict_SetItemString(record, "cas", py_cas);
 
-//	printf("NIST Num: %ld\n", io.aux_data->specno);
+	// printf("NIST Num: %ld\n", io.aux_data->specno);
 	PyObject *py_nist_no = PyLong_FromLong(io.aux_data->specno);
 	PyDict_SetItemString(record, "nist_no", py_nist_no);
 
-//	printf("ID: %ld\n", io.aux_data->ident);
+	// printf("ID: %ld\n", io.aux_data->ident);
 	PyObject *py_id = PyLong_FromLong(io.aux_data->ident);
 	PyDict_SetItemString(record, "id", py_id);
 
-//	printf("MW: %d\n", io.aux_data->mw);
+	// printf("MW: %d\n", io.aux_data->mw);
 	PyObject *py_mw = PyLong_FromLong(io.aux_data->mw);
 	PyDict_SetItemString(record, "mw", py_mw);
 
-//	printf("Exact Mass: %f##\n", io.aux_data->exact_mw);
+	// printf("Exact Mass: %f##\n", io.aux_data->exact_mw);
 
-//	printf("Formula: %s\n", io.aux_data->formula);
+	// printf("Formula: %s\n", io.aux_data->formula);
 	PyObject *py_formula = PyUnicode_FromString(io.aux_data->formula);
 	PyDict_SetItemString(record, "formula", py_formula);
 
-//	printf("Contributor: %s\n", io.aux_data->contributor);
+	// printf("Contributor: %s\n", io.aux_data->contributor);
 	PyObject *py_contributor = PyUnicode_FromString(io.aux_data->contributor);
 	PyDict_SetItemString(record, "contributor", py_contributor);
 
-//	printf("MS Num Peaks: %d\n", io.libms->num_peaks);
-	for (int i=0; i < io.libms->num_peaks; i++) {
-//		printf("\tmz, Intensity: %d %d\n", io.libms->mass[i], io.libms->abund[i]);
-//		printf("%d\n", PyLong_FromLong(io.libms->mass[i]));
+	// printf("MS Num Peaks: %d\n", io.libms->num_peaks);
+	for (int i = 0; i < io.libms->num_peaks; i++) {
+		// printf("\tmz, Intensity: %d %d\n", io.libms->mass[i], io.libms->abund[i]);
+		// printf("%d\n", PyLong_FromLong(io.libms->mass[i]));
 		PyList_Append(py_mass_list, PyLong_FromLong(io.libms->mass[i]));
 		PyList_Append(py_intensity_list, PyLong_FromLong(io.libms->abund[i]));
-//		printf("%d, %d\n", i, io.libms->num_peaks);
+		// printf("%d, %d\n", i, io.libms->num_peaks);
 	}
 
 	PyDict_SetItemString(record, "mass_list", py_mass_list);
@@ -1009,46 +989,45 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 
 	// Get synonyms in a list
 	int start_byte = 0;
-	unsigned char buffer[MAX_NAME_LEN];  // Should be much larger than needed
+	unsigned char buffer[MAX_NAME_LEN]; // Should be much larger than needed
 
 	for (int i = 0; i <= io.aux_data->synonyms_len; i++) {
 		if (io.aux_data->synonyms[i] == 0) {
-			if (i-start_byte > 0) {
-//				slice_str(io.aux_data->synonyms, buffer, start_byte, i);
-//				printf("%s#\n", buffer);
-//				printf("%s\n", PyUnicode_FromString(buffer));
-//				PyList_Append(py_synonym_list, PyUnicode_FromFormat("%s", buffer));
+			if (i - start_byte > 0) {
+				// slice_str(io.aux_data->synonyms, buffer, start_byte, i);
+				// printf("%s#\n", buffer);
+				// printf("%s\n", PyUnicode_FromString(buffer));
+				// PyList_Append(py_synonym_list, PyUnicode_FromFormat("%s", buffer));
 
 				PyObject *py_synonym_char_list = PyList_New(0);
 
-//				for (int i = 0; i <= MAX_NAME_LEN; i++) {
-//					PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
-//				}
+				// for (int i = 0; i <= MAX_NAME_LEN; i++) {
+				// 	PyList_Append(py_synonym_char_list, PyLong_FromLong(buffer[i]));
+				// }
 
 				// Fix for Wine crash
-				for ( size_t j = start_byte; j <= i; ++j ) {
+				for (size_t j = start_byte; j <= i; ++j) {
 					PyList_Append(py_synonym_char_list, PyLong_FromLong(io.aux_data->synonyms[j]));
 				}
 
 				PyList_Append(py_synonyms_char_list, py_synonym_char_list);
 			}
 
-			start_byte = i+1;
+			start_byte = i + 1;
 			char buffer[MAX_NAME_LEN];
 		}
 	}
 
-//	PyDict_SetItemString(record, "synonyms", py_synonym_list);
+	// PyDict_SetItemString(record, "synonyms", py_synonym_list);
 	PyDict_SetItemString(record, "synonyms_chars", py_synonyms_char_list);
 
 	return record;
 }
 
-
 /* loads a single spectrum from a string */
-static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *szPeaks) {
+static int parse_spectrum(NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *szPeaks) {
 
-	unsigned char szName[]    = "unknown";
+	unsigned char szName[] = "unknown";
 	int bIncludeExactMZ = 0;
 
 	/* tab-separated pairs (m/z, abundance) separated by NULL bytes; m/z in ASCENDING order */
@@ -1058,18 +1037,17 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 
 	int i;
 	char *p, *q, *pPeakBuf;
-	double dMz, dAbund, dMaxAbund=0.0;
-	unsigned int  rounded_mz, rounded_ab;
+	double dMz, dAbund, dMaxAbund = 0.0;
+	unsigned int rounded_mz, rounded_ab;
 
 	/* Name */
-	memcpy( aux_data->name, szName, sizeof(szName) );
-
+	memcpy(aux_data->name, szName, sizeof(szName));
 
 	/* Mass Spectrum */
 
 	/* Copy the mz-Abund exact data */
-	if ( ms->buf_exact_mz && ms->exact_mz && ms->exact_mz_len > 0 && sizeof( szPeaks ) <= ms->buf_exact_mz_len ) {
-		memcpy( ms->buf_exact_mz, szPeaks, sizeof( szPeaks ) );
+	if (ms->buf_exact_mz && ms->exact_mz && ms->exact_mz_len > 0 && sizeof(szPeaks) <= ms->buf_exact_mz_len) {
+		memcpy(ms->buf_exact_mz, szPeaks, sizeof(szPeaks));
 		pPeakBuf = ms->buf_exact_mz;
 		bIncludeExactMZ = 1;
 	} else {
@@ -1078,10 +1056,10 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 	}
 
 	/* count peaks, find max. abundance, store pointers to peaks */
-	for ( i = 0, p = pPeakBuf; *p; p ++, i ++ ) {
+	for (i = 0, p = pPeakBuf; *p; p++, i++) {
 		/* p points to the peak text data; store it */
-		if ( bIncludeExactMZ ) {
-			if ( i < ms->exact_mz_len ) {
+		if (bIncludeExactMZ) {
+			if (i < ms->exact_mz_len) {
 				ms->exact_mz[i] = p;
 			} else {
 				return -1; /* not enough room */
@@ -1089,40 +1067,39 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 		}
 
 		/* read one peak */
-		dMz = strtod( p, &q );
-		p = q+1;
-		dAbund = strtod( p, &q );
-		p = q+strlen(q);
-		if ( dMaxAbund < dAbund ) {
+		dMz = strtod(p, &q);
+		p = q + 1;
+		dAbund = strtod(p, &q);
+		p = q + strlen(q);
+		if (dMaxAbund < dAbund) {
 			dMaxAbund = dAbund;
 		}
 	}
 
-	if ( bIncludeExactMZ ) {
-		ms->num_exact_mz = i;  /* store number of exact m/z peaks */
+	if (bIncludeExactMZ) {
+		ms->num_exact_mz = i; /* store number of exact m/z peaks */
 	}
 
 	/* store integral peaks */
-	for ( i = 0, p = pPeakBuf; *p; p ++ ) {
+	for (i = 0, p = pPeakBuf; *p; p++) {
 		/* read one peak */
-		dMz = strtod( p, &q );
-		p = q+1;
-		dAbund = strtod( p, &q );
-		p = q+strlen(q);
+		dMz = strtod(p, &q);
+		p = q + 1;
+		dAbund = strtod(p, &q);
+		p = q + strlen(q);
 		/* rounding */
-		rounded_mz = (unsigned int)floor(dMz+0.5);
-		rounded_ab = (unsigned int)floor( 0.1 + (999.0 * dAbund / dMaxAbund) );
+		rounded_mz = (unsigned int)floor(dMz + 0.5);
+		rounded_ab = (unsigned int)floor(0.1 + (999.0 * dAbund / dMaxAbund));
 		/* assuming m/z in ascending order */
-		if ( i && rounded_mz == ms->mass[i-1] ) {
+		if (i && rounded_mz == ms->mass[i - 1]) {
 			/* same integral m/z: choose greater abundance */
-			if ( ms->abund[i-1] < rounded_ab )
-				ms->abund[i-1] = rounded_ab;
-		} else
-		if ( i < NISTMS_MAXPEAKS ) {
+			if (ms->abund[i - 1] < rounded_ab)
+				ms->abund[i - 1] = rounded_ab;
+		} else if (i < NISTMS_MAXPEAKS) {
 			/* add next integral peak */
-			ms->mass[i]  = rounded_mz;
+			ms->mass[i] = rounded_mz;
 			ms->abund[i] = rounded_ab;
-			i ++;
+			i++;
 		} else {
 			break; /* Too many peaks; in this simple example we ignore the rest. */
 			/* Actually, the smallest peaks are to be ignored, not the last ones */
@@ -1132,11 +1109,10 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 	}
 	ms->num_peaks = i; /* store the number of integral m/z peaks; ms->num_peaks <= ms->num_exact_mz */
 
-	return ms->num_peaks;  /* number of integral m/z peaks */
+	return ms->num_peaks; /* number of integral m/z peaks */
 }
 
-
-//static int initialize_libs(NISTMS_IO *pio) {
+// static int initialize_libs(NISTMS_IO *pio) {
 //	num_libs     = 0;
 //	lib_paths[0] = 0;
 //
@@ -1184,10 +1160,8 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
 //	}
 //
 //	return(pio->error_code);
-//}
+// }
 //
-
-
 
 /**********************************************************************
  Function for retrieving all data associated with a spectrum, including:
@@ -1213,23 +1187,21 @@ static int parse_spectrum( NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, 
   If optional data is not needed, retrieval will be faster if the
   corresponding fields are NULL.
 ***************************************************************************/
-static void get_spectrum(NISTMS_IO *pio, NISTMS_RECLOC *fpos) {
-	get_spectrum_int_or_accurate_mz(pio, fpos, 1) ;
-}
+static void get_spectrum(NISTMS_IO *pio, NISTMS_RECLOC *fpos) { get_spectrum_int_or_accurate_mz(pio, fpos, 1); }
 /*****************************************************************/
 static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz) {
-	static NISTMS_MASS_SPECTRUM ms;             /*  required */
-	static NISTMS_AUX_DATA      aux;            /*  optionsl */
-	static NISTMS_STDATA        stdata;         /*  optional */
-	//#define MAX_NUM_REPLICATES  10              /*  larger than ever needed */
+	static NISTMS_MASS_SPECTRUM ms; /*  required */
+	static NISTMS_AUX_DATA aux;		/*  optionsl */
+	static NISTMS_STDATA stdata;	/*  optional */
+	// #define MAX_NUM_REPLICATES  10              /*  larger than ever needed */
 	static NISTMS_RECLOC rep_locs[NISTMS_MAXREPLICATES]; /*  optional */
 
 	#if( defined(ALLOW_MSMS_VERSION) )
 	/* larger peptide-specific 'peaks text info' sizes may be needed */
-	#define MZ_PEAK_NUM   NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM
-	#define MZ_TEXT_SIZE  NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN
-	static char           szMzText[MZ_TEXT_SIZE];  /* buffer to hold 'peaks text info' */
-	static char          *pMzPtr[MZ_PEAK_NUM];     /* pointers to peaks */
+	#define MZ_PEAK_NUM NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM
+	#define MZ_TEXT_SIZE NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN
+	static char szMzText[MZ_TEXT_SIZE];			   /* buffer to hold 'peaks text info' */
+	static char *pMzPtr[MZ_PEAK_NUM];			   /* pointers to peaks */
 	#define REFERENCES_LEN NISTMS_MAXREFERENCESLEN /* may be greater */
 	static char           szReferences[REFERENCES_LEN];
 	#endif
@@ -1316,12 +1288,11 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 }
 /**************************************************************************/
 
-
 static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir) {
-	num_libs     = 0;
+	num_libs = 0;
 	lib_paths[0] = 0;
 
-	strcpy(lib_paths,  lib_path);
+	strcpy(lib_paths, lib_path);
 
 	printf("Using the following libraries:\n");
 	printf("%s\n", lib_paths);
@@ -1341,7 +1312,7 @@ static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_
 	pio->lib_types = lib_types;
 
 	strcpy(work_dir_path, work_dir);
-	pio->work_dir_path=work_dir_path;
+	pio->work_dir_path = work_dir_path;
 
 	/* attach callback function pointer */
 	pio->callback = CallBack;
@@ -1349,15 +1320,14 @@ static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_
 	nistms_search(NISTMS_INIT_SRCH, pio);
 
 	/* no need for paths and callback until next NISTMS_INIT_SRCH */
-	pio->work_dir_path=NULL;
-	pio->lib_paths    =NULL;
-	pio->callback     =NULL;
-
+	pio->work_dir_path = NULL;
+	pio->lib_paths = NULL;
+	pio->callback = NULL;
 
 	/* make sure struct. parts of user libraries are properly indexed */
-	if ( !pio->error_code ) {
-		active_libs[0] = 1; //2; /* user library */
-		active_libs[1] = 0; //4; /* another user library */
+	if (!pio->error_code) {
+		active_libs[0] = 1; // 2; /* user library */
+		active_libs[1] = 0; // 4; /* another user library */
 		active_libs[2] = 0;
 		pio->active_libs = active_libs;
 		nistms_search(NISTMS_INDEX_USER_STRU, pio);
@@ -1478,8 +1448,10 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_MAXREPLICATES", Py_BuildValue("i", NISTMS_MAXREPLICATES));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXANYPEAKS", Py_BuildValue("i", NISTMS_MAXANYPEAKS));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXPEAKS", Py_BuildValue("i", NISTMS_MAXPEAKS));
-	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM", Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM));
-	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN", Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN));
+	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM",
+						   Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM));
+	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN",
+						   Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXNAMELEN", Py_BuildValue("i", NISTMS_MAXNAMELEN));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXFORMLEN", Py_BuildValue("i", NISTMS_MAXFORMLEN));
 	PyObject_SetAttrString(py_module, "NISTMS_EXACT", Py_BuildValue("i", NISTMS_EXACT));
@@ -1494,7 +1466,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_PEPNAME_FRAG_LEN", Py_BuildValue("i", NISTMS_PEPNAME_FRAG_LEN));
 	PyObject_SetAttrString(py_module, "WARNING_NUM", Py_BuildValue("i", WARNING_NUM));
 	PyObject_SetAttrString(py_module, "MAX_WARN_STR", Py_BuildValue("i", MAX_WARN_STR));
-//	PyObject_SetAttrString(py_module, "INTERP_DEF", Py_BuildValue("i", INTERP_DEF));
+	// PyObject_SetAttrString(py_module, "INTERP_DEF", Py_BuildValue("i", INTERP_DEF));
 	PyObject_SetAttrString(py_module, "NUM_SUBS", Py_BuildValue("i", NUM_SUBS));
 	PyObject_SetAttrString(py_module, "NUM_MW_ESTIMATES", Py_BuildValue("i", NUM_MW_ESTIMATES));
 	PyObject_SetAttrString(py_module, "NISTMS_MAX_USER_STRUCT_FILES", Py_BuildValue("i", NISTMS_MAX_USER_STRUCT_FILES));

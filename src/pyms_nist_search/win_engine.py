@@ -43,7 +43,6 @@ from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum
 
 # this package
-# from ._core import *  # type: ignore
 from pyms_nist_search.reference_data import ReferenceData
 from pyms_nist_search.search_result import SearchResult
 from pyms_nist_search.utils import pack
@@ -129,7 +128,7 @@ class Engine:
 		"""
 		Search for a compound by CAS number.
 
-		:param cas: 
+		:param cas:
 
 		:return: List of results for CAS number (usually just one result).
 		"""

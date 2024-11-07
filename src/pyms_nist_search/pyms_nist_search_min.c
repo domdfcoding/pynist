@@ -60,7 +60,6 @@ This file is a modified version of the CALLDLL.C files from
 /*  link to nistdl32.lib */
 #endif
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -68,24 +67,19 @@ This file is a modified version of the CALLDLL.C files from
 #include <ctype.h>
 #include <memory.h>
 
-
 #include "NISTMS_min.H"
 #include "NISTERR.H"
 
-
-#define MAX_NAME_LEN 120       /*  longest string returned for a name in hit list */
+#define MAX_NAME_LEN 120 /*  longest string returned for a name in hit list */
 
 #ifdef WIN32
-	#define MAX_FINAL_HITS 6000   /*  largest number of spectra in final hit list */                              /*  This value MUST be >= 120 */
+	#define MAX_FINAL_HITS 6000 /*  largest number of spectra in final hit list */ /*  This value MUST be >= 120 */
 #else
-	#define MAX_FINAL_HITS 1000   /*  largest number of spectra in final hit list */
-								  /*  This value MUST be >= 120 */
+	#define MAX_FINAL_HITS 1000 /*  largest number of spectra in final hit list */
+/*  This value MUST be >= 120 */
 #endif
 
-
-static PyMethodDef Methods[] = {
-	{NULL, NULL}
-};
+static PyMethodDef Methods[] = { { NULL, NULL } };
 
 static struct PyModuleDef _core = {
 	PyModuleDef_HEAD_INIT,
@@ -95,10 +89,7 @@ static struct PyModuleDef _core = {
 	Methods
 };
 
-
-PyMODINIT_FUNC
-PyInit__core(void)
-{
+PyMODINIT_FUNC PyInit__core(void) {
 	PyObject *py_module = PyModule_Create(&_core);
 
 	PyObject_SetAttrString(py_module, "COUNT_REF_PEAKS", Py_BuildValue("i", COUNT_REF_PEAKS));
@@ -129,8 +120,10 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_MAXREPLICATES", Py_BuildValue("i", NISTMS_MAXREPLICATES));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXANYPEAKS", Py_BuildValue("i", NISTMS_MAXANYPEAKS));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXPEAKS", Py_BuildValue("i", NISTMS_MAXPEAKS));
-	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM", Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM));
-	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN", Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN));
+	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM",
+						   Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM));
+	PyObject_SetAttrString(py_module, "NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN",
+						   Py_BuildValue("i", NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXNAMELEN", Py_BuildValue("i", NISTMS_MAXNAMELEN));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXFORMLEN", Py_BuildValue("i", NISTMS_MAXFORMLEN));
 	PyObject_SetAttrString(py_module, "NISTMS_EXACT", Py_BuildValue("i", NISTMS_EXACT));
@@ -145,7 +138,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_PEPNAME_FRAG_LEN", Py_BuildValue("i", NISTMS_PEPNAME_FRAG_LEN));
 	PyObject_SetAttrString(py_module, "WARNING_NUM", Py_BuildValue("i", WARNING_NUM));
 	PyObject_SetAttrString(py_module, "MAX_WARN_STR", Py_BuildValue("i", MAX_WARN_STR));
-//	PyObject_SetAttrString(py_module, "INTERP_DEF", Py_BuildValue("i", INTERP_DEF));
+	// PyObject_SetAttrString(py_module, "INTERP_DEF", Py_BuildValue("i", INTERP_DEF));
 	PyObject_SetAttrString(py_module, "NUM_SUBS", Py_BuildValue("i", NUM_SUBS));
 	PyObject_SetAttrString(py_module, "NUM_MW_ESTIMATES", Py_BuildValue("i", NUM_MW_ESTIMATES));
 	PyObject_SetAttrString(py_module, "NISTMS_MAX_USER_STRUCT_FILES", Py_BuildValue("i", NISTMS_MAX_USER_STRUCT_FILES));
@@ -285,7 +278,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_ASCII", Py_BuildValue("i", search_type));
 	search_type = NISTMS_STRING_TO_GREEK;
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_GREEK", Py_BuildValue("i", search_type));
-	#if( MSTXTDATA == 1 )
+	#if (MSTXTDATA == 1)
 		search_type = NISTMS_SET_VERSION;
 		PyObject_SetAttrString(py_module, "NISTMS_SET_VERSION", Py_BuildValue("i", search_type));
 		search_type = NISTMS_DECODE_MODS;
@@ -299,7 +292,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_LIBS", Py_BuildValue("i", search_type));
 	search_type = NISTMS_MARK_ALL_LIBS;
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_ALL_LIBS", Py_BuildValue("i", search_type));
-	#if ( EXACTMW == 1 )
+	#if (EXACTMW == 1)
 		search_type = NISTMS_INDEX_LIBRARY_EXACT_MASS;
 		PyObject_SetAttrString(py_module, "NISTMS_INDEX_LIBRARY_EXACT_MASS", Py_BuildValue("i", search_type));
 		search_type = NISTMS_EXACT_MASS_SRCH;
