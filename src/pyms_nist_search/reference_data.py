@@ -374,4 +374,4 @@ class ReferenceData(NISTBase):
 
 @sdjson.register_encoder(ReferenceData)
 def encode_reference_data(obj: ReferenceData) -> Dict[str, Any]:
-	return dict(obj)
+	return obj.to_dict()

@@ -160,4 +160,4 @@ class SearchResult(NISTBase):
 
 @register_encoder(SearchResult)
 def encode_search_result(obj: SearchResult) -> Dict[str, Any]:
-	return dict(obj)
+	return obj.to_dict()
