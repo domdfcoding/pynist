@@ -48,3 +48,7 @@ def test_different_n_hits(search: pyms_nist_search.Engine, spectra: Tuple[str, O
 		hit_list = search.spectrum_search(spectrum, n_hits=n_hits)
 
 		assert len(hit_list) == n_hits
+
+
+def test_cas_search(search: pyms_nist_search.Engine):
+	search.cas_search("0-0-0")

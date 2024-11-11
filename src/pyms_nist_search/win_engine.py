@@ -57,10 +57,7 @@ class Engine:
 	"""
 	Search engine for Windows systems.
 
-	.. TODO::
-
-		Search by Name. See page 13 of the documentation.
-		Would also like to search by CAS number but DLL doesn't seem to support that.
+	.. TODO:: Search by Name. See page 13 of the documentation.
 
 	:param lib_path: The path to the mass spectral library.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.

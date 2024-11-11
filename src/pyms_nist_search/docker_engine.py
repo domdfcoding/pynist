@@ -250,6 +250,31 @@ class Engine:
 
 		raise TimeoutError("Unable to communicate with the search server.")
 
+	@staticmethod
+	def cas_search(cas: str) -> List[SearchResult]:
+		"""
+		Search for a compound by CAS number.
+
+		:param cas:
+
+		:return: List of results for CAS number (usually just one result).
+		"""
+
+		retry_count = 0
+
+		# Keep trying until it works
+		while retry_count < 240:
+			try:
+				res = requests.post(f"http://localhost:5001/search/cas/{cas}")
+				res.raise_for_status()
+				return hit_list_from_json(res.text)
+
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+				retry_count += 1
+
+		raise TimeoutError("Unable to communicate with the search server.")
+
 	@require_init
 	def full_spectrum_search(
 			self,
