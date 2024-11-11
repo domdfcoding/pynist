@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyms-nist-search"
-version = "0.7.0"
+version = "0.7.1"
 description = "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine."
 readme = "README.rst"
 requires-python = ">=3.6.1"
