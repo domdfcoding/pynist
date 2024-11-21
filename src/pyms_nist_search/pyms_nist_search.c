@@ -699,7 +699,7 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 	static NISTMS_RECLOC *stru_pos[MAX_HITS_RETURNED];
 
 	/*     OPTIONAL; for CAS reg. nos. retrieval for hit list presentation */
-	static long *casnos[MAX_HITS_RETURNED];
+	long *casnos[MAX_HITS_RETURNED];
 
 	int i;
 	int best_score = 0;
