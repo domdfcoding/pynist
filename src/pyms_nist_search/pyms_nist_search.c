@@ -480,7 +480,7 @@ static void build_hitlist(NISTMS_IO *pio) {
 static PyObject *nist_cas_search(NISTMS_IO *pio, char query[]) {
 
 
-    static NISTMS_HIT_LIST hit_list;   
+    static NISTMS_HIT_LIST hit_list;
     #define MAX_NUM_OF_OFFSETS MAX_FINAL_HITS  /*  must be no more than current system limit of NISTMS_MAX_FPOS=6000 */
 
 	static NISTMS_RECLOC fpos_array[MAX_NUM_OF_OFFSETS];
