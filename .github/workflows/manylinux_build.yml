@@ -77,7 +77,7 @@ jobs:
           pip-wheel-args: '--no-deps -w ./wheelhouse'
 
       - name: Upload Artifacts 🚀
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: "wheels-${{ matrix.config.tag }}"
           path: wheelhouse/
