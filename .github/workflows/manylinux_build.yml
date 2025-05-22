@@ -26,7 +26,6 @@ jobs:
       fail-fast: False
       matrix:
         config:
-          - {python-version: "3.6", testenv: "py36", tag: "cp36-cp36m"}
           - {python-version: "3.7", testenv: "py37", tag: "cp37-cp37m"}
           - {python-version: "3.8", testenv: "py38", tag: "cp38-cp38"}
           - {python-version: "3.9", testenv: "py39", tag: "cp39-cp39"}
