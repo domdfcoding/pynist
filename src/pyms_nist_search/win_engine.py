@@ -36,7 +36,7 @@ Search engine for Windows systems.
 # stdlib
 import atexit
 import pathlib
-from typing import List, Optional, Tuple
+from typing import List, Optional, Sequence, Tuple, Union
 
 # 3rd party
 from domdf_python_tools.typing import PathLike
@@ -68,13 +68,11 @@ class Engine:
 
 	def __init__(
 			self,
-			lib_path: PathLike,
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
 			lib_type: int = _core.NISTMS_MAIN_LIB,
 			work_dir: Optional[PathLike] = None,
 			debug: bool = False,
 			):
-		if not isinstance(lib_path, pathlib.Path):
-			lib_path = pathlib.Path(lib_path)
 
 		if work_dir is None:
 			work_dir = pathlib.Path.cwd()
@@ -85,16 +83,41 @@ class Engine:
 		if not work_dir.is_dir():
 			work_dir.mkdir()
 
-		if not lib_path.is_dir():
-			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
-
-		if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
-			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-
 		self.debug = debug
 
-		_core._init_api(str(lib_path), lib_type, str(work_dir))
+		if isinstance(lib_path, PathLike):
+			if not isinstance(lib_path, pathlib.Path):
+				lib_path = pathlib.Path(lib_path)
 
+			if not lib_path.is_dir():
+				raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+
+			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
+				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+
+			_core._init_api(str(lib_path) + "\0", str(lib_type) + "\0", 1, str(work_dir))
+
+		else:
+			assert lib_type is _core.NISTMS_MAIN_LIB
+			lib_paths = []
+			lib_types = []
+			libraries = lib_path
+			for library in libraries:
+				if not isinstance(lib_path, pathlib.Path):
+					lib_path = pathlib.Path(lib_path)
+
+				if not lib_path.is_dir():
+					raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+
+				lib_paths.append(str(lib_path) + "\0")
+				lib_type = library[1]
+				if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
+					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+				lib_types.append(str(lib_type) + "\0")
+
+			_core._init_api(''.join(lib_paths), ''.join(lib_types), len(lib_paths), str(work_dir))
+
+			
 		atexit.register(self.uninit)
 
 	def uninit(self) -> None:

@@ -35,6 +35,7 @@ This file is a modified version of the CALLDLL.C files from
 
 */
 
+#define PY_SSIZE_T_CLEAN 
 #include <Python.h>
 
 /*
@@ -111,7 +112,7 @@ static int parse_spectrum(NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, c
 static void get_spectrum(NISTMS_IO *io, NISTMS_RECLOC *fpos);
 static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos, int bAccurate_mz);
 
-static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir);
+static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigned int num_libs, char *work_dir);
 static PyObject *init_api(PyObject *self, PyObject *args);
 
 /******************************/
@@ -1341,13 +1342,16 @@ static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_
 }
 
 static PyObject *init_api(PyObject *self, PyObject *args) {
-	char *lib_path;
-	int lib_type;
+	char *lib_paths;
+	Py_ssize_t lib_paths_size;
+	char *lib_types;
+	Py_ssize_t lib_types_size;
+	unsigned int num_libs;
 	char *work_dir;
 
-	int ok = PyArg_ParseTuple(args, "sis", &lib_path, &lib_type, &work_dir);
+	int ok = PyArg_ParseTuple(args, "sss", &lib_paths, &lib_paths_size, &lib_types, &lib_types_size, &num_libs, &work_dir);
 
-	int err_code = do_init_api(&io, lib_path, lib_type, work_dir);
+	int err_code = do_init_api(&io, lib_paths, lib_types, num_libs, work_dir);
 
 	if (err_code) {
 		PyErr_Format(PyExc_ValueError,
