@@ -103,19 +103,21 @@ class Engine:
 			lib_types = []
 			libraries = lib_path
 			for library in libraries:
+				lib_path = library[0]
+
 				if not isinstance(lib_path, pathlib.Path):
 					lib_path = pathlib.Path(lib_path)
 
 				if not lib_path.is_dir():
 					raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
 
-				lib_paths.append(str(lib_path) + "\0")
+				lib_paths.append(str(lib_path))
 				lib_type = library[1]
 				if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-				lib_types.append(str(lib_type) + "\0")
+				lib_types.append(lib_type.to_bytes())
 
-			_core._init_api(''.join(lib_paths), ''.join(lib_types), len(lib_paths), str(work_dir))
+			_core._init_api('\r'.join(lib_paths) + "\0", b''.join(lib_types) + b"\0", len(lib_paths), str(work_dir))
 
 			
 		atexit.register(self.uninit)
