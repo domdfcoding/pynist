@@ -1295,8 +1295,16 @@ static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigne
 
 	// strcpy(lib_paths, lib_path);
 
-	printf("Using the following libraries:\n");
-	printf("%s\n", lib_paths);
+	printf("Using the following %d libraries:\n", num_libs);
+	for (int i=0; i<=255; i++) {
+		if (lib_paths[i] == 0) break;
+		else if (lib_paths[i] == 13) {  // \r
+			printf("; ");
+		} else {
+			printf("%c", lib_paths[i]);
+		}
+	}
+	printf("\n");
 
 	// lib_types[num_libs++] = lib_type;
 
@@ -1325,6 +1333,7 @@ static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigne
 	pio->lib_paths = NULL;
 	pio->callback = NULL;
 
+	// TODO: handle more than one (user) library
 	/* make sure struct. parts of user libraries are properly indexed */
 	if (!pio->error_code) {
 		active_libs[0] = 1; // 2; /* user library */
@@ -1361,8 +1370,15 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
    		return NULL;
 	}
 
-	/*  refers to NISTMS_MAIN_LIB, see above */
-	active_libs[0] = 1;
+	// Reset active_libs
+	for (int pos=0; pos<NISTMS_MAX_LIBS; pos++){
+		active_libs[pos] = 0;
+	}
+
+	// Enable the provided libraries in order given
+	for (int lib_idx=0; lib_idx<num_libs; lib_idx++){
+		active_libs[lib_idx] = lib_idx+1;	
+	}
 
 	/*  select libraries to search; some searches apply to multiple libraries, */
 	/*  while other search only the first active library or do not need        */
