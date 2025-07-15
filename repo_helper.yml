@@ -75,6 +75,7 @@ sphinx_html_theme: furo
 
 extra_lint_paths:
   - MoNA_GCMS_Library
+  - test_multi_library/
 
 extra_testenv_commands:
   - python coverage-fixup.py
