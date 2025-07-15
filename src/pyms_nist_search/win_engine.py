@@ -95,7 +95,7 @@ class Engine:
 			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 
-			_core._init_api(str(lib_path) + "\0", lib_type.to_bytes() + b"\0", 1, str(work_dir))
+			_core._init_api(str(lib_path) + '\x00', lib_type.to_bytes() + b"\0", 1, str(work_dir))
 
 		else:
 			assert lib_type is _core.NISTMS_MAIN_LIB
@@ -117,9 +117,13 @@ class Engine:
 					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 				lib_types.append(lib_type.to_bytes())
 
-			_core._init_api('\r'.join(lib_paths) + "\0", b''.join(lib_types) + b"\0", len(lib_paths), str(work_dir))
+			_core._init_api(
+					'\r'.join(lib_paths) + '\x00',
+					b''.join(lib_types) + b"\0",
+					len(lib_paths),
+					str(work_dir),
+					)
 
-			
 		atexit.register(self.uninit)
 
 	def uninit(self) -> None:
