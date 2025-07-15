@@ -1289,18 +1289,18 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 }
 /**************************************************************************/
 
-static int do_init_api(NISTMS_IO *pio, char *lib_path, int lib_type, char *work_dir) {
-	num_libs = 0;
-	lib_paths[0] = 0;
+static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigned int num_libs, char *work_dir){
+	// num_libs = 0;
+	// lib_paths[0] = 0;
 
-	strcpy(lib_paths, lib_path);
+	// strcpy(lib_paths, lib_path);
 
 	printf("Using the following libraries:\n");
 	printf("%s\n", lib_paths);
 
-	lib_types[num_libs++] = lib_type;
+	// lib_types[num_libs++] = lib_type;
 
-	lib_types[num_libs] = '\0';
+	// lib_types[num_libs] = '\0';
 
 	/*  order number of NISTMS_MAIN_LIB in active_lib[] will be 1 */
 	/*  order number of NISTMS_USER_LIB in active_lib[] will be 2 */
@@ -1349,8 +1349,7 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
 	unsigned int num_libs;
 	char *work_dir;
 
-	int ok = PyArg_ParseTuple(args, "sss", &lib_paths, &lib_paths_size, &lib_types, &lib_types_size, &num_libs, &work_dir);
-
+	int ok = PyArg_ParseTuple(args, "s#s#is", &lib_paths, &lib_paths_size, &lib_types, &lib_types_size, &num_libs, &work_dir);
 	int err_code = do_init_api(&io, lib_paths, lib_types, num_libs, work_dir);
 
 	if (err_code) {

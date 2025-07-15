@@ -95,7 +95,7 @@ class Engine:
 			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 
-			_core._init_api(str(lib_path) + "\0", str(lib_type) + "\0", 1, str(work_dir))
+			_core._init_api(str(lib_path) + "\0", lib_type.to_bytes() + b"\0", 1, str(work_dir))
 
 		else:
 			assert lib_type is _core.NISTMS_MAIN_LIB
