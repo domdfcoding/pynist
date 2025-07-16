@@ -35,7 +35,7 @@ This file is a modified version of the CALLDLL.C files from
 
 */
 
-#define PY_SSIZE_T_CLEAN 
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 /*
@@ -253,7 +253,9 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 
 	if (0 >= parse_spectrum(&userms, &aux, spectrum)) {
 		if (userms.num_exact_mz < -1) {
-			PyErr_Format(PyExc_RuntimeError, "Only %d peaks were read: not enough room to read all peaks. Terminating.\n", -(1+userms.num_exact_mz));
+			PyErr_Format(PyExc_RuntimeError,
+						 "Only %d peaks were read: not enough room to read all peaks. Terminating.\n",
+						 -(1 + userms.num_exact_mz));
 			return NULL;
 		} else {
 			PyErr_Format(PyExc_RuntimeError, "Could not read the spectrum. Terminating.\n");
@@ -480,9 +482,8 @@ static void build_hitlist(NISTMS_IO *pio) {
 
 static PyObject *nist_cas_search(NISTMS_IO *pio, char query[]) {
 
-
-    static NISTMS_HIT_LIST hit_list;
-    #define MAX_NUM_OF_OFFSETS MAX_FINAL_HITS  /*  must be no more than current system limit of NISTMS_MAX_FPOS=6000 */
+	static NISTMS_HIT_LIST hit_list;
+	#define MAX_NUM_OF_OFFSETS MAX_FINAL_HITS /*  must be no more than current system limit of NISTMS_MAX_FPOS=6000 */
 
 	static NISTMS_RECLOC fpos_array[MAX_NUM_OF_OFFSETS];
 	int num_hits_found = 0;
@@ -659,8 +660,9 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 
 	int search_type = NISTMS_SCREEN_SRCH;
 
-	#define MAX_SCREEN_LOCS NISTMS_MAX_FPOS /* 6000 = largest number of tentative hits from the
-											   screen search (pre-search) */
+	#define MAX_SCREEN_LOCS                                                                                                \
+	NISTMS_MAX_FPOS /* 6000 = largest number of tentative hits from the                                                \
+					   screen search (pre-search) */
 
 	#define MAX_HITS_RETURNED MAX_LIB_SRCH_HITS
 
@@ -1289,16 +1291,17 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 }
 /**************************************************************************/
 
-static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigned int num_libs, char *work_dir){
+static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigned int num_libs, char *work_dir) {
 	// num_libs = 0;
 	// lib_paths[0] = 0;
 
 	// strcpy(lib_paths, lib_path);
 
 	printf("Using the following %d libraries:\n", num_libs);
-	for (int i=0; i<=255; i++) {
-		if (lib_paths[i] == 0) break;
-		else if (lib_paths[i] == 13) {  // \r
+	for (int i = 0; i <= 255; i++) {
+		if (lib_paths[i] == 0)
+			break;
+		else if (lib_paths[i] == 13) { // \r
 			printf("; ");
 		} else {
 			printf("%c", lib_paths[i]);
@@ -1367,17 +1370,17 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
                  err_code
                  );
 
-   		return NULL;
+		return NULL;
 	}
 
 	// Reset active_libs
-	for (int pos=0; pos<NISTMS_MAX_LIBS; pos++){
+	for (int pos = 0; pos < NISTMS_MAX_LIBS; pos++) {
 		active_libs[pos] = 0;
 	}
 
 	// Enable the provided libraries in order given
-	for (int lib_idx=0; lib_idx<num_libs; lib_idx++){
-		active_libs[lib_idx] = lib_idx+1;	
+	for (int lib_idx = 0; lib_idx < num_libs; lib_idx++) {
+		active_libs[lib_idx] = lib_idx + 1;
 	}
 
 	/*  select libraries to search; some searches apply to multiple libraries, */

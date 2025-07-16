@@ -21,7 +21,7 @@ from pyms_nist_search import ReferenceData
 				"57-13-6",
 				"507-70-0",
 				"78-93-3",
-				]
+				],
 		)
 def spectra(request) -> Tuple[str, Optional[MassSpectrum]]:
 	# Download required files from NIST Webbook
