@@ -1,9 +1,8 @@
 # stdlib
 import pathlib
-from typing import Optional, Tuple
 
 # 3rd party
-import pytest
+from pyms_nist_search.reference_data import ReferenceData
 from pyms.Spectrum import MassSpectrum
 
 # this package
@@ -124,7 +123,105 @@ def test_all_53():
 		assert "2,5-DICHLOROPHENOL" in hit_list_names
 		assert "2,6-DICHLOROPHENOL" in hit_list_names
 
+def test_full_search_with_ref_data():
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C3_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C4_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C5_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
 
+		print()
+
+		spectrum = MassSpectrum([53.0], [64])
+
+		
+		hits = engine.full_search_with_ref_data(spectrum, n_hits=5)
+			
+		assert len(hits) == 3
+
+		for hit in hits:
+			# TODO: test CAS numbers
+			assert isinstance(hit[0], SearchResult)
+			assert isinstance(hit[1], ReferenceData)
+
+		assert hit[0].name == "3,4-DICHLOROPHENOL"
+		
+		assert hit[1].name == "3,4-DICHLOROPHENOL"
+		assert hit[1].cas == "95-77-2"
+		print(hit[1].to_dict())
+
+
+def test_c1_c2_cas():
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		print()
+
+		hit_list = engine.cas_search("51-28-5")
+	
+		assert len(hit_list) == 1
+		assert isinstance(hit_list[0], SearchResult)
+
+		assert hit_list[0].name == "2,4-DINITROPHENOL"
+
+
+
+def test_all_cas_c4():
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C3_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C4_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C5_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		print()
+
+		hit_list = engine.cas_search("583-78-8")
+	
+		assert len(hit_list) == 1
+
+		assert isinstance(hit_list[0], SearchResult)
+		assert hit_list[0].name == "2,5-DICHLOROPHENOL"
+
+
+def test_all_cas_c2():
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C5_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C4_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C3_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		print()
+
+		hit_list = engine.cas_search("51-28-5")
+	
+		assert len(hit_list) == 1
+
+		assert isinstance(hit_list[0], SearchResult)
+		assert hit_list[0].name == "2,4-DINITROPHENOL"
+
+
+
+# TODO: spectrum_search, get_reference_data
 
 # def test_different_n_hits(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 # 	print()
