@@ -50,6 +50,8 @@ def test_c1_c2_51():
 		assert "2,5-DICHLOROPHENOL" not in hit_list_names
 		assert "2,6-DICHLOROPHENOL" not in hit_list_names
 
+		assert hit_list_names == ['1-NITROPYRENE', '2,4-DINITROPHENOL']
+
 
 def test_all_51():
 	with pyms_nist_search.Engine(
@@ -83,6 +85,8 @@ def test_all_51():
 		assert "3,4-DICHLOROPHENOL" in hit_list_names
 		assert "2,5-DICHLOROPHENOL" in hit_list_names
 		assert "2,6-DICHLOROPHENOL" not in hit_list_names
+
+		assert hit_list_names == ['1-NITROPYRENE', '2,4-DINITROPHENOL', '2,5-DICHLOROPHENOL', '3,4-DICHLOROPHENOL']
 
 
 def test_all_53():
@@ -118,6 +122,8 @@ def test_all_53():
 		assert "2,5-DICHLOROPHENOL" in hit_list_names
 		assert "2,6-DICHLOROPHENOL" in hit_list_names
 
+		assert hit_list_names == ['2,5-DICHLOROPHENOL', '3,4-DICHLOROPHENOL', '2,6-DICHLOROPHENOL']
+
 
 def test_full_search_with_ref_data():
 	with pyms_nist_search.Engine(
@@ -144,9 +150,9 @@ def test_full_search_with_ref_data():
 			assert isinstance(hit[0], SearchResult)
 			assert isinstance(hit[1], ReferenceData)
 
-		assert hit[0].name == "3,4-DICHLOROPHENOL"
+		assert hit[0].name == "2,6-DICHLOROPHENOL"
 
-		assert hit[1].name == "3,4-DICHLOROPHENOL"
+		assert hit[1].name == "2,6-DICHLOROPHENOL"
 		assert hit[1].cas == "95-77-2"
 		print(hit[1].to_dict())
 
