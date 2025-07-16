@@ -1206,31 +1206,31 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 	static char szMzText[MZ_TEXT_SIZE];			   /* buffer to hold 'peaks text info' */
 	static char *pMzPtr[MZ_PEAK_NUM];			   /* pointers to peaks */
 	#define REFERENCES_LEN NISTMS_MAXREFERENCESLEN /* may be greater */
-	static char           szReferences[REFERENCES_LEN];
+	static char szReferences[REFERENCES_LEN];
 	#endif
 
-		memset(&ms,  '\0', sizeof(ms) );
-		memset(&aux, '\0', sizeof(aux) );
+	memset(&ms, '\0', sizeof(ms));
+	memset(&aux, '\0', sizeof(aux));
 
-	#if( defined(ALLOW_MSMS_VERSION) )
-		if ( bAccurate_mz ) {
+	#if (defined(ALLOW_MSMS_VERSION))
+		if (bAccurate_mz) {
 			// additional members for accurate m/z in mass spectral peaks
-			ms.exact_mz              = pMzPtr;       /* pointers to peaks */
-			ms.exact_mz_len          = MZ_PEAK_NUM;  /* max. number of peaks */
-			ms.num_exact_mz          = 0;            /* current number of peaks */
-			ms.buf_exact_mz          = szMzText;     /* buffer to hold 'peaks text info' */
-			ms.buf_exact_mz_len      = MZ_TEXT_SIZE; /* buffer size */
+			ms.exact_mz = pMzPtr;				/* pointers to peaks */
+			ms.exact_mz_len = MZ_PEAK_NUM;		/* max. number of peaks */
+			ms.num_exact_mz = 0;				/* current number of peaks */
+			ms.buf_exact_mz = szMzText;			/* buffer to hold 'peaks text info' */
+			ms.buf_exact_mz_len = MZ_TEXT_SIZE; /* buffer size */
 		}
 	#endif
 
 		printf("Gathering Data for spectrum at location %ld\n", fpos);
 		pio->input_spec_loc = fpos; /* most significant 4 bits=lib number, the rest=file offset */
 
-		pio->libms          = &ms;
-		pio->aux_data       = &aux;
+		pio->libms = &ms;
+		pio->aux_data = &aux;
 
 		/*  get chemical structures when io->stdata != NULL */
-		memset(&stdata, '\0', sizeof(stdata) );
+		memset(&stdata, '\0', sizeof(stdata));
 		pio->stdata = &stdata;
 
 		if ( pio->aux_data ) {
@@ -1247,8 +1247,8 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 			memset(g_contributor, '\0', sizeof(g_contributor));
 			pio->aux_data->contributor = g_contributor;
 			pio->aux_data->contributor_len = sizeof(g_contributor);
-	#if( defined(ALLOW_MSMS_VERSION) )
-			if ( bAccurate_mz ) {
+	#if (defined(ALLOW_MSMS_VERSION))
+			if (bAccurate_mz) {
 				/* peptide library spectrum origin references */
 				/* tab-delimited refernce fields:
 				   Dataset, Contributor, Number of Files, Source, Reference, Title, Authors.
@@ -1262,7 +1262,7 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 	#endif
 		}
 		/*  this will fill io with data */
-		nistms_search( NISTMS_GET_SPECTRUM_SRCH, pio);
+		nistms_search(NISTMS_GET_SPECTRUM_SRCH, pio);
 
 		/* show_spectrum(io);*/
 
@@ -1281,9 +1281,8 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 	//		printf("\tmz, Intensity: %d %d\n", pio->libms->mass[i], pio->libms->abund[i]);
 	//	}
 
-
 		return;
-	#if( defined(ALLOW_MSMS_VERSION) )
+	#if (defined(ALLOW_MSMS_VERSION))
 		#undef MZ_PEAK_NUM
 		#undef MZ_TEXT_SIZE
 		#undef REFERENCES_LEN
@@ -1350,7 +1349,7 @@ static int do_init_api(NISTMS_IO *pio, char *lib_paths, char *lib_types, unsigne
 //		printf("%d code here...",pio->error_code) ;
 //	}
 
-	return(pio->error_code);
+	return (pio->error_code);
 }
 
 static PyObject *init_api(PyObject *self, PyObject *args) {
@@ -1420,11 +1419,10 @@ PyInit__core(void)
 	*************************************************************************/
 
 	io.string_in = "2.1.1";
-	nistms_search( NISTMS_SET_VERSION, &io );
-	if ( io.error_code ) {
-		PyErr_Format(PyExc_ImportError, "This NIST DLL version is below 2.1.1\n" );
+	nistms_search(NISTMS_SET_VERSION, &io);
+	if (io.error_code) {
+		PyErr_Format(PyExc_ImportError, "This NIST DLL version is below 2.1.1\n");
 		return NULL;
-
 	}
 
 //	if (initialize_libs(&io)) {
@@ -1628,7 +1626,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_ASCII", Py_BuildValue("i", search_type));
 	search_type = NISTMS_STRING_TO_GREEK;
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_GREEK", Py_BuildValue("i", search_type));
-	#if( MSTXTDATA == 1 )
+	#if (MSTXTDATA == 1)
 		search_type = NISTMS_SET_VERSION;
 		PyObject_SetAttrString(py_module, "NISTMS_SET_VERSION", Py_BuildValue("i", search_type));
 		search_type = NISTMS_DECODE_MODS;
@@ -1642,7 +1640,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_LIBS", Py_BuildValue("i", search_type));
 	search_type = NISTMS_MARK_ALL_LIBS;
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_ALL_LIBS", Py_BuildValue("i", search_type));
-	#if ( EXACTMW == 1 )
+	#if (EXACTMW == 1)
 		search_type = NISTMS_INDEX_LIBRARY_EXACT_MASS;
 		PyObject_SetAttrString(py_module, "NISTMS_INDEX_LIBRARY_EXACT_MASS", Py_BuildValue("i", search_type));
 		search_type = NISTMS_EXACT_MASS_SRCH;
