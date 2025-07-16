@@ -2,12 +2,12 @@
 import pathlib
 
 # 3rd party
-from pyms_nist_search.reference_data import ReferenceData
 from pyms.Spectrum import MassSpectrum
 
 # this package
 import pyms_nist_search
 from pyms_nist_search import SearchResult
+from pyms_nist_search.reference_data import ReferenceData
 
 repo_root = pathlib.Path(__file__).parent.parent.absolute()
 
@@ -33,10 +33,9 @@ def test_c1_c2_51():
 
 		spectrum = MassSpectrum([51.0], [27])
 
-		
 		hit_list = engine.full_spectrum_search(spectrum, n_hits=5)
 		hit_list_names = [hit.name for hit in hit_list]
-	
+
 		assert len(hit_list) == 2
 
 		for hit in hit_list:
@@ -50,7 +49,6 @@ def test_c1_c2_51():
 		assert "3,4-DICHLOROPHENOL" not in hit_list_names
 		assert "2,5-DICHLOROPHENOL" not in hit_list_names
 		assert "2,6-DICHLOROPHENOL" not in hit_list_names
-
 
 
 def test_all_51():
@@ -69,10 +67,9 @@ def test_all_51():
 
 		spectrum = MassSpectrum([51.0], [27])
 
-		
 		hit_list = engine.full_spectrum_search(spectrum, n_hits=5)
 		hit_list_names = [hit.name for hit in hit_list]
-	
+
 		assert len(hit_list) == 4
 
 		for hit in hit_list:
@@ -86,7 +83,6 @@ def test_all_51():
 		assert "3,4-DICHLOROPHENOL" in hit_list_names
 		assert "2,5-DICHLOROPHENOL" in hit_list_names
 		assert "2,6-DICHLOROPHENOL" not in hit_list_names
-
 
 
 def test_all_53():
@@ -105,10 +101,9 @@ def test_all_53():
 
 		spectrum = MassSpectrum([53.0], [64])
 
-		
 		hit_list = engine.full_spectrum_search(spectrum, n_hits=5)
 		hit_list_names = [hit.name for hit in hit_list]
-	
+
 		assert len(hit_list) == 3
 
 		for hit in hit_list:
@@ -122,6 +117,7 @@ def test_all_53():
 		assert "3,4-DICHLOROPHENOL" in hit_list_names
 		assert "2,5-DICHLOROPHENOL" in hit_list_names
 		assert "2,6-DICHLOROPHENOL" in hit_list_names
+
 
 def test_full_search_with_ref_data():
 	with pyms_nist_search.Engine(
@@ -139,9 +135,8 @@ def test_full_search_with_ref_data():
 
 		spectrum = MassSpectrum([53.0], [64])
 
-		
 		hits = engine.full_search_with_ref_data(spectrum, n_hits=5)
-			
+
 		assert len(hits) == 3
 
 		for hit in hits:
@@ -150,7 +145,7 @@ def test_full_search_with_ref_data():
 			assert isinstance(hit[1], ReferenceData)
 
 		assert hit[0].name == "3,4-DICHLOROPHENOL"
-		
+
 		assert hit[1].name == "3,4-DICHLOROPHENOL"
 		assert hit[1].cas == "95-77-2"
 		print(hit[1].to_dict())
@@ -168,12 +163,11 @@ def test_c1_c2_cas():
 		print()
 
 		hit_list = engine.cas_search("51-28-5")
-	
+
 		assert len(hit_list) == 1
 		assert isinstance(hit_list[0], SearchResult)
 
 		assert hit_list[0].name == "2,4-DINITROPHENOL"
-
 
 
 def test_all_cas_c4():
@@ -191,7 +185,7 @@ def test_all_cas_c4():
 		print()
 
 		hit_list = engine.cas_search("583-78-8")
-	
+
 		assert len(hit_list) == 1
 
 		assert isinstance(hit_list[0], SearchResult)
@@ -213,12 +207,11 @@ def test_all_cas_c2():
 		print()
 
 		hit_list = engine.cas_search("51-28-5")
-	
+
 		assert len(hit_list) == 1
 
 		assert isinstance(hit_list[0], SearchResult)
 		assert hit_list[0].name == "2,4-DINITROPHENOL"
-
 
 
 # TODO: spectrum_search, get_reference_data
