@@ -86,7 +86,7 @@ class Engine:
 
 		self.debug = debug
 
-		if isinstance(lib_path, os.PathLike):
+		if isinstance(lib_path, (str, os.PathLike)):
 			if not isinstance(lib_path, pathlib.Path):
 				lib_path = pathlib.Path(lib_path)
 
