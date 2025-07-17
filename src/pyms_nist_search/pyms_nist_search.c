@@ -103,6 +103,9 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum);
 
 static PyObject *get_reference_data(PyObject *self, PyObject *args);
 
+// static PyObject *get_lib_paths(PyObject *self, PyObject *args);
+static PyObject *get_active_libs(PyObject *self, PyObject *args);
+
 /* loads a single spectrum from a string */
 static int parse_spectrum(NISTMS_MASS_SPECTRUM *ms, NISTMS_AUX_DATA *aux_data, char *spectrum);
 
@@ -433,6 +436,9 @@ static PyObject *spectrum_search(NISTMS_IO *pio, int search_type, char *spectrum
 			PyObject *py_spec_loc = PyLong_FromLong(pio->hit_list->spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 
+			PyObject *py_lib_idx = PyLong_FromLong(NISTMS_LIB_NUM(hit_list.spec_locs[i]));
+			PyDict_SetItemString(d, "lib_idx", py_lib_idx);
+
 			if (pio->hit_list->casnos) {
 				PyDict_SetItemString(d, "cas_no", PyLong_FromLong(pio->hit_list->casnos[i]));
 			} else {
@@ -592,6 +598,32 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 	free(my_test);
 	return py_hit_list;
 }
+
+
+// /*
+// Returns the current list of libraries (delimited by NISTMS_PATH_SEPARATOR)
+// */
+// static PyObject *get_lib_paths(PyObject *self, PyObject *Py_UNUSED(args)) {
+// 	PyObject *py_lib_names = PyUnicode_FromString(lib_paths);
+// 	return py_lib_names;
+// }
+
+
+/*
+Returns the currently active libraries (in search order)
+*/
+static PyObject *get_active_libs(PyObject *self, PyObject *Py_UNUSED(args)) {
+	PyObject *py_active_libs = PyList_New(0);
+
+	for (int pos = 0; pos < NISTMS_MAX_LIBS; pos++) {
+		PyList_Append(py_active_libs, PyLong_FromLong(active_libs[pos]));
+	}
+
+	return py_active_libs;
+}
+
+// TODO: allow active libs to be changed without reinit
+
 
 /****************************************************************************
 
@@ -876,12 +908,6 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
 			printf("%d, ", pio->hit_list->hit_prob[i]);
 
-			PyObject *py_hit_idx = PyLong_FromLong(i);
-			PyDict_SetItemString(d, "hit_idx", py_hit_idx);
-
-			PyObject *py_lib_names = PyUnicode_FromStringAndSize(hit_list.lib_names, hit_list.lib_names_len);
-			PyDict_SetItemString(d, "lib_names", py_lib_names);
-
 			// PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
 			// PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
 			// printf("%d, ", pio->hit_list->in_library_prob[i]);
@@ -912,6 +938,9 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 			PyObject *py_spec_loc = PyLong_FromLong(hit_list.spec_locs[i]);
 			PyDict_SetItemString(d, "spec_loc", py_spec_loc);
 			// printf("%ld, ", pio->hit_list->spec_locs[i]);
+
+			PyObject *py_lib_idx = PyLong_FromLong(NISTMS_LIB_NUM(hit_list.spec_locs[i]));
+			PyDict_SetItemString(d, "lib_idx", py_lib_idx);
 
 			PyObject *py_cas_no = PyLong_FromLong(hit_list.casnos[i]);
 			PyDict_SetItemString(d, "cas_no", py_cas_no);
@@ -1404,6 +1433,8 @@ static PyMethodDef Methods[] = {
 	{"_get_reference_data", get_reference_data, METH_VARARGS, ""},
 	{"_init_api", init_api, METH_VARARGS, ""},
 	{"_cas_search", cas_search, METH_VARARGS, ""},
+	// {"_get_lib_paths", get_lib_paths, METH_VARARGS, ""},
+	{"_get_active_libs", get_active_libs, METH_VARARGS, ""},
 	{NULL, NULL}
 };
 
@@ -1455,6 +1486,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "MSTXTDATA", Py_BuildValue("i", MSTXTDATA));
 	PyObject_SetAttrString(py_module, "NO_VALUE", Py_BuildValue("i", NO_VALUE));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXCONTRIBLEN", Py_BuildValue("i", NISTMS_MAXCONTRIBLEN));
+	PyObject_SetAttrString(py_module, "NISTMS_PATH_SEPARATOR", Py_BuildValue("s", NISTMS_PATH_SEPARATOR));
 	PyObject_SetAttrString(py_module, "NUM_ADD_SPEC_MATCHFACT", Py_BuildValue("i", NUM_ADD_SPEC_MATCHFACT));
 	PyObject_SetAttrString(py_module, "COLHDRLEN", Py_BuildValue("i", COLHDRLEN));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXSYNONYMLEN", Py_BuildValue("i", NISTMS_MAXSYNONYMLEN));

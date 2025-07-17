@@ -101,6 +101,7 @@ PyMODINIT_FUNC PyInit__core(void) {
 	PyObject_SetAttrString(py_module, "MSTXTDATA", Py_BuildValue("i", MSTXTDATA));
 	PyObject_SetAttrString(py_module, "NO_VALUE", Py_BuildValue("i", NO_VALUE));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXCONTRIBLEN", Py_BuildValue("i", NISTMS_MAXCONTRIBLEN));
+	PyObject_SetAttrString(py_module, "NISTMS_PATH_SEPARATOR", Py_BuildValue("s", NISTMS_PATH_SEPARATOR));
 	PyObject_SetAttrString(py_module, "NUM_ADD_SPEC_MATCHFACT", Py_BuildValue("i", NUM_ADD_SPEC_MATCHFACT));
 	PyObject_SetAttrString(py_module, "COLHDRLEN", Py_BuildValue("i", COLHDRLEN));
 	PyObject_SetAttrString(py_module, "NISTMS_MAXSYNONYMLEN", Py_BuildValue("i", NISTMS_MAXSYNONYMLEN));
