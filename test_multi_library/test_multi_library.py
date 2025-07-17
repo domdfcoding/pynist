@@ -234,3 +234,22 @@ def test_all_cas_c2():
 # 		hit_list = search.full_spectrum_search(spectrum, n_hits=n_hits)
 
 # 		assert len(hit_list) == n_hits
+
+
+def test_cas_single_library():
+	# Make sure it works with these "fake" libraries
+
+	with pyms_nist_search.Engine(
+			[(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB)],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		print()
+
+		hit_list = engine.cas_search("51-28-5")
+
+		assert len(hit_list) == 1
+		assert isinstance(hit_list[0], SearchResult)
+
+		assert hit_list[0].name == "2,4-DINITROPHENOL"
+
