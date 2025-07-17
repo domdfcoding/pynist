@@ -24,6 +24,7 @@ def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Option
 		assert isinstance(hit, SearchResult)
 
 	assert hit_list[0].name.lower() == name.lower()
+	assert hit_list[0].lib_name == "MoNA"
 	# assert hit_list[0].cas == cas
 
 

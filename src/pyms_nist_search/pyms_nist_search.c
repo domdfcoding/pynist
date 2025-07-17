@@ -876,6 +876,12 @@ static PyObject *full_spectrum_search(NISTMS_IO *pio, char *spectrum) {
 			PyDict_SetItemString(d, "hit_prob", py_hit_prob);
 			printf("%d, ", pio->hit_list->hit_prob[i]);
 
+			PyObject *py_hit_idx = PyLong_FromLong(i);
+			PyDict_SetItemString(d, "hit_idx", py_hit_idx);
+
+			PyObject *py_lib_names = PyUnicode_FromStringAndSize(hit_list.lib_names, hit_list.lib_names_len);
+			PyDict_SetItemString(d, "lib_names", py_lib_names);
+
 			// PyObject *py_in_library_prob = PyLong_FromLong(hit_list.in_library_prob[i]);
 			// PyDict_SetItemString(d, "in_library_prob", py_in_library_prob);
 			// printf("%d, ", pio->hit_list->in_library_prob[i]);
@@ -1199,7 +1205,7 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 	// #define MAX_NUM_REPLICATES  10              /*  larger than ever needed */
 	static NISTMS_RECLOC rep_locs[NISTMS_MAXREPLICATES]; /*  optional */
 
-	#if( defined(ALLOW_MSMS_VERSION) )
+	#if (defined(ALLOW_MSMS_VERSION))
 	/* larger peptide-specific 'peaks text info' sizes may be needed */
 	#define MZ_PEAK_NUM NISTMS_DFLT_MAX_PEAK_TXTDATA_NUM
 	#define MZ_TEXT_SIZE NISTMS_DFLT_MAX_PEAK_TXTDATA_LEN
@@ -1233,7 +1239,7 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 		memset(&stdata, '\0', sizeof(stdata));
 		pio->stdata = &stdata;
 
-		if ( pio->aux_data ) {
+		if (pio->aux_data) {
 			/*  get synonyms when io->aux_data->synonyms != NULL */
 			memset(g_synonyms, '\0', sizeof(g_synonyms));
 			pio->aux_data->synonyms = g_synonyms;
