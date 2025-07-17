@@ -154,6 +154,8 @@ class Engine:
 		"""
 		Search for a compound by CAS number.
 
+		.. note:: This function does not appear to work with user libraries converted using LIB2NIST.
+
 		:param cas:
 
 		:return: List of results for CAS number (usually just one result).
