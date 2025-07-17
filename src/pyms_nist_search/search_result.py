@@ -120,7 +120,6 @@ class SearchResult(NISTBase):
 
 		return int(self._spec_loc)
 
-
 	@property
 	def lib_idx(self) -> int:
 		"""
@@ -128,7 +127,6 @@ class SearchResult(NISTBase):
 		"""
 
 		return int(self._lib_idx)
-
 
 	@classmethod
 	def from_pynist(cls, pynist_dict: Dict[str, Any]) -> "SearchResult":
