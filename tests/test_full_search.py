@@ -1,4 +1,5 @@
 # stdlib
+import os
 from typing import Optional, Tuple
 
 # 3rd party
@@ -24,7 +25,8 @@ def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Option
 		assert isinstance(hit, SearchResult)
 
 	assert hit_list[0].name.lower() == name.lower()
-	assert hit_list[0].lib_name == "MoNA"
+	lib_paths = search.get_lib_paths()
+	assert os.path.split(lib_paths[hit_list[0].lib_idx])[-1] == "MoNA"
 	# assert hit_list[0].cas == cas
 
 

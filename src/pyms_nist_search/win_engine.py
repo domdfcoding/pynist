@@ -95,7 +95,8 @@ class Engine:
 			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 
-			_core._init_api(str(lib_path) + '\x00', lib_type.to_bytes() + b"\0", 1, str(work_dir))
+			_core._init_api(str(lib_path) + "\x00", lib_type.to_bytes() + b"\0", 1, str(work_dir))
+			self._lib_paths = str(lib_path)
 
 		else:
 			assert lib_type is _core.NISTMS_MAIN_LIB
@@ -118,11 +119,12 @@ class Engine:
 				lib_types.append(lib_type.to_bytes())
 
 			_core._init_api(
-					'\r'.join(lib_paths) + '\x00',
+					_core.NISTMS_PATH_SEPARATOR.join(lib_paths) + '\x00',
 					b''.join(lib_types) + b"\0",
 					len(lib_paths),
 					str(work_dir),
 					)
+			self._lib_paths = _core.NISTMS_PATH_SEPARATOR.join(lib_paths)
 
 		atexit.register(self.uninit)
 
@@ -163,8 +165,7 @@ class Engine:
 
 		return [SearchResult.from_pynist(hit) for hit in _core._cas_search(cas)]
 
-	@staticmethod
-	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
+	def full_spectrum_search(self, mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library.
 
@@ -220,6 +221,24 @@ class Engine:
 		reference_data = _core._get_reference_data(spec_loc)
 
 		return ReferenceData.from_pynist(reference_data)
+
+
+	def get_lib_paths(self) -> List[str]:
+		"""
+		Returns the list of library names currently in use.
+		"""
+
+		return self._lib_paths.rstrip("\0").split(_core.NISTMS_PATH_SEPARATOR)
+		# return _core._get_lib_paths().rstrip("\0").split(_core.NISTMS_PATH_SEPARATOR)
+
+	@staticmethod
+	def get_active_libs() -> List[int]:
+		"""
+		Returns the active librararies, as their (zero-based) indices in the output of :meth:~.WinEngine.get_lib_names()`.
+		"""
+
+		return _core._get_active_libs()
+
 
 	def __enter__(self) -> "Engine":
 		return self
