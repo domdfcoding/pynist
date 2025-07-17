@@ -35,6 +35,7 @@ Search engine for Windows systems.
 
 # stdlib
 import atexit
+import os
 import pathlib
 from typing import List, Optional, Sequence, Tuple, Union
 
@@ -85,7 +86,7 @@ class Engine:
 
 		self.debug = debug
 
-		if isinstance(lib_path, PathLike):
+		if isinstance(lib_path, os.PathLike):
 			if not isinstance(lib_path, pathlib.Path):
 				lib_path = pathlib.Path(lib_path)
 
