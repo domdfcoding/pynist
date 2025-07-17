@@ -96,14 +96,14 @@ class Engine:
 			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 
-			_core._init_api(str(lib_path) + "\x00", lib_type.to_bytes() + b"\0", 1, str(work_dir))
+			_core._init_api(str(lib_path) + '\x00', lib_type.to_bytes(1, "big") + b"\0", 1, str(work_dir))
 			self._lib_paths = str(lib_path)
 
 		else:
 			assert lib_type is _core.NISTMS_MAIN_LIB
 			lib_paths = []
 			lib_types = []
-			libraries = lib_path
+			libraries: Sequence[Tuple[PathLike, int]] = lib_path
 			for library in libraries:
 				lib_path = library[0]
 
@@ -117,7 +117,7 @@ class Engine:
 				lib_type = library[1]
 				if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-				lib_types.append(lib_type.to_bytes())
+				lib_types.append(lib_type.to_bytes(1, "big"))
 
 			_core._init_api(
 					_core.NISTMS_PATH_SEPARATOR.join(lib_paths) + '\x00',
@@ -223,13 +223,12 @@ class Engine:
 
 		return ReferenceData.from_pynist(reference_data)
 
-
 	def get_lib_paths(self) -> List[str]:
 		"""
 		Returns the list of library names currently in use.
 		"""
 
-		return self._lib_paths.rstrip("\0").split(_core.NISTMS_PATH_SEPARATOR)
+		return self._lib_paths.rstrip('\x00').split(_core.NISTMS_PATH_SEPARATOR)
 		# return _core._get_lib_paths().rstrip("\0").split(_core.NISTMS_PATH_SEPARATOR)
 
 	@staticmethod
@@ -239,7 +238,6 @@ class Engine:
 		"""
 
 		return _core._get_active_libs()
-
 
 	def __enter__(self) -> "Engine":
 		return self

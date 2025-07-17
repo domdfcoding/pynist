@@ -1,6 +1,6 @@
 # stdlib
 import pathlib
-from typing import Iterator, Optional, Tuple
+from typing import Optional, Tuple
 
 # 3rd party
 import pytest
@@ -8,7 +8,6 @@ import requests
 from pyms.Spectrum import MassSpectrum
 
 # this package
-import pyms_nist_search
 from pyms_nist_search import ReferenceData
 
 
