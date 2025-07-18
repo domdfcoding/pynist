@@ -2,13 +2,13 @@
 from typing import Optional, Tuple
 
 # 3rd party
-from pyms_nist_search.utils import lib_name_from_path
 import pytest
 from pyms.Spectrum import MassSpectrum
 
 # this package
 import pyms_nist_search
 from pyms_nist_search import SearchResult
+from pyms_nist_search.utils import lib_name_from_path
 
 
 def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):

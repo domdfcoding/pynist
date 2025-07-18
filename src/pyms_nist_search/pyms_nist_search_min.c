@@ -279,12 +279,12 @@ PyMODINIT_FUNC PyInit__core(void) {
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_ASCII", Py_BuildValue("i", search_type));
 	search_type = NISTMS_STRING_TO_GREEK;
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_GREEK", Py_BuildValue("i", search_type));
-	#if (MSTXTDATA == 1)
-		search_type = NISTMS_SET_VERSION;
-		PyObject_SetAttrString(py_module, "NISTMS_SET_VERSION", Py_BuildValue("i", search_type));
-		search_type = NISTMS_DECODE_MODS;
-		PyObject_SetAttrString(py_module, "NISTMS_DECODE_MODS", Py_BuildValue("i", search_type));
-	#endif
+#if (MSTXTDATA == 1)
+	search_type = NISTMS_SET_VERSION;
+	PyObject_SetAttrString(py_module, "NISTMS_SET_VERSION", Py_BuildValue("i", search_type));
+	search_type = NISTMS_DECODE_MODS;
+	PyObject_SetAttrString(py_module, "NISTMS_DECODE_MODS", Py_BuildValue("i", search_type));
+#endif
 	search_type = NISTMS_MAKE_MOLFILE;
 	PyObject_SetAttrString(py_module, "NISTMS_MAKE_MOLFILE", Py_BuildValue("i", search_type));
 	search_type = NISTMS_ALT2AROM;
@@ -293,16 +293,16 @@ PyMODINIT_FUNC PyInit__core(void) {
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_LIBS", Py_BuildValue("i", search_type));
 	search_type = NISTMS_MARK_ALL_LIBS;
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_ALL_LIBS", Py_BuildValue("i", search_type));
-	#if (EXACTMW == 1)
-		search_type = NISTMS_INDEX_LIBRARY_EXACT_MASS;
-		PyObject_SetAttrString(py_module, "NISTMS_INDEX_LIBRARY_EXACT_MASS", Py_BuildValue("i", search_type));
-		search_type = NISTMS_EXACT_MASS_SRCH;
-		PyObject_SetAttrString(py_module, "NISTMS_EXACT_MASS_SRCH", Py_BuildValue("i", search_type));
-		search_type = NISTMS_GET_EXACT_MASS_LIMITS;
-		PyObject_SetAttrString(py_module, "NISTMS_GET_EXACT_MASS_LIMITS", Py_BuildValue("i", search_type));
-		search_type = NISTMS_EXACT_MZ_TO_INT_PEAKS;
-		PyObject_SetAttrString(py_module, "NISTMS_EXACT_MZ_TO_INT_PEAKS", Py_BuildValue("i", search_type));
-	#endif
+#if (EXACTMW == 1)
+	search_type = NISTMS_INDEX_LIBRARY_EXACT_MASS;
+	PyObject_SetAttrString(py_module, "NISTMS_INDEX_LIBRARY_EXACT_MASS", Py_BuildValue("i", search_type));
+	search_type = NISTMS_EXACT_MASS_SRCH;
+	PyObject_SetAttrString(py_module, "NISTMS_EXACT_MASS_SRCH", Py_BuildValue("i", search_type));
+	search_type = NISTMS_GET_EXACT_MASS_LIMITS;
+	PyObject_SetAttrString(py_module, "NISTMS_GET_EXACT_MASS_LIMITS", Py_BuildValue("i", search_type));
+	search_type = NISTMS_EXACT_MZ_TO_INT_PEAKS;
+	PyObject_SetAttrString(py_module, "NISTMS_EXACT_MZ_TO_INT_PEAKS", Py_BuildValue("i", search_type));
+#endif
 	search_type = NISTMS_CASNO_SRCH2;
 	PyObject_SetAttrString(py_module, "NISTMS_CASNO_SRCH2", Py_BuildValue("i", search_type));
 	search_type = NISTMS_NISTNO_SRCH;
@@ -328,24 +328,24 @@ PyMODINIT_FUNC PyInit__core(void) {
 	search_mode_flags = SEARCH_MODE_CHAR_MASK;
 	PyObject_SetAttrString(py_module, "SEARCH_MODE_CHAR_MASK", Py_BuildValue("i", search_mode_flags));
 
-	#ifdef MSPEPSEARCH
-		/* used in MSPepSEarch only */
-		#ifndef MAP_LIB_FILE_TYPE_DEFINED
+#ifdef MSPEPSEARCH
+	/* used in MSPepSEarch only */
+	#ifndef MAP_LIB_FILE_TYPE_DEFINED
 
-		enum MAP_LIB_FILE_TYPE lib_file_type;
-		lib_file_type = MM_PEAKIN_PM0;
-		PyObject_SetAttrString(py_module, "MM_PEAKIN_PM0", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_PEAKDB_PM0;
-		PyObject_SetAttrString(py_module, "MM_PEAKDB_PM0", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_MZBIN_INU;
-		PyObject_SetAttrString(py_module, "MM_MZBIN_INU", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_MZBIN_DBU;
-		PyObject_SetAttrString(py_module, "MM_MZBIN_DBU", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_MZPRECUB_INU;
-		PyObject_SetAttrString(py_module, "MM_MZPRECUB_INU", Py_BuildValue("i", lib_file_type));
+	enum MAP_LIB_FILE_TYPE lib_file_type;
+	lib_file_type = MM_PEAKIN_PM0;
+	PyObject_SetAttrString(py_module, "MM_PEAKIN_PM0", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_PEAKDB_PM0;
+	PyObject_SetAttrString(py_module, "MM_PEAKDB_PM0", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_MZBIN_INU;
+	PyObject_SetAttrString(py_module, "MM_MZBIN_INU", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_MZBIN_DBU;
+	PyObject_SetAttrString(py_module, "MM_MZBIN_DBU", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_MZPRECUB_INU;
+	PyObject_SetAttrString(py_module, "MM_MZPRECUB_INU", Py_BuildValue("i", lib_file_type));
 
-		#endif
 	#endif
+#endif
 
 	/*
 	USER_DLL_STR_2_0

@@ -2,7 +2,6 @@
 import pathlib
 
 # 3rd party
-from pyms_nist_search.utils import lib_name_from_path
 import pytest
 from pyms.Spectrum import MassSpectrum
 
@@ -10,6 +9,7 @@ from pyms.Spectrum import MassSpectrum
 import pyms_nist_search
 from pyms_nist_search import SearchResult
 from pyms_nist_search.reference_data import ReferenceData
+from pyms_nist_search.utils import lib_name_from_path
 
 repo_root = pathlib.Path(__file__).parent.parent.absolute()
 

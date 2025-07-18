@@ -39,9 +39,8 @@ import ntpath
 import warnings
 from typing import Sequence
 
-from domdf_python_tools.typing import PathLike
-
 # 3rd party
+from domdf_python_tools.typing import PathLike
 from pyms.Spectrum import MassSpectrum
 
 __all__ = ["pack", "parse_name_chars", "lib_name_from_path"]
@@ -134,4 +133,3 @@ def lib_name_from_path(lib_path: PathLike) -> str:
 	"""
 
 	return ntpath.split(lib_path)[-1]
-

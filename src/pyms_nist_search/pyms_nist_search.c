@@ -1258,25 +1258,25 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 		}
 	#endif
 
-		printf("Gathering Data for spectrum at location %ld\n", fpos);
-		pio->input_spec_loc = fpos; /* most significant 4 bits=lib number, the rest=file offset */
+	printf("Gathering Data for spectrum at location %ld\n", fpos);
+	pio->input_spec_loc = fpos; /* most significant 4 bits=lib number, the rest=file offset */
 
-		pio->libms = &ms;
-		pio->aux_data = &aux;
+	pio->libms = &ms;
+	pio->aux_data = &aux;
 
-		/*  get chemical structures when io->stdata != NULL */
-		memset(&stdata, '\0', sizeof(stdata));
-		pio->stdata = &stdata;
+	/*  get chemical structures when io->stdata != NULL */
+	memset(&stdata, '\0', sizeof(stdata));
+	pio->stdata = &stdata;
 
-		if (pio->aux_data) {
-			/*  get synonyms when io->aux_data->synonyms != NULL */
-			memset(g_synonyms, '\0', sizeof(g_synonyms));
-			pio->aux_data->synonyms = g_synonyms;
-			pio->aux_data->synonyms_len = sizeof(g_synonyms);
+	if (pio->aux_data) {
+		/*  get synonyms when io->aux_data->synonyms != NULL */
+		memset(g_synonyms, '\0', sizeof(g_synonyms));
+		pio->aux_data->synonyms = g_synonyms;
+		pio->aux_data->synonyms_len = sizeof(g_synonyms);
 
-			/*  get any replicates in replicate library if io->aux_data->rep_locs != NULL */
-			pio->aux_data->num_rep_locs = NISTMS_MAXREPLICATES;
-			pio->aux_data->rep_locs = rep_locs;
+		/*  get any replicates in replicate library if io->aux_data->rep_locs != NULL */
+		pio->aux_data->num_rep_locs = NISTMS_MAXREPLICATES;
+		pio->aux_data->rep_locs = rep_locs;
 
 			// get contributor for NIST library or comment for user library
 			memset(g_contributor, '\0', sizeof(g_contributor));
@@ -1316,12 +1316,12 @@ static void get_spectrum_int_or_accurate_mz(NISTMS_IO *pio, NISTMS_RECLOC *fpos,
 	//		printf("\tmz, Intensity: %d %d\n", pio->libms->mass[i], pio->libms->abund[i]);
 	//	}
 
-		return;
-	#if (defined(ALLOW_MSMS_VERSION))
-		#undef MZ_PEAK_NUM
-		#undef MZ_TEXT_SIZE
-		#undef REFERENCES_LEN
-	#endif
+	return;
+#if (defined(ALLOW_MSMS_VERSION))
+	#undef MZ_PEAK_NUM
+	#undef MZ_TEXT_SIZE
+	#undef REFERENCES_LEN
+#endif
 }
 /**************************************************************************/
 
@@ -1427,29 +1427,20 @@ static PyObject *init_api(PyObject *self, PyObject *args) {
 	Py_RETURN_NONE;
 }
 
-static PyMethodDef Methods[] = {
-	{"_spectrum_search", spec_search, METH_VARARGS, "Searches the library with search type 'NISTMS_NO_PRE_SRCH'"},
-	{"_full_spectrum_search", full_spec_search, METH_VARARGS, ""},
-	{"_get_reference_data", get_reference_data, METH_VARARGS, ""},
-	{"_init_api", init_api, METH_VARARGS, ""},
-	{"_cas_search", cas_search, METH_VARARGS, ""},
-	// {"_get_lib_paths", get_lib_paths, METH_VARARGS, ""},
-	{"_get_active_libs", get_active_libs, METH_VARARGS, ""},
-	{NULL, NULL}
-};
+static PyMethodDef Methods[] = { { "_spectrum_search", spec_search, METH_VARARGS,
+								   "Searches the library with search type 'NISTMS_NO_PRE_SRCH'" },
+								 { "_full_spectrum_search", full_spec_search, METH_VARARGS, "" },
+								 { "_get_reference_data", get_reference_data, METH_VARARGS, "" },
+								 { "_init_api", init_api, METH_VARARGS, "" },
+								 { "_cas_search", cas_search, METH_VARARGS, "" },
+								 // {"_get_lib_paths", get_lib_paths, METH_VARARGS, ""},
+								 { "_get_active_libs", get_active_libs, METH_VARARGS, "" },
+								 { NULL, NULL } };
 
-static struct PyModuleDef _core = {
-	PyModuleDef_HEAD_INIT,
-	"_core",
-	"Python interface for the NIST Spectral Search library",
-	-1,
-	Methods
-};
+static struct PyModuleDef _core = { PyModuleDef_HEAD_INIT, "_core",
+									"Python interface for the NIST Spectral Search library", -1, Methods };
 
-
-PyMODINIT_FUNC
-PyInit__core(void)
-{
+PyMODINIT_FUNC PyInit__core(void) {
 	/*************************************************************************
 	One-time initialization of the NIST DLL
 	This sets up database buffers and library locations.
@@ -1664,12 +1655,12 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_ASCII", Py_BuildValue("i", search_type));
 	search_type = NISTMS_STRING_TO_GREEK;
 	PyObject_SetAttrString(py_module, "NISTMS_STRING_TO_GREEK", Py_BuildValue("i", search_type));
-	#if (MSTXTDATA == 1)
-		search_type = NISTMS_SET_VERSION;
-		PyObject_SetAttrString(py_module, "NISTMS_SET_VERSION", Py_BuildValue("i", search_type));
-		search_type = NISTMS_DECODE_MODS;
-		PyObject_SetAttrString(py_module, "NISTMS_DECODE_MODS", Py_BuildValue("i", search_type));
-	#endif
+#if (MSTXTDATA == 1)
+	search_type = NISTMS_SET_VERSION;
+	PyObject_SetAttrString(py_module, "NISTMS_SET_VERSION", Py_BuildValue("i", search_type));
+	search_type = NISTMS_DECODE_MODS;
+	PyObject_SetAttrString(py_module, "NISTMS_DECODE_MODS", Py_BuildValue("i", search_type));
+#endif
 	search_type = NISTMS_MAKE_MOLFILE;
 	PyObject_SetAttrString(py_module, "NISTMS_MAKE_MOLFILE", Py_BuildValue("i", search_type));
 	search_type = NISTMS_ALT2AROM;
@@ -1678,16 +1669,16 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_LIBS", Py_BuildValue("i", search_type));
 	search_type = NISTMS_MARK_ALL_LIBS;
 	PyObject_SetAttrString(py_module, "NISTMS_MARK_ALL_LIBS", Py_BuildValue("i", search_type));
-	#if (EXACTMW == 1)
-		search_type = NISTMS_INDEX_LIBRARY_EXACT_MASS;
-		PyObject_SetAttrString(py_module, "NISTMS_INDEX_LIBRARY_EXACT_MASS", Py_BuildValue("i", search_type));
-		search_type = NISTMS_EXACT_MASS_SRCH;
-		PyObject_SetAttrString(py_module, "NISTMS_EXACT_MASS_SRCH", Py_BuildValue("i", search_type));
-		search_type = NISTMS_GET_EXACT_MASS_LIMITS;
-		PyObject_SetAttrString(py_module, "NISTMS_GET_EXACT_MASS_LIMITS", Py_BuildValue("i", search_type));
-		search_type = NISTMS_EXACT_MZ_TO_INT_PEAKS;
-		PyObject_SetAttrString(py_module, "NISTMS_EXACT_MZ_TO_INT_PEAKS", Py_BuildValue("i", search_type));
-	#endif
+#if (EXACTMW == 1)
+	search_type = NISTMS_INDEX_LIBRARY_EXACT_MASS;
+	PyObject_SetAttrString(py_module, "NISTMS_INDEX_LIBRARY_EXACT_MASS", Py_BuildValue("i", search_type));
+	search_type = NISTMS_EXACT_MASS_SRCH;
+	PyObject_SetAttrString(py_module, "NISTMS_EXACT_MASS_SRCH", Py_BuildValue("i", search_type));
+	search_type = NISTMS_GET_EXACT_MASS_LIMITS;
+	PyObject_SetAttrString(py_module, "NISTMS_GET_EXACT_MASS_LIMITS", Py_BuildValue("i", search_type));
+	search_type = NISTMS_EXACT_MZ_TO_INT_PEAKS;
+	PyObject_SetAttrString(py_module, "NISTMS_EXACT_MZ_TO_INT_PEAKS", Py_BuildValue("i", search_type));
+#endif
 	search_type = NISTMS_CASNO_SRCH2;
 	PyObject_SetAttrString(py_module, "NISTMS_CASNO_SRCH2", Py_BuildValue("i", search_type));
 	search_type = NISTMS_NISTNO_SRCH;
@@ -1713,24 +1704,24 @@ PyInit__core(void)
 	search_mode_flags = SEARCH_MODE_CHAR_MASK;
 	PyObject_SetAttrString(py_module, "SEARCH_MODE_CHAR_MASK", Py_BuildValue("i", search_mode_flags));
 
-	#ifdef MSPEPSEARCH
-		/* used in MSPepSEarch only */
-		#ifndef MAP_LIB_FILE_TYPE_DEFINED
+#ifdef MSPEPSEARCH
+	/* used in MSPepSEarch only */
+	#ifndef MAP_LIB_FILE_TYPE_DEFINED
 
-		enum MAP_LIB_FILE_TYPE lib_file_type;
-		lib_file_type = MM_PEAKIN_PM0;
-		PyObject_SetAttrString(py_module, "MM_PEAKIN_PM0", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_PEAKDB_PM0;
-		PyObject_SetAttrString(py_module, "MM_PEAKDB_PM0", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_MZBIN_INU;
-		PyObject_SetAttrString(py_module, "MM_MZBIN_INU", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_MZBIN_DBU;
-		PyObject_SetAttrString(py_module, "MM_MZBIN_DBU", Py_BuildValue("i", lib_file_type));
-		lib_file_type = MM_MZPRECUB_INU;
-		PyObject_SetAttrString(py_module, "MM_MZPRECUB_INU", Py_BuildValue("i", lib_file_type));
+	enum MAP_LIB_FILE_TYPE lib_file_type;
+	lib_file_type = MM_PEAKIN_PM0;
+	PyObject_SetAttrString(py_module, "MM_PEAKIN_PM0", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_PEAKDB_PM0;
+	PyObject_SetAttrString(py_module, "MM_PEAKDB_PM0", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_MZBIN_INU;
+	PyObject_SetAttrString(py_module, "MM_MZBIN_INU", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_MZBIN_DBU;
+	PyObject_SetAttrString(py_module, "MM_MZBIN_DBU", Py_BuildValue("i", lib_file_type));
+	lib_file_type = MM_MZPRECUB_INU;
+	PyObject_SetAttrString(py_module, "MM_MZPRECUB_INU", Py_BuildValue("i", lib_file_type));
 
-		#endif
 	#endif
+#endif
 
 	/*
 	USER_DLL_STR_2_0
