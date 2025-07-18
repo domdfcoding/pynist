@@ -49,7 +49,7 @@ from pyms_nist_search.search_result import SearchResult
 from pyms_nist_search.utils import pack
 
 # this package
-from . import _core
+from . import _core  # type: ignore[attr-defined]
 
 __all__ = ("Engine", )
 
