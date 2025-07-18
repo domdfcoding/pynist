@@ -2,7 +2,10 @@
 import pytest
 
 # this package
-from pyms_nist_search import utils
+from pyms_nist_search import Engine, utils
+
+# this package
+from .engines import FULL_PATH_TO_USER_LIBRARY
 
 
 # yapf: disable
@@ -91,3 +94,17 @@ def test_parse_name_chars():
 	# Errors
 	with pytest.raises(TypeError):
 		utils.parse_name_chars(['a', 'b', 'c'])  # type: ignore[list-item]
+
+
+def test_get_active_libs(search: Engine):
+	active_libs = search.get_active_libs()
+	assert active_libs[0] == 1
+
+	for pos in active_libs[1:]:
+		assert pos == 0
+
+
+def test_get_lib_paths(search: Engine):
+	lib_paths = search.get_lib_paths()
+	assert len(lib_paths) == 1
+	assert lib_paths[0] == FULL_PATH_TO_USER_LIBRARY

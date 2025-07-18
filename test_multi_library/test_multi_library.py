@@ -52,6 +52,9 @@ def test_c1_c2_51():
 		assert "2,6-DICHLOROPHENOL" not in hit_list_names
 
 		assert hit_list_names == ["1-NITROPYRENE", "2,4-DINITROPHENOL"]
+		lib_paths = engine.get_lib_paths()
+		assert lib_paths[hit_list[0].lib_idx] == FULL_PATH_TO_C1_LIBRARY
+		assert lib_paths[hit_list[1].lib_idx] == FULL_PATH_TO_C2_LIBRARY
 
 
 def test_all_51():
@@ -89,6 +92,12 @@ def test_all_51():
 
 		assert hit_list_names == ["1-NITROPYRENE", "2,4-DINITROPHENOL", "2,5-DICHLOROPHENOL", "3,4-DICHLOROPHENOL"]
 
+		lib_paths = engine.get_lib_paths()
+		assert lib_paths[hit_list[0].lib_idx] == FULL_PATH_TO_C1_LIBRARY
+		assert lib_paths[hit_list[1].lib_idx] == FULL_PATH_TO_C2_LIBRARY
+		assert lib_paths[hit_list[2].lib_idx] == FULL_PATH_TO_C4_LIBRARY
+		assert lib_paths[hit_list[3].lib_idx] == FULL_PATH_TO_C3_LIBRARY
+
 
 def test_all_53():
 	with pyms_nist_search.Engine(
@@ -125,6 +134,11 @@ def test_all_53():
 
 		assert hit_list_names == ["2,5-DICHLOROPHENOL", "3,4-DICHLOROPHENOL", "2,6-DICHLOROPHENOL"]
 
+		lib_paths = engine.get_lib_paths()
+		assert lib_paths[hit_list[0].lib_idx] == FULL_PATH_TO_C4_LIBRARY
+		assert lib_paths[hit_list[1].lib_idx] == FULL_PATH_TO_C3_LIBRARY
+		assert lib_paths[hit_list[2].lib_idx] == FULL_PATH_TO_C5_LIBRARY
+
 
 def test_full_search_with_ref_data():
 	with pyms_nist_search.Engine(
@@ -155,7 +169,14 @@ def test_full_search_with_ref_data():
 
 		assert hit[1].name == "2,6-DICHLOROPHENOL"
 		# assert hit[1].cas == "95-77-2"  # Not supported by lib2nist it seems
-		print(hit[1].to_dict())
+
+		ref_data_dict = hit[1].to_dict()
+		assert ref_data_dict["name"] == "2,6-DICHLOROPHENOL"
+		# CAS not supported by LIB2NIST
+		assert ref_data_dict["formula"] == "C6H4Cl2O"
+		assert ref_data_dict["nist_no"] == 5
+		assert ref_data_dict["id"] == 1
+		assert isinstance(ref_data_dict["mass_spec"], MassSpectrum)
 
 
 @pytest.mark.xfail()
@@ -257,3 +278,62 @@ def test_cas_single_library():
 		assert isinstance(hit_list[0], SearchResult)
 
 		assert hit_list[0].name == "2,4-DINITROPHENOL"
+
+
+def test_get_active_libs():
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C5_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C4_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C3_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		active_libs = engine.get_active_libs()
+		assert active_libs[0] == 1
+		assert active_libs[1] == 2
+		assert active_libs[2] == 3
+		assert active_libs[3] == 4
+		assert active_libs[4] == 5
+
+		for pos in active_libs[5:]:
+			assert pos == 0
+
+
+def test_get_lib_paths():
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C5_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C4_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C3_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C2_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		lib_paths = engine.get_lib_paths()
+		assert len(lib_paths) == 5
+		assert lib_paths[0] == FULL_PATH_TO_C5_LIBRARY
+		assert lib_paths[1] == FULL_PATH_TO_C4_LIBRARY
+		assert lib_paths[2] == FULL_PATH_TO_C3_LIBRARY
+		assert lib_paths[3] == FULL_PATH_TO_C2_LIBRARY
+		assert lib_paths[4] == FULL_PATH_TO_C1_LIBRARY
+
+	with pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_C1_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C3_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					(FULL_PATH_TO_C5_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			) as engine:
+
+		lib_paths = engine.get_lib_paths()
+		assert len(lib_paths) == 3
+		assert lib_paths[0] == FULL_PATH_TO_C1_LIBRARY
+		assert lib_paths[1] == FULL_PATH_TO_C3_LIBRARY
+		assert lib_paths[2] == FULL_PATH_TO_C5_LIBRARY
