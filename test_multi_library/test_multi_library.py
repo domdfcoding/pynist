@@ -175,8 +175,8 @@ def test_full_search_with_ref_data():
 		# CAS not supported by LIB2NIST
 		assert hit[1].formula == "C6H4Cl2O"
 		assert hit[1].nist_no == 5
-		assert hit[1].id == 1
-		assert hit[1].lib_idx == 5
+		assert hit[1].id == "1"
+		assert hit[1].lib_idx == 4
 		engine.get_lib_paths()[hit[1].lib_idx] == FULL_PATH_TO_C5_LIBRARY
 		assert isinstance(hit[1].mass_spec, MassSpectrum)
 

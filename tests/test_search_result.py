@@ -53,6 +53,7 @@ def reference_data(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional
 			"reverse_match_factor": 926,
 			"spec_loc": 1046408,
 			"hit_prob": 35.43,
+			"lib_idx": 0,
 			}
 
 	search_res_json = json.dumps(search_res_dict)

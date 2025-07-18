@@ -35,7 +35,7 @@ def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Option
 	assert hit_list[0][1].name.lower() == name.lower()
 
 	assert hit_list[0][1].lib_idx == 0
-	search.get_lib_paths()[hit_list[0][1]] == FULL_PATH_TO_USER_LIBRARY
+	search.get_lib_paths()[hit_list[0][1].lib_idx] == FULL_PATH_TO_USER_LIBRARY
 
 
 def test_different_n_hits(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
