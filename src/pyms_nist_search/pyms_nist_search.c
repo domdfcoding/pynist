@@ -975,7 +975,7 @@ static PyObject *get_reference_data(PyObject *self, PyObject *args) {
 	// printf("Search Complete\n");
 
 	PyObject *py_lib_idx = PyLong_FromLong(NISTMS_LIB_NUM(input_spec_loc));
-	PyDict_SetItemString(d, "lib_idx", py_lib_idx);
+	PyDict_SetItemString(record, "lib_idx", py_lib_idx);
 
 	// printf("Name: %s\n", io.aux_data->name);
 	PyObject *py_name = PyUnicode_FromFormat("%s", io.aux_data->name);
