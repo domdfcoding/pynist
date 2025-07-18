@@ -1547,7 +1547,7 @@ PyInit__core(void)
 	peak_type = NISTMS_EXACT_MASS_PEAK;
 	PyObject_SetAttrString(py_module, "NISTMS_EXACT_MASS_PEAK", Py_BuildValue("i", peak_type));
 
-	enum tagNISTMS_INSTR_TYPE instr_type;
+	enum tagNIST_INSTR_TYPE instr_type;
 	instr_type = NISTMS_INSTR_TYPE_NONE;
 	PyObject_SetAttrString(py_module, "NISTMS_INSTR_TYPE_NONE", Py_BuildValue("i", instr_type));
 	instr_type = NISTMS_INSTR_TYPE_IONTRAP;
@@ -1563,7 +1563,7 @@ PyInit__core(void)
 	instr_type = NIST_INSTR_TYPE_NOT_IN_LIBREC;
 	PyObject_SetAttrString(py_module, "NIST_INSTR_TYPE_NOT_IN_LIBREC", Py_BuildValue("i", instr_type));
 
-	enum NISTMS_BIT_INSTR_TYPE bit_instr_type;
+	enum tagNISTMS_BIT_INSTR_TYPE bit_instr_type;
 	bit_instr_type = NISTMS_BIT_INSTR_TYPE_NONE;
 	PyObject_SetAttrString(py_module, "NISTMS_BIT_INSTR_TYPE_NONE", Py_BuildValue("i", bit_instr_type));
 	bit_instr_type = NISTMS_BIT_INSTR_TYPE_IONTRAP;
