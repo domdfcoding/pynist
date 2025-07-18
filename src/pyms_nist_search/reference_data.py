@@ -72,6 +72,8 @@ class ReferenceData(NISTBase):
 	:param contributor: The contributor to the library.
 	:param mass_spec: The reference mass spectrum.
 	:param synonyms: List of synonyms for the compound.
+	:param exact_mass: Not used.
+	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
 
 	.. latex:vspace:: 60px
 	"""
@@ -92,6 +94,7 @@ class ReferenceData(NISTBase):
 			mass_spec: Optional[MassSpectrum] = None,
 			synonyms: Optional[Sequence[str]] = None,
 			exact_mass: Optional[Any] = None,
+			lib_idx: int = 0,
 			) -> None:
 
 		NISTBase.__init__(self, name, cas)
@@ -108,6 +111,8 @@ class ReferenceData(NISTBase):
 			self._exact_mass = float(mw)
 		else:
 			self._exact_mass = float(exact_mass)
+
+		self._lib_idx: int = int(lib_idx)
 
 		if mass_spec is None:
 			self._mass_spec = None
@@ -164,7 +169,7 @@ class ReferenceData(NISTBase):
 	@property
 	def exact_mass(self) -> float:
 		"""
-		The exact mass of the compound.
+		The exact mass of the compound (not used).
 		"""
 
 		return self._exact_mass
@@ -185,6 +190,14 @@ class ReferenceData(NISTBase):
 
 		return self._synonyms[:]
 
+	@property
+	def lib_idx(self) -> int:
+		"""
+		The (zero-based) index of the library the result was found in (see :meth:`~.Engine.get_lib_names()`).
+		"""
+
+		return int(self._lib_idx)
+
 	@classmethod
 	def from_pynist(cls, pynist_dict: Dict[str, Any]) -> "ReferenceData":
 		"""
@@ -203,6 +216,7 @@ class ReferenceData(NISTBase):
 				mw=pynist_dict["mw"],
 				mass_spec=MassSpectrum(pynist_dict["mass_list"], pynist_dict["intensity_list"]),
 				synonyms=[parse_name_chars(synonym) for synonym in pynist_dict["synonyms_chars"]],
+				lib_idx=pynist_dict["lib_idx"],
 				)
 
 	def __repr__(self) -> str:
@@ -226,6 +240,7 @@ class ReferenceData(NISTBase):
 				exact_mass=self.exact_mass,
 				synonyms=self.synonyms[:],
 				mass_spec=self.mass_spec,
+				lib_idx=self.lib_idx,
 				)
 
 	@property
