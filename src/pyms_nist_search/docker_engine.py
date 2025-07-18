@@ -166,7 +166,7 @@ class Engine:
 
 		raise TimeoutError("Unable to communicate with the search server.")
 
-	def _pull_and_launch(self, lib_paths: List[str], lib_types: List[bytes]) -> None:
+	def _pull_and_launch(self, lib_paths: List[str], lib_types: List[int]) -> None:
 		try:
 			self.__launch_container(lib_paths, lib_types)
 		except docker.errors.ImageNotFound:
@@ -178,7 +178,7 @@ class Engine:
 	def _parse_lib_paths_and_types(
 			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
 			lib_type: int,
-			) -> Tuple[List[str], List[bytes]]:
+			) -> Tuple[List[str], List[int]]:
 
 		if isinstance(lib_path, (str, os.PathLike)):
 			if not isinstance(lib_path, pathlib.Path):
@@ -190,7 +190,7 @@ class Engine:
 			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 
-			return [str(lib_path)], [lib_type.to_bytes(1, "big")]
+			return [str(lib_path)], [lib_type]
 
 		else:
 			assert lib_type is _core.NISTMS_MAIN_LIB
@@ -210,11 +210,11 @@ class Engine:
 				lib_type = library[1]
 				if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-				lib_types.append(lib_type.to_bytes(1, "big"))
+				lib_types.append(lib_type)
 
 			return lib_paths, lib_types
 
-	def __launch_container(self, lib_paths: List[str], lib_types: List[bytes]) -> None:
+	def __launch_container(self, lib_paths: List[str], lib_types: List[int]) -> None:
 		volumes = {}
 		lib_names = []
 
@@ -224,16 +224,15 @@ class Engine:
 			volumes[library] = {"bind": f"/{lib_name}", "mode": "ro"}
 
 		configdata = {
-			"lib_paths": lib_names,
-			"lib_types": lib_types,
-		}
+				"lib_paths": lib_names,
+				"lib_types": [lt for lt in lib_types],
+				}
 
 		config_b64 = base64.b64encode(json.dumps(configdata).encode("UTF-8")).decode("UTF-8")
 
-		# lib_paths_packed = _core.NISTMS_PATH_SEPARATOR.join(lib_names) + '\x00',
-
 		self.docker = self._client.containers.run(
-				"domdfcoding/pywine-pyms-nist",
+				# "domdfcoding/pywine-pyms-nist:latest",
+				"domdfcoding/pywine-pyms-nist:multi-library",
 				ports={5001: 5001},
 				detach=True,
 				name="pyms-nist-server",
@@ -423,8 +422,7 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	@staticmethod
-	def get_lib_paths() -> List[str]:
+	def get_lib_paths(self) -> List[str]:
 		"""
 		Returns the list of library names currently in use.
 		"""
@@ -435,8 +433,9 @@ class Engine:
 		while retry_count < 240:
 			try:
 				res = requests.get(f"http://localhost:5001/info/lib_paths")
-				assert isinstance(res.json, list)
-				return res.json
+				res.raise_for_status()
+				assert isinstance(res.json(), list)
+				return res.json()
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1
@@ -444,8 +443,7 @@ class Engine:
 		raise TimeoutError("Unable to communicate with the search server.")
 
 	@require_init
-	@staticmethod
-	def get_active_libs() -> List[int]:
+	def get_active_libs(self) -> List[int]:
 		"""
 		Returns the active librararies, as their (zero-based) indices in the output of :meth:~.WinEngine.get_lib_names()`.
 		"""
@@ -456,8 +454,9 @@ class Engine:
 		while retry_count < 240:
 			try:
 				res = requests.get(f"http://localhost:5001/info/active_libs")
-				assert isinstance(res.json, list)
-				return res.json
+				res.raise_for_status()
+				assert isinstance(res.json(), list)
+				return res.json()
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
 				retry_count += 1

@@ -35,13 +35,16 @@ General utilities.
 #
 
 # stdlib
+import ntpath
 import warnings
 from typing import Sequence
+
+from domdf_python_tools.typing import PathLike
 
 # 3rd party
 from pyms.Spectrum import MassSpectrum
 
-__all__ = ["pack", "parse_name_chars"]
+__all__ = ["pack", "parse_name_chars", "lib_name_from_path"]
 
 
 def pack(mass_spec: MassSpectrum, top: int = 20) -> str:
@@ -123,3 +126,12 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 		warnings.warn(f"Unable to parse the following character codes for string {hit_name}: {errors}.")
 
 	return hit_name
+
+
+def lib_name_from_path(lib_path: PathLike) -> str:
+	"""
+	Given the path to a mass spectral library, returns the library name (the final path component).
+	"""
+
+	return ntpath.split(lib_path)[-1]
+

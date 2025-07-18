@@ -107,4 +107,4 @@ def test_get_active_libs(search: Engine):
 def test_get_lib_paths(search: Engine):
 	lib_paths = search.get_lib_paths()
 	assert len(lib_paths) == 1
-	assert lib_paths[0] == FULL_PATH_TO_USER_LIBRARY
+	assert utils.lib_name_from_path(lib_paths[0]) == "MoNA"
