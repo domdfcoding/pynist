@@ -84,7 +84,24 @@ class Engine:
 		if not work_dir.is_dir():
 			work_dir.mkdir()
 
-		self.debug = debug
+		self.debug: bool = bool(debug)
+
+		parsed_lib_paths, parsed_lib_types = self._parse_lib_paths_and_types(lib_path, lib_type)
+		_core._init_api(
+				_core.NISTMS_PATH_SEPARATOR.join(parsed_lib_paths) + '\x00',
+				b''.join(parsed_lib_types) + b"\0",
+				len(parsed_lib_paths),
+				str(work_dir),
+				)
+		self._lib_paths = _core.NISTMS_PATH_SEPARATOR.join(parsed_lib_paths)
+
+		atexit.register(self.uninit)
+
+	@staticmethod
+	def _parse_lib_paths_and_types(
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
+			lib_type: int,
+			) -> Tuple[List[str], List[bytes]]:
 
 		if isinstance(lib_path, (str, os.PathLike)):
 			if not isinstance(lib_path, pathlib.Path):
@@ -96,8 +113,7 @@ class Engine:
 			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
 				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 
-			_core._init_api(str(lib_path) + '\x00', lib_type.to_bytes(1, "big") + b"\0", 1, str(work_dir))
-			self._lib_paths = str(lib_path)
+			return [str(lib_path)], [lib_type.to_bytes(1, "big")]
 
 		else:
 			assert lib_type is _core.NISTMS_MAIN_LIB
@@ -119,15 +135,7 @@ class Engine:
 					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
 				lib_types.append(lib_type.to_bytes(1, "big"))
 
-			_core._init_api(
-					_core.NISTMS_PATH_SEPARATOR.join(lib_paths) + '\x00',
-					b''.join(lib_types) + b"\0",
-					len(lib_paths),
-					str(work_dir),
-					)
-			self._lib_paths = _core.NISTMS_PATH_SEPARATOR.join(lib_paths)
-
-		atexit.register(self.uninit)
+			return lib_paths, lib_types
 
 	def uninit(self) -> None:
 		"""
