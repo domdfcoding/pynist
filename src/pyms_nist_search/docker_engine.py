@@ -228,7 +228,7 @@ class Engine:
 				# stderr=False,
 				stdin_open=False,
 				volumes={lib_path: {"bind": "/mainlib", "mode": "ro"}},
-				environment=[f"LIBTYPE={lib_type.decode("UTF-8")}", f"NUM_LIBS={num_libs}"],
+				environment=[f"LIBTYPE={lib_type.decode('UTF-8')}", f"NUM_LIBS={num_libs}"],
 				)
 
 	def __enter__(self) -> "Engine":
