@@ -2,6 +2,7 @@
 import pathlib
 
 # 3rd party
+from pyms_nist_search.utils import lib_name_from_path
 import pytest
 from pyms.Spectrum import MassSpectrum
 
@@ -53,8 +54,8 @@ def test_c1_c2_51():
 
 		assert hit_list_names == ["1-NITROPYRENE", "2,4-DINITROPHENOL"]
 		lib_paths = engine.get_lib_paths()
-		assert lib_paths[hit_list[0].lib_idx] == FULL_PATH_TO_C1_LIBRARY
-		assert lib_paths[hit_list[1].lib_idx] == FULL_PATH_TO_C2_LIBRARY
+		assert lib_name_from_path(lib_paths[hit_list[0].lib_idx]) == "c1"
+		assert lib_name_from_path(lib_paths[hit_list[1].lib_idx]) == "c2"
 
 
 def test_all_51():
@@ -93,10 +94,10 @@ def test_all_51():
 		assert hit_list_names == ["1-NITROPYRENE", "2,4-DINITROPHENOL", "2,5-DICHLOROPHENOL", "3,4-DICHLOROPHENOL"]
 
 		lib_paths = engine.get_lib_paths()
-		assert lib_paths[hit_list[0].lib_idx] == FULL_PATH_TO_C1_LIBRARY
-		assert lib_paths[hit_list[1].lib_idx] == FULL_PATH_TO_C2_LIBRARY
-		assert lib_paths[hit_list[2].lib_idx] == FULL_PATH_TO_C4_LIBRARY
-		assert lib_paths[hit_list[3].lib_idx] == FULL_PATH_TO_C3_LIBRARY
+		assert lib_name_from_path(lib_paths[hit_list[0].lib_idx]) == "c1"
+		assert lib_name_from_path(lib_paths[hit_list[1].lib_idx]) == "c2"
+		assert lib_name_from_path(lib_paths[hit_list[2].lib_idx]) == "c4"
+		assert lib_name_from_path(lib_paths[hit_list[3].lib_idx]) == "c3"
 
 
 def test_all_53():
@@ -135,9 +136,9 @@ def test_all_53():
 		assert hit_list_names == ["2,5-DICHLOROPHENOL", "3,4-DICHLOROPHENOL", "2,6-DICHLOROPHENOL"]
 
 		lib_paths = engine.get_lib_paths()
-		assert lib_paths[hit_list[0].lib_idx] == FULL_PATH_TO_C4_LIBRARY
-		assert lib_paths[hit_list[1].lib_idx] == FULL_PATH_TO_C3_LIBRARY
-		assert lib_paths[hit_list[2].lib_idx] == FULL_PATH_TO_C5_LIBRARY
+		assert lib_name_from_path(lib_paths[hit_list[0].lib_idx]) == "c4"
+		assert lib_name_from_path(lib_paths[hit_list[1].lib_idx]) == "c3"
+		assert lib_name_from_path(lib_paths[hit_list[2].lib_idx]) == "c5"
 
 
 def test_full_search_with_ref_data():
@@ -175,7 +176,7 @@ def test_full_search_with_ref_data():
 		# CAS not supported by LIB2NIST
 		assert hit[1].formula == "C6H4Cl2O"
 		assert hit[1].nist_no == 5
-		assert hit[1].id == "1"
+		assert hit[1].id == '1'
 		assert hit[1].lib_idx == 4
 		engine.get_lib_paths()[hit[1].lib_idx] == FULL_PATH_TO_C5_LIBRARY
 		assert isinstance(hit[1].mass_spec, MassSpectrum)
@@ -319,11 +320,11 @@ def test_get_lib_paths():
 
 		lib_paths = engine.get_lib_paths()
 		assert len(lib_paths) == 5
-		assert lib_paths[0] == FULL_PATH_TO_C5_LIBRARY
-		assert lib_paths[1] == FULL_PATH_TO_C4_LIBRARY
-		assert lib_paths[2] == FULL_PATH_TO_C3_LIBRARY
-		assert lib_paths[3] == FULL_PATH_TO_C2_LIBRARY
-		assert lib_paths[4] == FULL_PATH_TO_C1_LIBRARY
+		assert lib_name_from_path(lib_paths[0]) == "c5"
+		assert lib_name_from_path(lib_paths[1]) == "c4"
+		assert lib_name_from_path(lib_paths[2]) == "c3"
+		assert lib_name_from_path(lib_paths[3]) == "c2"
+		assert lib_name_from_path(lib_paths[4]) == "c1"
 
 	with pyms_nist_search.Engine(
 			[
@@ -336,6 +337,6 @@ def test_get_lib_paths():
 
 		lib_paths = engine.get_lib_paths()
 		assert len(lib_paths) == 3
-		assert lib_paths[0] == FULL_PATH_TO_C1_LIBRARY
-		assert lib_paths[1] == FULL_PATH_TO_C3_LIBRARY
-		assert lib_paths[2] == FULL_PATH_TO_C5_LIBRARY
+		assert lib_name_from_path(lib_paths[0]) == "c1"
+		assert lib_name_from_path(lib_paths[1]) == "c3"
+		assert lib_name_from_path(lib_paths[2]) == "c5"
