@@ -36,6 +36,7 @@ Search engine for Linux and other platforms supporting Docker.
 
 # stdlib
 import atexit
+import base64
 import functools
 import json
 import os
@@ -146,11 +147,7 @@ class Engine:
 
 		self._client = docker.from_env()
 
-		self._pull_and_launch(
-				_core.NISTMS_PATH_SEPARATOR.join(parsed_lib_paths) + '\x00',
-				b''.join(parsed_lib_types) + b"\0",
-				len(parsed_lib_paths),
-				)
+		self._pull_and_launch(parsed_lib_paths, parsed_lib_types)
 
 		atexit.register(self.uninit)
 
@@ -169,13 +166,13 @@ class Engine:
 
 		raise TimeoutError("Unable to communicate with the search server.")
 
-	def _pull_and_launch(self, lib_path: PathLike, lib_type: bytes, num_libs: int) -> None:
+	def _pull_and_launch(self, lib_paths: List[str], lib_types: List[bytes]) -> None:
 		try:
-			self.__launch_container(lib_path, lib_type, num_libs)
+			self.__launch_container(lib_paths, lib_types)
 		except docker.errors.ImageNotFound:
 			print("Docker Image not found. Downloading now.")
 			self._client.images.pull("domdfcoding/pywine-pyms-nist:latest")
-			self.__launch_container(lib_path, lib_type, num_libs)
+			self.__launch_container(lib_paths, lib_types)
 
 	@staticmethod
 	def _parse_lib_paths_and_types(
@@ -217,7 +214,24 @@ class Engine:
 
 			return lib_paths, lib_types
 
-	def __launch_container(self, lib_path: PathLike, lib_type: bytes, num_libs: int) -> None:
+	def __launch_container(self, lib_paths: List[str], lib_types: List[bytes]) -> None:
+		volumes = {}
+		lib_names = []
+
+		for library in lib_paths:
+			lib_name = os.path.split(library)[-1]
+			lib_names.append(f"Z:\\{lib_name}")
+			volumes[library] = {"bind": f"/{lib_name}", "mode": "ro"}
+
+		configdata = {
+			"lib_paths": lib_names,
+			"lib_types": lib_types,
+		}
+
+		config_b64 = base64.b64encode(json.dumps(configdata).encode("UTF-8")).decode("UTF-8")
+
+		# lib_paths_packed = _core.NISTMS_PATH_SEPARATOR.join(lib_names) + '\x00',
+
 		self.docker = self._client.containers.run(
 				"domdfcoding/pywine-pyms-nist",
 				ports={5001: 5001},
@@ -227,8 +241,9 @@ class Engine:
 				# stdout=False,
 				# stderr=False,
 				stdin_open=False,
-				volumes={lib_path: {"bind": "/mainlib", "mode": "ro"}},
-				environment=[f"LIBTYPE={lib_type.decode('UTF-8')}", f"NUM_LIBS={num_libs}"],
+				volumes=volumes,
+				# environment=[f"LIBPATHS={lib_paths_packed!r}", f"LIBTYPES={lib_types.decode('UTF-8')!r}", f"NUM_LIBS={num_libs}"],
+				environment=[f"CONFIG={config_b64}"]
 				)
 
 	def __enter__(self) -> "Engine":
@@ -419,7 +434,7 @@ class Engine:
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
-				res = requests.get(f"http://localhost:5001/info/get_lib_paths")
+				res = requests.get(f"http://localhost:5001/info/lib_paths")
 				assert isinstance(res.json, list)
 				return res.json
 			except requests.exceptions.ConnectionError:
@@ -440,7 +455,7 @@ class Engine:
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
-				res = requests.get(f"http://localhost:5001/info/get_active_libs")
+				res = requests.get(f"http://localhost:5001/info/active_libs")
 				assert isinstance(res.json, list)
 				return res.json
 			except requests.exceptions.ConnectionError:
