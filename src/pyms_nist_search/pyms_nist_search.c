@@ -599,7 +599,6 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 	return py_hit_list;
 }
 
-
 // /*
 // Returns the current list of libraries (delimited by NISTMS_PATH_SEPARATOR)
 // */
@@ -607,7 +606,6 @@ static PyObject *full_spec_search(PyObject *self, PyObject *args) {
 // 	PyObject *py_lib_names = PyUnicode_FromString(lib_paths);
 // 	return py_lib_names;
 // }
-
 
 /*
 Returns the currently active libraries (in search order)
@@ -623,7 +621,6 @@ static PyObject *get_active_libs(PyObject *self, PyObject *Py_UNUSED(args)) {
 }
 
 // TODO: allow active libs to be changed without reinit
-
 
 /****************************************************************************
 
@@ -1536,7 +1533,7 @@ PyInit__core(void)
 	PyObject_SetAttrString(py_module, "NISTMS_PREC_MZ_ONE", Py_BuildValue("i", NISTMS_PREC_MZ_ONE));
 	PyObject_SetAttrString(py_module, "NISTMS_FAKE_PREC_MZ", Py_BuildValue("i", NISTMS_FAKE_PREC_MZ));
 
-	enum NISTMS_PEAK_TYPE peak_type;
+	enum tagNISTMS_PEAK_TYPE peak_type;
 	peak_type = NISTMS_ANY_PEAK;
 	PyObject_SetAttrString(py_module, "NISTMS_ANY_PEAK", Py_BuildValue("i", peak_type));
 	peak_type = NISTMS_LOSS_PEAK;
@@ -1550,7 +1547,7 @@ PyInit__core(void)
 	peak_type = NISTMS_EXACT_MASS_PEAK;
 	PyObject_SetAttrString(py_module, "NISTMS_EXACT_MASS_PEAK", Py_BuildValue("i", peak_type));
 
-	enum NISTMS_INSTR_TYPE instr_type;
+	enum tagNISTMS_INSTR_TYPE instr_type;
 	instr_type = NISTMS_INSTR_TYPE_NONE;
 	PyObject_SetAttrString(py_module, "NISTMS_INSTR_TYPE_NONE", Py_BuildValue("i", instr_type));
 	instr_type = NISTMS_INSTR_TYPE_IONTRAP;
@@ -1578,7 +1575,7 @@ PyInit__core(void)
 	bit_instr_type = NISTMS_BIT_INSTR_TYPE_OTHER;
 	PyObject_SetAttrString(py_module, "NISTMS_BIT_INSTR_TYPE_OTHER", Py_BuildValue("i", bit_instr_type));
 
-	enum NISTMS_SPECTRUM_FLAGS spec_flags;
+	enum tagNISTMS_SPECTRUM_FLAGS spec_flags;
 	spec_flags = NISTMS_SPEC_FLAG_PEPSEQ_MASK;
 	PyObject_SetAttrString(py_module, "NISTMS_SPEC_FLAG_PEPSEQ_MASK", Py_BuildValue("i", spec_flags));
 	spec_flags = NISTMS_SPEC_FLAG_PEPSEQ_NOT_SEARCHED;
@@ -1592,7 +1589,7 @@ PyInit__core(void)
 	spec_flags = NISTMS_SPEC_FLAG_PEPSEQ_GENERATED;
 	PyObject_SetAttrString(py_module, "NISTMS_SPEC_FLAG_PEPSEQ_GENERATED", Py_BuildValue("i", spec_flags));
 
-	enum NISTMS_SEARCH_TYPE search_type;
+	enum tagNISTMS_SEARCH_TYPE search_type;
 	search_type = NISTMS_INIT_SRCH;
 	PyObject_SetAttrString(py_module, "NISTMS_INIT_SRCH", Py_BuildValue("i", search_type));
 	search_type = NISTMS_CLOSE_SRCH;

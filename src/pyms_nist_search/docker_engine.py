@@ -56,7 +56,7 @@ from pyms_nist_search.reference_data import ReferenceData
 from pyms_nist_search.search_result import SearchResult
 
 # this package
-from . import _core  # type: ignore[import-not-found]
+from . import _core  # type: ignore[attr-defined]
 
 __all__ = [
 		"require_init",
@@ -114,22 +114,21 @@ class Engine:
 			search.full_spectrum_search(ms, n_hits=5)
 
 	.. versionchanged:: 0.6.0  Added context manager support.
+
+	:param lib_path: The path to the mass spectral library.
+	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
+	:param work_dir: The path to the working directory.
 	"""
 
 	initialised: bool = False
 
 	def __init__(
 			self,
-			lib_path: PathLike,
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
 			lib_type: int = _core.NISTMS_MAIN_LIB,
 			work_dir: Optional[PathLike] = None,
 			debug: bool = False,
 			):
-		"""
-		:param lib_path: The path to the mass spectral library.
-		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.
-		:param work_dir: The path to the working directory.
-		"""
 
 		self.debug: bool = bool(debug)
 
@@ -170,7 +169,7 @@ class Engine:
 
 		raise TimeoutError("Unable to communicate with the search server.")
 
-	def _pull_and_launch(self, lib_path: PathLike, lib_type: int, num_libs: int) -> None:
+	def _pull_and_launch(self, lib_path: PathLike, lib_type: bytes, num_libs: int) -> None:
 		try:
 			self.__launch_container(lib_path, lib_type, num_libs)
 		except docker.errors.ImageNotFound:
@@ -218,7 +217,7 @@ class Engine:
 
 			return lib_paths, lib_types
 
-	def __launch_container(self, lib_path: PathLike, lib_type: int, num_libs: int) -> None:
+	def __launch_container(self, lib_path: PathLike, lib_type: bytes, num_libs: int) -> None:
 		self.docker = self._client.containers.run(
 				"domdfcoding/pywine-pyms-nist",
 				ports={5001: 5001},
@@ -229,7 +228,7 @@ class Engine:
 				# stderr=False,
 				stdin_open=False,
 				volumes={lib_path: {"bind": "/mainlib", "mode": "ro"}},
-				environment=[f"LIBTYPE={lib_type}", f"NUM_LIBS={num_libs}"],
+				environment=[f"LIBTYPE={lib_type.decode("UTF-8")}", f"NUM_LIBS={num_libs}"],
 				)
 
 	def __enter__(self) -> "Engine":
