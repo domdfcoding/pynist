@@ -176,6 +176,8 @@ def test_full_search_with_ref_data():
 		assert ref_data_dict["formula"] == "C6H4Cl2O"
 		assert ref_data_dict["nist_no"] == 5
 		assert ref_data_dict["id"] == 1
+		assert ref_data_dict["lib_idx"] == 5
+		engine.get_lib_paths()[ref_data_dict["lib_idx"]] == FULL_PATH_TO_C5_LIBRARY
 		assert isinstance(ref_data_dict["mass_spec"], MassSpectrum)
 
 

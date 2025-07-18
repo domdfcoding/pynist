@@ -163,6 +163,7 @@ class SearchResult(NISTBase):
 				reverse_match_factor=self.reverse_match_factor,
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
+				lib_idx=self.lib_idx,
 				)
 
 	@property
