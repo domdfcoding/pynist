@@ -119,9 +119,19 @@ class Engine:
 	:param lib_path: The path to the mass spectral library.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
+
+	.. latex:clearpage::
 	"""
 
 	initialised: bool = False
+
+	image_name: str = "domdfcoding/pywine-pyms-nist:multi-library"
+	# image_name: str = "domdfcoding/pywine-pyms-nist:latest"
+	"""
+	The name (and label) of the docker image to use.
+
+	.. versionadded:: 0.8.0
+	"""
 
 	def __init__(
 			self,
@@ -171,7 +181,7 @@ class Engine:
 			self.__launch_container(lib_paths, lib_types)
 		except docker.errors.ImageNotFound:
 			print("Docker Image not found. Downloading now.")
-			self._client.images.pull("domdfcoding/pywine-pyms-nist:latest")
+			self._client.images.pull("domdfcoding/pywine-pyms-nist:multi-library")
 			self.__launch_container(lib_paths, lib_types)
 
 	@staticmethod
@@ -231,8 +241,7 @@ class Engine:
 		config_b64 = base64.b64encode(json.dumps(configdata).encode("UTF-8")).decode("UTF-8")
 
 		self.docker = self._client.containers.run(
-				# "domdfcoding/pywine-pyms-nist:latest",
-				"domdfcoding/pywine-pyms-nist:multi-library",
+				self.image_name,
 				ports={5001: 5001},
 				detach=True,
 				name="pyms-nist-server",
@@ -254,6 +263,8 @@ class Engine:
 	def uninit(self) -> None:
 		"""
 		Uninitialize the Search Engine.
+
+		.. latex:clearpage::
 		"""
 
 		if self.initialised:
@@ -379,6 +390,8 @@ class Engine:
 
 		:return: List of tuples containing possible identities
 			for the mass spectrum, and the reference data.
+
+		.. latex:clearpage::
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):

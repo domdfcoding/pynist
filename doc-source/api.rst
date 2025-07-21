@@ -22,6 +22,8 @@ API Reference
 .. automodule:: pyms_nist_search.docker_engine
 
 
+.. latex:clearpage::
+
 :mod:`~pyms_nist_search.reference_data`
 ---------------------------------------
 
@@ -48,6 +50,8 @@ API Reference
 
 .. automodule:: pyms_nist_search.utils
 
+
+.. latex:clearpage::
 
 :mod:`~pyms_nist_search.win_engine`
 -----------------------------------

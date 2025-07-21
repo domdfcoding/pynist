@@ -75,7 +75,7 @@ class ReferenceData(NISTBase):
 	:param exact_mass: Not used.
 	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
 
-	.. latex:vspace:: 60px
+	.. latex:vspace:: 100px
 	"""
 
 	_exact_mass: float

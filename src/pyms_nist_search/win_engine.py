@@ -63,8 +63,6 @@ class Engine:
 	:param lib_path: The path to the mass spectral library.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
-
-	.. latex:vspace:: 50px
 	"""
 
 	def __init__(
@@ -170,6 +168,8 @@ class Engine:
 		:param cas:
 
 		:return: List of results for CAS number (usually just one result).
+
+		.. latex:clearpage::
 		"""
 
 		return [SearchResult.from_pynist(hit) for hit in _core._cas_search(cas)]
@@ -242,7 +242,7 @@ class Engine:
 	@staticmethod
 	def get_active_libs() -> List[int]:
 		"""
-		Returns the active librararies, as their (zero-based) indices in the output of :meth:~.WinEngine.get_lib_names()`.
+		Returns the active librararies, as their (zero-based) indices in the output of :meth:`~.WinEngine.get_lib_names()`.
 		"""
 
 		return _core._get_active_libs()
