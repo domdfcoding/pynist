@@ -166,20 +166,19 @@ def test_full_search_with_ref_data():
 			assert isinstance(hit[0], SearchResult)
 			assert isinstance(hit[1], ReferenceData)
 
-		assert hit[0].name == "2,6-DICHLOROPHENOL"
+		assert hits[2][0].name == "2,6-DICHLOROPHENOL"
 
-		assert hit[1].name == "2,6-DICHLOROPHENOL"
+		assert hits[2][1].name == "2,6-DICHLOROPHENOL"
 		# assert hit[1].cas == "95-77-2"  # Not supported by lib2nist it seems
 
-		ref_data_dict = hit[1].to_dict()
-		assert hit[1].name == "2,6-DICHLOROPHENOL"
+		assert hits[2][1].name == "2,6-DICHLOROPHENOL"
 		# CAS not supported by LIB2NIST
-		assert hit[1].formula == "C6H4Cl2O"
-		assert hit[1].nist_no == 5
-		assert hit[1].id == '1'
-		assert hit[1].lib_idx == 4
-		engine.get_lib_paths()[hit[1].lib_idx] == FULL_PATH_TO_C5_LIBRARY
-		assert isinstance(hit[1].mass_spec, MassSpectrum)
+		assert hits[2][1].formula == "C6H4Cl2O"
+		assert hits[2][1].nist_no == 5
+		assert hits[2][1].id == '1'
+		assert hits[2][1].lib_idx == 4
+		assert lib_name_from_path(engine.get_lib_paths()[hits[2][1].lib_idx]) == "c5"
+		assert isinstance(hits[2][1].mass_spec, MassSpectrum)
 
 
 @pytest.mark.xfail()
