@@ -73,7 +73,7 @@ name: str = "PyMassSpec NIST Search"
 __author__: str = "Dominic Davis-Foster"
 __license__: str = "LGPLv3+"
 __maintainer_email__: str = "dominic@davis-foster.co.uk"
-__version__: str = "0.8.0b1"
+__version__: str = "0.8.0b2"
 
 __copyright__: str = "2020 Dominic Davis-Foster"
 __email__: str = "dominic@davis-foster.co.uk"
