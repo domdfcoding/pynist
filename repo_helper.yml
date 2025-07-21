@@ -4,7 +4,7 @@ repo_name: pynist
 copyright_years: "2020-2021"
 author: "Dominic Davis-Foster"
 email: "dominic@davis-foster.co.uk"
-version: "0.7.2"
+version: "0.8.0b1"
 username: "domdfcoding"
 license: 'LGPLv3+'
 short_desc: "PyMassSpec extension for searching mass spectra using NIST's Mass Spectrum Search Engine."
@@ -75,6 +75,7 @@ sphinx_html_theme: furo
 
 extra_lint_paths:
   - MoNA_GCMS_Library
+  - test_multi_library/
 
 extra_testenv_commands:
   - python coverage-fixup.py

@@ -36,11 +36,13 @@ Search engine for Linux and other platforms supporting Docker.
 
 # stdlib
 import atexit
+import base64
 import functools
 import json
+import os
 import pathlib
 import time
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Sequence, Tuple, Union
 
 # 3rd party
 import docker  # type: ignore[import-untyped]
@@ -55,7 +57,7 @@ from pyms_nist_search.reference_data import ReferenceData
 from pyms_nist_search.search_result import SearchResult
 
 # this package
-from ._core import NISTMS_MAIN_LIB, NISTMS_REP_LIB, NISTMS_USER_LIB  # type: ignore[import-not-found]
+from . import _core  # type: ignore[attr-defined]
 
 __all__ = [
 		"require_init",
@@ -113,31 +115,35 @@ class Engine:
 			search.full_spectrum_search(ms, n_hits=5)
 
 	.. versionchanged:: 0.6.0  Added context manager support.
+
+	:param lib_path: The path to the mass spectral library.
+	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
+	:param work_dir: The path to the working directory.
+
+	.. latex:clearpage::
 	"""
 
-	initialised: bool
+	initialised: bool = False
+
+	image_name: str = "domdfcoding/pywine-pyms-nist:multi-library"
+	# image_name: str = "domdfcoding/pywine-pyms-nist:latest"
+	"""
+	The name (and label) of the docker image to use.
+
+	.. versionadded:: 0.8.0
+	"""
 
 	def __init__(
 			self,
-			lib_path: PathLike,
-			lib_type: int = NISTMS_MAIN_LIB,
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
+			lib_type: int = _core.NISTMS_MAIN_LIB,
 			work_dir: Optional[PathLike] = None,
 			debug: bool = False,
 			):
-		"""
-		:param lib_path: The path to the mass spectral library.
-		:param lib_type: The type of library. One of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.
-		:param work_dir: The path to the working directory.
-		"""
 
-		if not isinstance(lib_path, pathlib.Path):
-			lib_path = pathlib.Path(lib_path)
+		self.debug: bool = bool(debug)
 
-		if not lib_path.is_dir():
-			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
-
-		if lib_type not in {NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB}:
-			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+		parsed_lib_paths, parsed_lib_types = self._parse_lib_paths_and_types(lib_path, lib_type)
 
 		# # Check if the server is already running
 		# for container in client.containers.list(all=True, filters={"status": "running"}):
@@ -147,18 +153,11 @@ class Engine:
 		# else:
 		#
 
-		self.debug: bool = bool(debug)
-
 		print("Launching Docker...")
 
 		self._client = docker.from_env()
 
-		try:
-			self.__launch_container(lib_path, lib_type)
-		except docker.errors.ImageNotFound:
-			print("Docker Image not found. Downloading now.")
-			self._client.images.pull("domdfcoding/pywine-pyms-nist")
-			self.__launch_container(lib_path, lib_type)
+		self._pull_and_launch(parsed_lib_paths, parsed_lib_types)
 
 		atexit.register(self.uninit)
 
@@ -177,9 +176,72 @@ class Engine:
 
 		raise TimeoutError("Unable to communicate with the search server.")
 
-	def __launch_container(self, lib_path: PathLike, lib_type: int) -> None:
+	def _pull_and_launch(self, lib_paths: List[str], lib_types: List[int]) -> None:
+		try:
+			self.__launch_container(lib_paths, lib_types)
+		except docker.errors.ImageNotFound:
+			print("Docker Image not found. Downloading now.")
+			self._client.images.pull("domdfcoding/pywine-pyms-nist:multi-library")
+			self.__launch_container(lib_paths, lib_types)
+
+	@staticmethod
+	def _parse_lib_paths_and_types(
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
+			lib_type: int,
+			) -> Tuple[List[str], List[int]]:
+
+		if isinstance(lib_path, (str, os.PathLike)):
+			if not isinstance(lib_path, pathlib.Path):
+				lib_path = pathlib.Path(lib_path)
+
+			if not lib_path.is_dir():
+				raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+
+			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
+				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+
+			return [str(lib_path)], [lib_type]
+
+		else:
+			assert lib_type is _core.NISTMS_MAIN_LIB
+			lib_paths = []
+			lib_types = []
+			libraries: Sequence[Tuple[PathLike, int]] = lib_path
+			for library in libraries:
+				lib_path = library[0]
+
+				if not isinstance(lib_path, pathlib.Path):
+					lib_path = pathlib.Path(lib_path)
+
+				if not lib_path.is_dir():
+					raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+
+				lib_paths.append(str(lib_path))
+				lib_type = library[1]
+				if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
+					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+				lib_types.append(lib_type)
+
+			return lib_paths, lib_types
+
+	def __launch_container(self, lib_paths: List[str], lib_types: List[int]) -> None:
+		volumes = {}
+		lib_names = []
+
+		for library in lib_paths:
+			lib_name = os.path.split(library)[-1]
+			lib_names.append(f"Z:\\{lib_name}")
+			volumes[library] = {"bind": f"/{lib_name}", "mode": "ro"}
+
+		configdata = {
+				"lib_paths": lib_names,
+				"lib_types": [lt for lt in lib_types],
+				}
+
+		config_b64 = base64.b64encode(json.dumps(configdata).encode("UTF-8")).decode("UTF-8")
+
 		self.docker = self._client.containers.run(
-				"domdfcoding/pywine-pyms-nist",
+				self.image_name,
 				ports={5001: 5001},
 				detach=True,
 				name="pyms-nist-server",
@@ -187,8 +249,9 @@ class Engine:
 				# stdout=False,
 				# stderr=False,
 				stdin_open=False,
-				volumes={lib_path: {"bind": "/mainlib", "mode": "ro"}},
-				environment=[f"LIBTYPE={lib_type}"],
+				volumes=volumes,
+				# environment=[f"LIBPATHS={lib_paths_packed!r}", f"LIBTYPES={lib_types.decode('UTF-8')!r}", f"NUM_LIBS={num_libs}"],
+				environment=[f"CONFIG={config_b64}"]
 				)
 
 	def __enter__(self) -> "Engine":
@@ -200,6 +263,8 @@ class Engine:
 	def uninit(self) -> None:
 		"""
 		Uninitialize the Search Engine.
+
+		.. latex:clearpage::
 		"""
 
 		if self.initialised:
@@ -254,6 +319,8 @@ class Engine:
 	def cas_search(cas: str) -> List[SearchResult]:
 		"""
 		Search for a compound by CAS number.
+
+		.. note:: This function does not appear to work with user libraries converted using LIB2NIST.
 
 		:param cas:
 
@@ -323,6 +390,8 @@ class Engine:
 
 		:return: List of tuples containing possible identities
 			for the mass spectrum, and the reference data.
+
+		.. latex:clearpage::
 		"""
 
 		if not isinstance(mass_spec, MassSpectrum):
@@ -362,6 +431,48 @@ class Engine:
 
 			except requests.exceptions.ConnectionError:
 				time.sleep(0.5)
+
+		raise TimeoutError("Unable to communicate with the search server.")
+
+	@require_init
+	def get_lib_paths(self) -> List[str]:
+		"""
+		Returns the list of library names currently in use.
+		"""
+
+		retry_count = 0
+
+		# Keep trying until it works
+		while retry_count < 240:
+			try:
+				res = requests.get(f"http://localhost:5001/info/lib_paths")
+				res.raise_for_status()
+				assert isinstance(res.json(), list)
+				return res.json()
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+				retry_count += 1
+
+		raise TimeoutError("Unable to communicate with the search server.")
+
+	@require_init
+	def get_active_libs(self) -> List[int]:
+		"""
+		Returns the active librararies, as their (zero-based) indices in the output of :meth:~.WinEngine.get_lib_names()`.
+		"""
+
+		retry_count = 0
+
+		# Keep trying until it works
+		while retry_count < 240:
+			try:
+				res = requests.get(f"http://localhost:5001/info/active_libs")
+				res.raise_for_status()
+				assert isinstance(res.json(), list)
+				return res.json()
+			except requests.exceptions.ConnectionError:
+				time.sleep(0.5)
+				retry_count += 1
 
 		raise TimeoutError("Unable to communicate with the search server.")
 

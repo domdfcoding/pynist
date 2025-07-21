@@ -7,6 +7,10 @@ from pyms.Spectrum import MassSpectrum
 # this package
 import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
+from pyms_nist_search.utils import lib_name_from_path
+
+# this package
+from .engines import FULL_PATH_TO_USER_LIBRARY
 
 
 def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
@@ -30,6 +34,9 @@ def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Option
 	# 	assert name.lower() in hit_list[0][1].synonyms
 	assert hit_list[0][0].name.lower() == name.lower()
 	assert hit_list[0][1].name.lower() == name.lower()
+
+	assert hit_list[0][1].lib_idx == 0
+	assert lib_name_from_path(search.get_lib_paths()[hit_list[0][1].lib_idx]) == "MoNA"
 
 
 def test_different_n_hits(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):

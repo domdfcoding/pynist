@@ -58,6 +58,7 @@ class SearchResult(NISTBase):
 	:param reverse_match_factor:
 	:param hit_prob:
 	:param spec_loc: The location of the reference spectrum in the library.
+	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
 
 	.. latex:vspace:: 20px
 	"""
@@ -70,6 +71,7 @@ class SearchResult(NISTBase):
 			reverse_match_factor: float = 0,
 			hit_prob: float = 0.0,
 			spec_loc: float = 0,
+			lib_idx: int = 0,
 			) -> None:
 		NISTBase.__init__(self, name, cas)
 
@@ -78,6 +80,7 @@ class SearchResult(NISTBase):
 
 		self._hit_prob: float = float(hit_prob)
 		self._spec_loc: int = int(spec_loc)
+		self._lib_idx: int = int(lib_idx)
 
 	@property
 	def match_factor(self) -> int:
@@ -117,6 +120,14 @@ class SearchResult(NISTBase):
 
 		return int(self._spec_loc)
 
+	@property
+	def lib_idx(self) -> int:
+		"""
+		The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
+		"""
+
+		return int(self._lib_idx)
+
 	@classmethod
 	def from_pynist(cls, pynist_dict: Dict[str, Any]) -> "SearchResult":
 		"""
@@ -132,6 +143,7 @@ class SearchResult(NISTBase):
 				reverse_match_factor=pynist_dict["rev_sim_num"],
 				hit_prob=pynist_dict["hit_prob"] / 100,
 				spec_loc=pynist_dict["spec_loc"],
+				lib_idx=pynist_dict["lib_idx"],
 				)
 
 	def __repr__(self) -> str:
@@ -151,6 +163,7 @@ class SearchResult(NISTBase):
 				reverse_match_factor=self.reverse_match_factor,
 				spec_loc=self.spec_loc,
 				hit_prob=self.hit_prob,
+				lib_idx=self.lib_idx,
 				)
 
 	@property

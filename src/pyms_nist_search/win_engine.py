@@ -35,8 +35,9 @@ Search engine for Windows systems.
 
 # stdlib
 import atexit
+import os
 import pathlib
-from typing import List, Optional, Tuple
+from typing import List, Optional, Sequence, Tuple, Union
 
 # 3rd party
 from domdf_python_tools.typing import PathLike
@@ -48,7 +49,7 @@ from pyms_nist_search.search_result import SearchResult
 from pyms_nist_search.utils import pack
 
 # this package
-from . import _core
+from . import _core  # type: ignore[attr-defined]
 
 __all__ = ("Engine", )
 
@@ -62,19 +63,15 @@ class Engine:
 	:param lib_path: The path to the mass spectral library.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
-
-	.. latex:vspace:: 50px
 	"""
 
 	def __init__(
 			self,
-			lib_path: PathLike,
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
 			lib_type: int = _core.NISTMS_MAIN_LIB,
 			work_dir: Optional[PathLike] = None,
 			debug: bool = False,
 			):
-		if not isinstance(lib_path, pathlib.Path):
-			lib_path = pathlib.Path(lib_path)
 
 		if work_dir is None:
 			work_dir = pathlib.Path.cwd()
@@ -85,17 +82,58 @@ class Engine:
 		if not work_dir.is_dir():
 			work_dir.mkdir()
 
-		if not lib_path.is_dir():
-			raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+		self.debug: bool = bool(debug)
 
-		if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
-			raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
-
-		self.debug = debug
-
-		_core._init_api(str(lib_path), lib_type, str(work_dir))
+		parsed_lib_paths, parsed_lib_types = self._parse_lib_paths_and_types(lib_path, lib_type)
+		_core._init_api(
+				_core.NISTMS_PATH_SEPARATOR.join(parsed_lib_paths) + '\x00',
+				b''.join(parsed_lib_types) + b"\0",
+				len(parsed_lib_paths),
+				str(work_dir),
+				)
+		self._lib_paths = _core.NISTMS_PATH_SEPARATOR.join(parsed_lib_paths)
 
 		atexit.register(self.uninit)
+
+	@staticmethod
+	def _parse_lib_paths_and_types(
+			lib_path: Union[PathLike, Sequence[Tuple[PathLike, int]]],
+			lib_type: int,
+			) -> Tuple[List[str], List[bytes]]:
+
+		if isinstance(lib_path, (str, os.PathLike)):
+			if not isinstance(lib_path, pathlib.Path):
+				lib_path = pathlib.Path(lib_path)
+
+			if not lib_path.is_dir():
+				raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+
+			if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
+				raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+
+			return [str(lib_path)], [lib_type.to_bytes(1, "big")]
+
+		else:
+			assert lib_type is _core.NISTMS_MAIN_LIB
+			lib_paths = []
+			lib_types = []
+			libraries: Sequence[Tuple[PathLike, int]] = lib_path
+			for library in libraries:
+				lib_path = library[0]
+
+				if not isinstance(lib_path, pathlib.Path):
+					lib_path = pathlib.Path(lib_path)
+
+				if not lib_path.is_dir():
+					raise FileNotFoundError(f"Library not found at the given path: {lib_path}")
+
+				lib_paths.append(str(lib_path))
+				lib_type = library[1]
+				if lib_type not in {_core.NISTMS_MAIN_LIB, _core.NISTMS_USER_LIB, _core.NISTMS_REP_LIB}:
+					raise ValueError("`lib_type` must be one of NISTMS_MAIN_LIB, NISTMS_USER_LIB, NISTMS_REP_LIB.")
+				lib_types.append(lib_type.to_bytes(1, "big"))
+
+			return lib_paths, lib_types
 
 	def uninit(self) -> None:
 		"""
@@ -125,15 +163,18 @@ class Engine:
 		"""
 		Search for a compound by CAS number.
 
+		.. note:: This function does not appear to work with user libraries converted using LIB2NIST.
+
 		:param cas:
 
 		:return: List of results for CAS number (usually just one result).
+
+		.. latex:clearpage::
 		"""
 
 		return [SearchResult.from_pynist(hit) for hit in _core._cas_search(cas)]
 
-	@staticmethod
-	def full_spectrum_search(mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
+	def full_spectrum_search(self, mass_spec: MassSpectrum, n_hits: int = 5) -> List[SearchResult]:
 		"""
 		Perform a Full Spectrum Search of the mass spectral library.
 
@@ -189,6 +230,22 @@ class Engine:
 		reference_data = _core._get_reference_data(spec_loc)
 
 		return ReferenceData.from_pynist(reference_data)
+
+	def get_lib_paths(self) -> List[str]:
+		"""
+		Returns the list of library names currently in use.
+		"""
+
+		return self._lib_paths.rstrip('\x00').split(_core.NISTMS_PATH_SEPARATOR)
+		# return _core._get_lib_paths().rstrip("\0").split(_core.NISTMS_PATH_SEPARATOR)
+
+	@staticmethod
+	def get_active_libs() -> List[int]:
+		"""
+		Returns the active librararies, as their (zero-based) indices in the output of :meth:`~.WinEngine.get_lib_names()`.
+		"""
+
+		return _core._get_active_libs()
 
 	def __enter__(self) -> "Engine":
 		return self

@@ -68,6 +68,7 @@ def reference_data(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional
 					"intensity_list": intensity_list,
 					"mass_list": mass_list,
 					},
+			"lib_idx": 0,
 			}
 
 	ref_data_dict_non_recursive = {
@@ -81,6 +82,7 @@ def reference_data(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional
 			"exact_mass": 169.0,
 			"synonyms": [],
 			"mass_spec": ref_data.mass_spec,
+			"lib_idx": 0,
 			}
 
 	ref_data_json = json.dumps(ref_data_dict)
