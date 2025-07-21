@@ -92,3 +92,5 @@ github_ci_requirements:
   post:
    # Prefery binary wheels for older versions over sdists for newer ones
    - pip config set global.prefer-binary true
+
+pre_commit_exclude: "\\.NUM$"
