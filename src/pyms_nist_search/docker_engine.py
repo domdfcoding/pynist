@@ -125,8 +125,7 @@ class Engine:
 
 	initialised: bool = False
 
-	image_name: str = "domdfcoding/pywine-pyms-nist:multi-library"
-	# image_name: str = "domdfcoding/pywine-pyms-nist:latest"
+	image_name: str = "domdfcoding/pywine-pyms-nist:latest"
 	"""
 	The name (and label) of the docker image to use.
 
@@ -181,7 +180,7 @@ class Engine:
 			self.__launch_container(lib_paths, lib_types)
 		except docker.errors.ImageNotFound:
 			print("Docker Image not found. Downloading now.")
-			self._client.images.pull("domdfcoding/pywine-pyms-nist:multi-library")
+			self._client.images.pull(self.image_name)
 			self.__launch_container(lib_paths, lib_types)
 
 	@staticmethod
