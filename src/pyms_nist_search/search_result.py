@@ -58,7 +58,7 @@ class SearchResult(NISTBase):
 	:param reverse_match_factor:
 	:param hit_prob:
 	:param spec_loc: The location of the reference spectrum in the library.
-	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
+	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.win_engine.Engine.get_lib_paths`).
 
 	.. latex:vspace:: 20px
 	"""
@@ -114,7 +114,7 @@ class SearchResult(NISTBase):
 		"""
 		The location of the reference spectrum in the library.
 
-		This can then be searched using the :meth:`~pynist.win_engine.Engine.get_reference_data` method of the
+		This can then be searched using the :meth:`~.win_engine.Engine.get_reference_data` method of the
 		search engine to obtain the reference data.
 		"""
 
@@ -123,7 +123,7 @@ class SearchResult(NISTBase):
 	@property
 	def lib_idx(self) -> int:
 		"""
-		The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
+		The (zero-based) index of the library the result was found in (see :meth:`~.win_engine.Engine.get_lib_paths`).
 		"""
 
 		return int(self._lib_idx)

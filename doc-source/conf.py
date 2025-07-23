@@ -97,3 +97,6 @@ def setup(app):
 	app.add_js_file("twemoji.js")
 	app.add_css_file("twemoji.css")
 	app.add_transform(sphinxemoji.EmojiSubstitutions)
+
+
+nitpicky = True

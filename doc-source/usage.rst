@@ -39,3 +39,24 @@ For each of these hits, the reference data can be obtained as follows:
 
 	for hit in hit_list:
 		ref_data = search.get_reference_data(hit.spec_loc)
+
+Using Multiple Libraries
+===========================
+
+``pyms-nist-search`` can also be configured to search multiple libraries simultaneously,
+such as the NIST mainlib and some user libraries.
+The libraries to search are specified in a list of ``(<lib_path>, <lib_type>)`` tuples,
+where ``lib_path`` is the full path to the library on disk and ``lib_type``
+is :data:`pyms_nist_search.NISTMS_MAIN_LIB`, :data:`pyms_nist_search.NISTMS_USER_LIB` or :data:`pyms_nist_search.NISTMS_REP_LIB`
+as applicable.
+
+.. code-block:: python
+
+	search = pyms_nist_search.Engine(
+			[
+					(FULL_PATH_TO_MAIN_LIBRARY, pyms_nist_search.NISTMS_MAIN_LIB),
+					(FULL_PATH_TO_REPLICATE_LIBRARY, pyms_nist_search.NISTMS_REP_LIB),
+					(FULL_PATH_TO_USER_LIBRARY, pyms_nist_search.NISTMS_USER_LIB),
+					],
+			work_dir=FULL_PATH_TO_WORK_DIR,
+			)

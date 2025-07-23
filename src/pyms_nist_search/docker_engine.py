@@ -115,8 +115,9 @@ class Engine:
 			search.full_spectrum_search(ms, n_hits=5)
 
 	.. versionchanged:: 0.6.0  Added context manager support.
+	.. versionchanged:: 0.8.0  Add support for searching multiple libraries.
 
-	:param lib_path: The path to the mass spectral library.
+	:param lib_path: The path to the mass spectral library, or a list of ``(<lib_path>, <lib_type>)`` tuples giving multiple libraries to search.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
 
@@ -437,6 +438,8 @@ class Engine:
 	def get_lib_paths(self) -> List[str]:
 		"""
 		Returns the list of library names currently in use.
+
+		.. versionadded:: 0.8.0
 		"""
 
 		retry_count = 0
@@ -457,7 +460,9 @@ class Engine:
 	@require_init
 	def get_active_libs(self) -> List[int]:
 		"""
-		Returns the active librararies, as their (zero-based) indices in the output of :meth:~.WinEngine.get_lib_names()`.
+		Returns the active librararies, as their (zero-based) indices in the output of :meth:`~.docker_engine.Engine.get_lib_paths`.
+
+		.. versionadded:: 0.8.0
 		"""
 
 		retry_count = 0

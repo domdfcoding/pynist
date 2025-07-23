@@ -73,7 +73,7 @@ class ReferenceData(NISTBase):
 	:param mass_spec: The reference mass spectrum.
 	:param synonyms: List of synonyms for the compound.
 	:param exact_mass: Not used.
-	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.WinEngine.get_lib_names()`).
+	:param lib_idx: The (zero-based) index of the library the result was found in (see :meth:`~.win_engine.Engine.get_lib_paths`).
 
 	.. latex:vspace:: 100px
 	"""
@@ -193,7 +193,7 @@ class ReferenceData(NISTBase):
 	@property
 	def lib_idx(self) -> int:
 		"""
-		The (zero-based) index of the library the result was found in (see :meth:`~.Engine.get_lib_names()`).
+		The (zero-based) index of the library the result was found in (see :meth:`~.win_engine.Engine.get_lib_paths`).
 		"""
 
 		return int(self._lib_idx)

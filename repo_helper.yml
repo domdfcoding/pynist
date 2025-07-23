@@ -95,3 +95,6 @@ github_ci_requirements:
    - pip config set global.prefer-binary true
 
 pre_commit_exclude: "\\.NUM$"
+
+sphinx_conf_epilogue:
+ - nitpicky = True
