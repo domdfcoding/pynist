@@ -39,7 +39,7 @@ def search() -> Iterator[pyms_nist_search.Engine]:
 				# "121-14-2",  # 2,4-DNT	need to fix synonyms
 				"507-70-0",  # Borneol
 				"78-93-3",  # MEK
-				]
+				],
 		)
 def spectra(request) -> Tuple[str, Optional[MassSpectrum]]:
 	# Download required files from NIST Webbook

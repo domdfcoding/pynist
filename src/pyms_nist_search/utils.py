@@ -130,6 +130,8 @@ def parse_name_chars(name_char_list: Sequence[int]) -> str:
 def lib_name_from_path(lib_path: PathLike) -> str:
 	"""
 	Given the path to a mass spectral library, returns the library name (the final path component).
+
+	:param lib_path:
 	"""
 
 	return ntpath.split(lib_path)[-1]

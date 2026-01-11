@@ -79,7 +79,7 @@ def require_init(func: Callable) -> Callable:
 		if not cls.initialised:
 			raise RuntimeError(
 					"""The Search Engine has been uninitialised!
-Please create a new instance of the Search Engine and try again."""
+Please create a new instance of the Search Engine and try again.""",
 					)
 
 		return func(cls, *args, **kwargs)
@@ -120,6 +120,7 @@ class Engine:
 	:param lib_path: The path to the mass spectral library, or a list of ``(<lib_path>, <lib_type>)`` tuples giving multiple libraries to search.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
+	:param debug: Display debugging messages.
 
 	.. latex:clearpage::
 	"""
@@ -251,7 +252,7 @@ class Engine:
 				stdin_open=False,
 				volumes=volumes,
 				# environment=[f"LIBPATHS={lib_paths_packed!r}", f"LIBTYPES={lib_types.decode('UTF-8')!r}", f"NUM_LIBS={num_libs}"],
-				environment=[f"CONFIG={config_b64}"]
+				environment=[f"CONFIG={config_b64}"],
 				)
 
 	def __enter__(self) -> "Engine":
@@ -366,7 +367,8 @@ class Engine:
 		while retry_count < 240:
 			try:
 				res = requests.post(
-						f"http://localhost:5001/search/spectrum/?n_hits={n_hits}", json=sdjson.dumps(mass_spec)
+						f"http://localhost:5001/search/spectrum/?n_hits={n_hits}",
+						json=sdjson.dumps(mass_spec),
 						)
 				return hit_list_from_json(res.text)
 
@@ -404,7 +406,7 @@ class Engine:
 			try:
 				res = requests.post(
 						f"http://localhost:5001/search/spectrum_with_ref_data/?n_hits={n_hits}",
-						json=sdjson.dumps(mass_spec)
+						json=sdjson.dumps(mass_spec),
 						)
 				return hit_list_with_ref_data_from_json(res.text)
 			except requests.exceptions.ConnectionError:
@@ -447,7 +449,7 @@ class Engine:
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
-				res = requests.get(f"http://localhost:5001/info/lib_paths")
+				res = requests.get("http://localhost:5001/info/lib_paths")
 				res.raise_for_status()
 				assert isinstance(res.json(), list)
 				return res.json()
@@ -470,7 +472,7 @@ class Engine:
 		# Keep trying until it works
 		while retry_count < 240:
 			try:
-				res = requests.get(f"http://localhost:5001/info/active_libs")
+				res = requests.get("http://localhost:5001/info/active_libs")
 				res.raise_for_status()
 				assert isinstance(res.json(), list)
 				return res.json()

@@ -9,9 +9,6 @@ import pyms_nist_search
 from pyms_nist_search import ReferenceData, SearchResult
 from pyms_nist_search.utils import lib_name_from_path
 
-# this package
-from .engines import FULL_PATH_TO_USER_LIBRARY
-
 
 def test_full_search(search: pyms_nist_search.Engine, spectra: Tuple[str, Optional[MassSpectrum]]):
 	print()

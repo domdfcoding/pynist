@@ -72,7 +72,12 @@ class Contributor:
 		:param mona_data:
 		"""
 
-	def add_contribution(self, id_: str, license_: Optional[str] = None, **kwargs) -> "Record":
+	def add_contribution(  # noqa: PRM002
+			self,
+			id_: str,
+			license_: Optional[str] = None,
+			**kwargs,
+			) -> "Record":
 		r"""
 		Add a contribution made by this Contributor, and return the new :class:`~.Record` object created.
 
@@ -100,7 +105,7 @@ class Contributor:
 		self.contributions.append(record)
 
 
-class Record:
+class Record:  # noqa: PRM002
 	r"""
 	Class to model a Mass Spectrum record in the MoNA library.
 

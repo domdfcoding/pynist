@@ -2,7 +2,7 @@
 import pathlib
 
 # this package
-import pyms_nist_search
+import pyms_nist_search  # noqa: F401
 
 repo_root = pathlib.Path(__file__).parent.parent.absolute()
 

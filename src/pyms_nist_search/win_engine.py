@@ -66,6 +66,7 @@ class Engine:
 	:param lib_path: The path to the mass spectral library, or a list of ``(<lib_path>, <lib_type>)`` tuples giving multiple libraries to search.
 	:param lib_type: The type of library. One of ``NISTMS_MAIN_LIB``, ``NISTMS_USER_LIB``, ``NISTMS_REP_LIB``.
 	:param work_dir: The path to the working directory.
+	:param debug: Display debugging messages.
 	"""
 
 	def __init__(
