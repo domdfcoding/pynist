@@ -98,11 +98,11 @@ PyMassSpec NIST Search
 	:target: https://github.com/domdfcoding/pynist/commit/master
 	:alt: GitHub last commit
 
-.. |maintained| image:: https://img.shields.io/maintenance/yes/2025
+.. |maintained| image:: https://img.shields.io/maintenance/yes/2026
 	:alt: Maintenance
 
 .. |pypi-downloads| image:: https://img.shields.io/pypi/dm/pyms-nist-search
-	:target: https://pypi.org/project/pyms-nist-search/
+	:target: https://pypistats.org/packages/pyms-nist-search
 	:alt: PyPI - Downloads
 
 .. end shields
