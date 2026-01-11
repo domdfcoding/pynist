@@ -124,7 +124,8 @@ def test_sdjson_ref_data(reference_data: Dict[str, Any]):
 
 
 def test_dict(reference_data: Dict[str, Any]):
-	expected = reference_data["ref_data"].to_dict() == reference_data["ref_data_dict_non_recursive"]
+	expected = reference_data["ref_data"].to_dict()
+	assert expected == reference_data["ref_data_dict_non_recursive"]
 	assert dict(reference_data["ref_data"]) == expected
 	assert sdjson.loads(sdjson.dumps(reference_data["ref_data"])) == reference_data["ref_data_dict"]
 	assert ReferenceData.from_dict(dict(reference_data["ref_data"])) == reference_data["ref_data"]
