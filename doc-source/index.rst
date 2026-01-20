@@ -134,8 +134,9 @@ Installation
 
 .. start installation
 
-.. installation:: pyms-nist-search
+.. installation:: pynist
 	:pypi:
+	:pypi-name: pyms-nist-search
 	:github:
 
 .. end installation
